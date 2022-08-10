@@ -1,3 +1,9 @@
+# User defined
+temp/
+hts-keep/
+hts-core/
+.vscode/
+
 # Prerequisites
 *.d
 
