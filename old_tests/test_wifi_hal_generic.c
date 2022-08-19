@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include "wifi_hal_generic.h"
 
-#include <CUnit.h>
+#include <csunit.h>
 
 /**
  * @brief Init the test system
@@ -361,21 +361,21 @@ static CU_pSuite pSuite = NULL;
 int test_generic_register( void )
 {
     /* add a suite to the registry */
-    pSuite = CU_add_suite("[L1 test_wifi_hal_generic]", &test_generic_init, &test_generic_clean);
+    pSuite = CS_TEST_ADD_SUITE("[L1 test_wifi_hal_generic]", &test_generic_init, &test_generic_clean);
     if (NULL == pSuite) 
     {
         return -1;
     }
 
-    CU_ADD_TEST( pSuite, test_generic_wifi_init);
-    CU_ADD_TEST( pSuite, test_generic_wifi_reset);
-    CU_ADD_TEST( pSuite, test_generic_wifi_setLED);
-    CU_ADD_TEST( pSuite, test_generic_wifi_down );
-    CU_ADD_TEST( pSuite, test_generic_wifi_factoryReset);
-    CU_ADD_TEST( pSuite, test_generic_wifi_createInitialConfigFiles);
-    CU_ADD_TEST( pSuite, test_generic_wifi_createHostApdConfig);
-    CU_ADD_TEST( pSuite, test_generic_wifi_startHostApd);
-    CU_ADD_TEST( pSuite, test_generic_wifi_stopHostApd);
+    CS_TEST_ADD( pSuite, test_generic_wifi_init);
+    CS_TEST_ADD( pSuite, test_generic_wifi_reset);
+    CS_TEST_ADD( pSuite, test_generic_wifi_setLED);
+    CS_TEST_ADD( pSuite, test_generic_wifi_down );
+    CS_TEST_ADD( pSuite, test_generic_wifi_factoryReset);
+    CS_TEST_ADD( pSuite, test_generic_wifi_createInitialConfigFiles);
+    CS_TEST_ADD( pSuite, test_generic_wifi_createHostApdConfig);
+    CS_TEST_ADD( pSuite, test_generic_wifi_startHostApd);
+    CS_TEST_ADD( pSuite, test_generic_wifi_stopHostApd);
 
     return 0;
 }

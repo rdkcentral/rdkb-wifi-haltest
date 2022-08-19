@@ -2,12 +2,12 @@
 
 #include "wifi_hal_emu.h"
 
-#include <CUnit.h>
+#include <csunit.h>
 
 
 void test_wifi_hal_emu_NeedToImplement(void)
 {
-    CU_FAIL("Need to Implement wifi_hal_emu");
+    TEST_FAIL"Need to Implement wifi_hal_emu");
 }
 
 #endif // TEST

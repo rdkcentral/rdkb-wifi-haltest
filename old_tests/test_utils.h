@@ -1,6 +1,5 @@
 
 #include <stdint.h>
-#include <CUnit.h>
 
 // In order to get INT, BOOL Types
 #include <wifi_hal_generic.h>

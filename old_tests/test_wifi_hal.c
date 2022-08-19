@@ -1,16 +1,13 @@
 
 #ifdef TEST
 
-
 #include <stddef.h>
 #include "test_utils.h"
-
 
 #include <wifi_hal_generic.h>
 #include <wifi_hal.h>
 #include <wifi_hal_extender.h>
-
-#include <CUnit.h>
+#include <csunit.h>
 
 void test_wifi_hal_L2_setValidSSID_2Ghz(void)
 {
@@ -686,55 +683,55 @@ int test_wifi_hal_clean(void)
 int test_wifi_hal_l2_register( void )
 {
     /* add a suite to the registry */
-    pSuite = CU_add_suite("[L2 test_wifi_hal]", &test_wifi_hal_init, &test_wifi_hal_clean);
+    pSuite = CS_ADD_SUITE("[L2 test_wifi_hal]", &test_wifi_hal_init, &test_wifi_hal_clean);
     if (NULL == pSuite) 
     {
         return -1;
     }
-    CU_add_test( pSuite, "L2_set_Valid_SSID_2GHz (test@1234)", test_wifi_hal_L2_setValidSSID_2Ghz);
-    CU_add_test( pSuite, "L2_set_InValidIndex_SSID_2GHz", test_wifi_hal_L2_setInValidIndexSSID_2Ghz);
-    CU_add_test( pSuite, "L2_set_NULL_SSID_2GHz", test_wifi_hal_L2_setNULLSSID_2Ghz);
-    CU_add_test( pSuite, "L2_set_Valid_SSID_5GHz", test_wifi_hal_L2_setValidSSID_5Ghz);
-    CU_add_test( pSuite, "L2_set_InValidIndex_SSID_5GHz", test_wifi_hal_L2_setInValidIndexSSID_5Ghz);
-    CU_add_test( pSuite, "L2_set_NULL_SSID_5GHz", test_wifi_hal_L2_setNULLSSID_5Ghz);
-    CU_add_test( pSuite, "L2_set_Valid_SSID_6GHz", test_wifi_hal_L2_setValidSSID_6Ghz);
-    CU_add_test( pSuite, "L2_set_InValidIndex_SSID_6GHz", test_wifi_hal_L2_setInValidIndexSSID_6Ghz);
-    CU_add_test( pSuite, "L2_set_NULL_SSID_6GHz", test_wifi_hal_L2_setNULLSSID_6Ghz);
-    CU_add_test( pSuite, "L2_set_ap_Disable_2GHz", test_wifi_hal_L2_setApDisable_2GHz);
-    CU_add_test( pSuite, "L2_set_ap_Disable_5GHz", test_wifi_hal_L2_setApDisable_5GHz);
-    CU_add_test( pSuite, "L2_set_ap_Disable_6GHz", test_wifi_hal_L2_setApDisable_6GHz);
-    CU_add_test( pSuite, "L2_set_ap_Enable_2GHz", test_wifi_hal_L2_setApEnable_2GHz);
-    CU_add_test( pSuite, "L2_set_ap_Enable_5GHz", test_wifi_hal_L2_setApEnable_5GHz);
-    CU_add_test( pSuite, "L2_set_ap_Enable_6GHz", test_wifi_hal_L2_setApEnable_6GHz);
-    CU_add_test( pSuite, "L2_set_ap_InValidIndex_Disable",test_wifi_hal_L2_setInvalidIndexApDisable);
-    CU_add_test( pSuite, "L2_set_ap_InValidIndex_Enable",test_wifi_hal_L2_setInvalidIndexApEnable);
-    CU_add_test( pSuite, "L2_valid_channel_push_2GHz", test_wifi_L2_Validchannel_push_2GHz);
-    CU_add_test( pSuite, "L2_Invalid_channel_push_2GHz", test_wifi_L2_InValidchannel_push_2GHz);
-    CU_add_test( pSuite, "L2_Invalid_Index_channel_push_2GHz", test_wifi_L2_InValidIndex_channel_push_2GHz);
-    CU_add_test( pSuite, "L2_valid_channel_push_5GHz", test_wifi_L2_Validchannel_push_5GHz);
-    CU_add_test( pSuite, "L2_Invalid_channel_push_5GHz", test_wifi_L2_InValidchannel_push_5GHz);
-    CU_add_test( pSuite, "L2_Invalid_Index_channel_push_5GHz", test_wifi_L2_InValidIndex_channel_push_5GHz);
-    CU_add_test( pSuite, "L2_valid_channel_push_6GHz", test_wifi_L2_Validchannel_push_6GHz);
-    CU_add_test( pSuite, "L2_Invalid_channel_push_6GHz", test_wifi_L2_InValidchannel_push_6GHz);
-    CU_add_test( pSuite, "L2_Invalid_Index_channel_push_6GHz", test_wifi_L2_InValidIndex_channel_push_6GHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_2GHz_40MHz",test_wifi_L2_set_valid_bandwidth_2Ghz_40MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_2GHz_20MHz",test_wifi_L2_set_valid_bandwidth_2Ghz_20MHz);
-    CU_add_test( pSuite, "L2_set_InValid_bandwidth_2GHz",test_wifi_L2_set_Invalid_bandwidth_2Ghz);
-    CU_add_test( pSuite, "L2_set_InValidIndex_bandwidth_2GHz",test_wifi_L2_set_InvalidIndex_bandwidth_2Ghz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_5GHz_20MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_20MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_5GHz_40MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_40MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_5GHz_80MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_80MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_5GHz_160MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_160MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_5GHz_80_80MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_80_80MHz);
-    CU_add_test( pSuite, "L2_set_InValid_bandwidth_5GHz",test_wifi_L2_set_Invalid_bandwidth_5Ghz);
-    CU_add_test( pSuite, "L2_set_InValidIndex_bandwidth_5GHz",test_wifi_L2_set_InvalidIndex_bandwidth_5Ghz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_6GHz_20MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_20MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_6GHz_20MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_40MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_6GHz_160MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_160MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_6GHz_80MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_80MHz);
-    CU_add_test( pSuite, "L2_set_Valid_bandwidth_6GHz_80_80MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_80_80MHz);
-    CU_add_test( pSuite, "L2_set_InValid_bandwidth_6GHz",test_wifi_L2_set_Invalid_bandwidth_6Ghz);
-    CU_add_test( pSuite, "L2_set_InValidIndex_bandwidth_6GHz",test_wifi_L2_set_InvalidIndex_bandwidth_6Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_SSID_2GHz (test@1234)", test_wifi_hal_L2_setValidSSID_2Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_InValidIndex_SSID_2GHz", test_wifi_hal_L2_setInValidIndexSSID_2Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_NULL_SSID_2GHz", test_wifi_hal_L2_setNULLSSID_2Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_SSID_5GHz", test_wifi_hal_L2_setValidSSID_5Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_InValidIndex_SSID_5GHz", test_wifi_hal_L2_setInValidIndexSSID_5Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_NULL_SSID_5GHz", test_wifi_hal_L2_setNULLSSID_5Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_SSID_6GHz", test_wifi_hal_L2_setValidSSID_6Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_InValidIndex_SSID_6GHz", test_wifi_hal_L2_setInValidIndexSSID_6Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_NULL_SSID_6GHz", test_wifi_hal_L2_setNULLSSID_6Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_Disable_2GHz", test_wifi_hal_L2_setApDisable_2GHz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_Disable_5GHz", test_wifi_hal_L2_setApDisable_5GHz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_Disable_6GHz", test_wifi_hal_L2_setApDisable_6GHz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_Enable_2GHz", test_wifi_hal_L2_setApEnable_2GHz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_Enable_5GHz", test_wifi_hal_L2_setApEnable_5GHz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_Enable_6GHz", test_wifi_hal_L2_setApEnable_6GHz);
+    CS_TEST_ADD( pSuite, "L2_set_ap_InValidIndex_Disable",test_wifi_hal_L2_setInvalidIndexApDisable);
+    CS_TEST_ADD( pSuite, "L2_set_ap_InValidIndex_Enable",test_wifi_hal_L2_setInvalidIndexApEnable);
+    CS_TEST_ADD( pSuite, "L2_valid_channel_push_2GHz", test_wifi_L2_Validchannel_push_2GHz);
+    CS_TEST_ADD( pSuite, "L2_Invalid_channel_push_2GHz", test_wifi_L2_InValidchannel_push_2GHz);
+    CS_TEST_ADD( pSuite, "L2_Invalid_Index_channel_push_2GHz", test_wifi_L2_InValidIndex_channel_push_2GHz);
+    CS_TEST_ADD( pSuite, "L2_valid_channel_push_5GHz", test_wifi_L2_Validchannel_push_5GHz);
+    CS_TEST_ADD( pSuite, "L2_Invalid_channel_push_5GHz", test_wifi_L2_InValidchannel_push_5GHz);
+    CS_TEST_ADD( pSuite, "L2_Invalid_Index_channel_push_5GHz", test_wifi_L2_InValidIndex_channel_push_5GHz);
+    CS_TEST_ADD( pSuite, "L2_valid_channel_push_6GHz", test_wifi_L2_Validchannel_push_6GHz);
+    CS_TEST_ADD( pSuite, "L2_Invalid_channel_push_6GHz", test_wifi_L2_InValidchannel_push_6GHz);
+    CS_TEST_ADD( pSuite, "L2_Invalid_Index_channel_push_6GHz", test_wifi_L2_InValidIndex_channel_push_6GHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_2GHz_40MHz",test_wifi_L2_set_valid_bandwidth_2Ghz_40MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_2GHz_20MHz",test_wifi_L2_set_valid_bandwidth_2Ghz_20MHz);
+    CS_TEST_ADD( pSuite, "L2_set_InValid_bandwidth_2GHz",test_wifi_L2_set_Invalid_bandwidth_2Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_InValidIndex_bandwidth_2GHz",test_wifi_L2_set_InvalidIndex_bandwidth_2Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_5GHz_20MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_20MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_5GHz_40MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_40MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_5GHz_80MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_80MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_5GHz_160MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_160MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_5GHz_80_80MHz",test_wifi_L2_set_valid_bandwidth_5Ghz_80_80MHz);
+    CS_TEST_ADD( pSuite, "L2_set_InValid_bandwidth_5GHz",test_wifi_L2_set_Invalid_bandwidth_5Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_InValidIndex_bandwidth_5GHz",test_wifi_L2_set_InvalidIndex_bandwidth_5Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_6GHz_20MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_20MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_6GHz_20MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_40MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_6GHz_160MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_160MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_6GHz_80MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_80MHz);
+    CS_TEST_ADD( pSuite, "L2_set_Valid_bandwidth_6GHz_80_80MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_80_80MHz);
+    CS_TEST_ADD( pSuite, "L2_set_InValid_bandwidth_6GHz",test_wifi_L2_set_Invalid_bandwidth_6Ghz);
+    CS_TEST_ADD( pSuite, "L2_set_InValidIndex_bandwidth_6GHz",test_wifi_L2_set_InvalidIndex_bandwidth_6Ghz);
 
     return 0;
 }

@@ -22,7 +22,8 @@ BIN_DIR := $(ROOT_DIR)/bin
 TOP_DIR := $(ROOT_DIR)
 
 SRC_DIRS = $(ROOT_DIR)/src
-SRC_DIRS += $(ROOT_DIR)/stubs/src
+#SRC_DIRS += $(ROOT_DIR)/stubs/src
+SRC_DIRS += $(ROOT_DIR)/skeletons/src
 INC_DIRS := $(ROOT_DIR)/../include
 
 ifeq ($(TARGET),)
