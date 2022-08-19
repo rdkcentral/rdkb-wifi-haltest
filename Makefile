@@ -7,13 +7,13 @@
 #* * A PARTICULAR PURPOSE ARE DISCLAIMED
 #* ******************************************************************************
 #*
-#*   ** Project      : cunit_hal_test
-#*   ** @addtogroup  : cunit_hal_test
+#*   ** Project      : ut
+#*   ** @addtogroup  : ut
 #*   ** @file        : makefile
 #*   ** @author      : gerald.weatherup@sky.uk
 #*   ** @date        : 20/05/2022
 #*   **
-#*   ** @brief : Makefile for hal_test
+#*   ** @brief : Makefile for ut
 #*   ** 
 #*
 #* ******************************************************************************
@@ -22,14 +22,13 @@ BIN_DIR := $(ROOT_DIR)/bin
 TOP_DIR := $(ROOT_DIR)
 
 SRC_DIRS = $(ROOT_DIR)/src
-#SRC_DIRS += $(ROOT_DIR)/stubs/src
-SRC_DIRS += $(ROOT_DIR)/skeletons/src
 INC_DIRS := $(ROOT_DIR)/../include
 
 ifeq ($(TARGET),)
 $(info TARGET NOT SET )
 $(info TARGET FORCED TO Linux)
 TARGET=linux
+SRC_DIRS += $(ROOT_DIR)/skeletons/src
 endif
 
 $(info TARGET [$(TARGET)])
@@ -51,13 +50,13 @@ export TOP_DIR
 .PHONY: clean list build
 
 build:
-	@echo HTS [$@]
-	make -C ./hts-core
+	@echo UT [$@]
+	make -C ./ut-core
 
 list:
-	@echo HTS [$@]
-	make -C ./hts-core list
+	@echo UT [$@]
+	make -C ./ut-core list
 
 clean:
-	@echo HTS [$@]
-	make -C ./hts-core clean
+	@echo UT [$@]
+	make -C ./ut-core clean

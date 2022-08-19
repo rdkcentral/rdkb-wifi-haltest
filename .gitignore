@@ -1,8 +1,9 @@
 # User defined
 temp/
 hts-keep/
-hts-core/
+ut-core/
 .vscode/
+obj
 
 # Prerequisites
 *.d
