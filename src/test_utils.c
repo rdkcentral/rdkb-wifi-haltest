@@ -141,30 +141,30 @@ INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_index)
 INT test_utils_setApEnable (BOOL enable, INT ap_index)
 {
 #if 0
-    int result = RETURN_OK;
+    int result = WIFI_HAL_SUCCESS;
     BOOL get_ap_enable = FALSE;
 
     result = wifi_setApEnable(ap_index, enable);
-    if (result != RETURN_OK)
+    if (result != WIFI_HAL_SUCCESS)
     {
         return result;
     }
     result = wifi_applySSIDSettings(ap_index);
-    if (result != RETURN_OK)
+    if (result != WIFI_HAL_SUCCESS)
     {
         return result;
     }
     
     result = wifi_getApEnable(ap_index, &get_ap_enable);
 
-    if (result != RETURN_OK)
+    if (result != WIFI_HAL_SUCCESS)
     {
         return result;
     }
      
     if( get_ap_enable != enable ) 
     {
-        return RETURN_ERR;
+        return WIFI_HAL_ERROR;
     }
 
     return result;

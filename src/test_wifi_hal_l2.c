@@ -132,12 +132,12 @@ void test_wifi_hal_L2_setNULLSSID_6Ghz(void)
 }
 
 /* This will test AP Enable/Disable functionality*
-* positive case * maps to RETURN_OK *
+* positive case * maps to WIFI_HAL_SUCCESS *
 * set main interface AP to disable first and check it through get *
 * now set it to enable and check it through get *
 * virtaul/guest Enable/Disable set check is not added yet
 *
-* Negative case * RETURN_ERR *
+* Negative case * WIFI_HAL_ERROR *
 * Try to Enable AP  with wrong AP indexes * Here 25,26,27 are taken as wrong indeces */
 
 void test_wifi_hal_L2_setApDisable_2GHz(void)
@@ -150,7 +150,7 @@ void test_wifi_hal_L2_setApDisable_2GHz(void)
     /* Disable the APs */
     enable = FALSE;
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_OK);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
 
@@ -164,7 +164,7 @@ void test_wifi_hal_L2_setApDisable_5GHz(void)
     /* Disable the APs */
     enable = FALSE;
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_OK);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
 
@@ -178,7 +178,7 @@ void test_wifi_hal_L2_setApDisable_6GHz(void)
     /* Disable the APs */
     enable = FALSE;
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_OK);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
 
@@ -190,7 +190,7 @@ void test_wifi_hal_L2_setApEnable_2GHz(void)
     int ap_index = 0;
     BOOL enable = TRUE;
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_OK);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
 
@@ -202,7 +202,7 @@ void test_wifi_hal_L2_setApEnable_5GHz(void)
     int ap_index = 1;
     BOOL enable = TRUE;
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_OK);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
 
@@ -214,7 +214,7 @@ void test_wifi_hal_L2_setApEnable_6GHz(void)
     int ap_index = 16;
     BOOL enable = TRUE;
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_OK);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
 
@@ -227,7 +227,7 @@ void test_wifi_hal_L2_setInvalidIndexApDisable(void)
     int result;
 
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_ERR);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR);
 
     /* Done */
     return;
@@ -242,7 +242,7 @@ void test_wifi_hal_L2_setInvalidIndexApEnable(void)
     int result;
 
     result = test_utils_setApEnable (enable, ap_index);
-    UT_ASSERT_EQUAL( result, RETURN_ERR);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR);
 
     /* Done */
     return;
