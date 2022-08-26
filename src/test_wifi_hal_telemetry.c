@@ -28,12 +28,16 @@
 
 void test_telemetry_wifi_getRadioBandUtilization(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_telemetry_wifi_getApAssociatedClientDiagnosticResult(void)

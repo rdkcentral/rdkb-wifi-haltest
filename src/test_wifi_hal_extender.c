@@ -29,7 +29,9 @@
 
 void test_extender_wifi_getRadioChannelStats(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 static UT_test_suite_t *pSuite = NULL;

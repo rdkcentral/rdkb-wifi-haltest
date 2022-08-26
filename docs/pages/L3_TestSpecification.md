@@ -1,12 +1,54 @@
-# Setup L3 Testing environment
+# Level 3 HAL Testing Specification (Template)
 
-| Date | Author | Comment | Version |
-| --- | --- | --- | --- |
-| 20/6/22 | G. Weatherup | Draft Revision | 1.0 |
+## History
 
-## Scope
+|Version|Date (YY-MM-DD)|Author|
+|-------|-----|-----|
+|1.0.0| 22/07/21 |Joe Bloggs|
+
+## TODO: THIS DOCUMENT IS DRAFT AND NOT YET COMPLETE
+
+## Document Scope
 
 This document describes the option for Level 3 testing, ( out of the box ), which is deliverable to the vendor as a set of python scripts, that support simple configuration triggered from the command line.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Acronyms](#acronyms)
+- [Definitions](#definitions)
+- [References](#references)
+- [Testing Support Package](#testing-support-package)
+
+## Acronyms
+
+- `HAL` \- Hardware Abstraction Layer, may include some common components
+- `HAL.h` \- Abstracted defined API to control the hardware
+- `HAL.c` \- Implementation wrapper layer created by the `OEM` or `SoC` Vendor.
+- `RDK` \- Reference Design Kit for All Devices
+- `RDK-B` \- Reference Design Kit for Broadband Devices
+- `RDK-V` \- Reference Design Kit for Video Devices
+- `UT` \- Unit Test(s)
+- `OEM` \- Original Equipment Manufacture (Sky is also an OEM)
+- `SoC` \- System on a Chip
+
+## Definitions
+
+- `Broadcom` \- `SoC` manufacturer [https://www.broadcom.com/]
+- `Amlogic` \- `SoC` manufacturer [https://en.wikipedia.org/wiki/Amlogic]
+- `Soc Vendor` \- Definition to encompass multiple vendors
+- `Unit Tests` \- C Function tests that run on the target hardware
+- `Common Testing Framework` \- Off the shelf 3rd Party Testing Framework, or framework that does not require infrastructure to control it. That's not to say it cannot be controlled via infrastructure if required. Examples of which are.
+  - GTest - [https://google.github.io/googletest] \- Google Test Suit
+  - CUnit - [http://cunit.sourceforge.net/] \- C Testing Suit
+  - Unity - [http://www.throwtheswitch.org/unity] -C Embedded Testing Suit
+- `ut-core` - Common Testing Framework [https://github.com/comcast-sky/rdk-components-ut-core]
+
+## References
+
+- `Feedback Loops` \- [https://www.softwaretestingnews.co.uk/4-methods-to-improve-your-feedback-loops-and-supercharge-your-testing-process/]
+- `Doxygen` \- SourceCode documentation tool - [https://www.doxygen.nl/index.html]
+- `Black Box Testing` \- [https://en.wikipedia.org/wiki/Black-box_testing]
 
 ## Testing Support Package
 
@@ -44,7 +86,7 @@ If you wish to run the testing system, on other devices that have
 | Python VENV | Python Virtual Environment |
 | USB Ethernet | Connection from Ethernet to Hub |
 
-## Installing Build Essential
+### Installing Build Essential
 
 Build essential is required to support
 
@@ -53,19 +95,19 @@ sudo apt update
 sudo apt install build-essential
 ```
 
-## VCP USB Serial Serial Driver
+### VCP USB Serial Serial Driver
 
 If not already installed on your target device you will need to install the SI Labs serial
 
 [https://www.silabs.com/documents/login/software/Linux\_3.x.x\_4.x.x\_VCP\_Driver_Source.zip](https://www.silabs.com/documents/login/software/Linux_3.x.x_4.x.x_VCP_Driver_Source.zip)
 
-## USB Ethernet Adaptor
+### USB Ethernet Adaptor
 
 An external ethernet adaptor is required to support the platform.
 
 In our example case, an anker USB adaptor
 
-[https://d2211byn0pk9fi.cloudfront.net/eu/accessories/attachments/3725/D9E0693FA9E8164_linux0003-r8152.53-2.05.0.tar.bz2?1579234543]
+https://d2211byn0pk9fi.cloudfront.net/eu/accessories/attachments/3725/D9E0693FA9E8164_linux0003-r8152.53-2.05.0.tar.bz2?1579234543
 
 But this was non-function, so the latest driver from Realtek provides a solution
 
@@ -80,7 +122,7 @@ sudo apt-get install flex
 sudo apt-get install bison
 ```
 
-## Install Minicom
+### Install Minicom
 
 ADA-HUB Serial port configuration
 
@@ -90,7 +132,7 @@ ADA-HUB Serial port configuration
 | Setting | Bps/Par/Bits : 115200 8N1 |
 | Hardware Flow Control | Off |
 
-## Installing Python Requirements
+### Installing Python Requirements
 
 Python `VENV` is setup via the following command
 
@@ -102,63 +144,3 @@ Activate the virtual environment
 
 `. ./framework/core/installation/VENV/bin/activate`
 
-## L3 - Hal Test - 3rd Party Device Testing
-
-Using the L2 Tests or dedicated L3 tests, the testing suite can trigger Tests / Balances outside of the box.
-
-Basic setup is nearly there, fleshing out the below tests will cause the
-
-- **Total 20 / xx (Min required tests), TBC from documentation, and test requirements**
-
-**1\. SetSSID to know SSID
--\> Check via RaspPi that the SSID is correct**
-2\. AP Disable / Enable
--\> Check via RaspPI iw commands that SSID is gone
-3\. Change Freq, AP Enable, Bandwidth, Auth Method
--\> Check via RaspPi iw commands that this is correct.
--\> Break into a few extra tests here.
-4\. AP Enable
--\> Check via PI
-5\. Bandwidth
--\> Check via PI
-6\. Auth Method
--\> Check via PI
-7\. Reset SSID back to correct Value
--\> Check via RaspPi SSID is ok.
-
-## Examples of future tests
-
-8.  Throughput Test
-    -\> ??? iPerf?
-    
-9.  System loaded throughput test
-    -\> Load the CPU heavily.
-    -\> Repeat the Throughput Test
-    
-## Ada DUT
-
-```
-[a]. serialwm1: [00000000]
-[b]. serialver: [00000000]
-[c]. description: [ADA]
-[d]. manufacturer: [SKY]
-[e]. manufactureroui: [a0bdcd]
-[f]. productclass: [ADA Router]
-[g]. basemac: [a0bdcdff9be0]
-[h]. wifimac: [a0bdcdff9be0]
-[i]. btmac: [a0bdcdff9be0]
-[j]. zigbeemac: [0000000000000000]
-[k]. gpondslmac: [000000000000]
-[l]. adsluser: [a0bdcdff9be0@skydsl]
-[m]. adslpass: [dbqa57q8]
-[n]. factoryssid: [SKYMC4YF]
-[o]. factorypublickey: [Reserved]
-[p]. wifipswd: [1J5nkBLQPSqG]
-[q]. wpspin: [09141063]
-[r]. modelnumber: [SR300]
-[s]. hardwareid: [Reserved]
-[t]. hardwareversion: [001]
-[u]. serialnumber: [F60021BD000060]
-[v]. skyserialnumber: [Reserved]
-[w]. pmi: [SR300]
-```

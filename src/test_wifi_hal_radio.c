@@ -28,22 +28,30 @@
 
 void test_radio_wifi_getRadioTransmitPower(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_radio_wifi_getRadioOperatingChannelBandwidth(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_radio_wifi_setRadioOperatingParameters(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_radio_wifi_scanResults_callback_register(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 

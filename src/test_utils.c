@@ -82,7 +82,9 @@ INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_index)
     wifi_vap_info_map_t  map;
     int result;
 
-    /* Negative */ /* set SSID Name to NULL */
+    /* Negative */
+
+    /* set SSID Name to NULL */
     result = wifi_getRadioVapInfoMap(radioIndex, &map);
     if (result != WIFI_HAL_SUCCESS)
     {

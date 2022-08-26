@@ -26,16 +26,56 @@
 
 #include <ut.h>
 
-void test_generic_wifi_init(void)
+void test_generic_wifi_init( void )
 {
-	UT_FAIL("Need to implement"); 
+    int result;
+
+    /* Positive result */
+    result = wifi_init();
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
+    /*calling wifi_init should succeed, As it will return with Already initalized message */
+    result = wifi_init();
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
+
+    /* #TODO: Unclear how the function will fail, maybe this function should be void? */
 }
 
+/**
+ * @brief Tests requirements for L1 testing wifi_getHalCapability()
+ * 
+ * Test Coverage:
+ * 
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ * 
+ * @Note hal api is Synchronous
+ */
 void test_generic_wifi_getHalCapability(void)
 {
-	UT_FAIL("Need to implement"); 
-}
+    wifi_hal_capability_t cap;
+    INT result;
 
+    /* L1 Test */
+
+    /* Negative Test cause */
+    result = wifi_getHalCapability(NULL);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS  );
+
+    /* Positive Test WIFI_HAL_SUCCESS */
+    result = wifi_getHalCapability(&cap);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS  );
+
+    /* Check each element of the profile */
+    UT_ASSERT_EQUAL( cap.version.major , 3 );
+    UT_ASSERT_EQUAL( cap.version.minor, 0 );
+
+    /* #TODO: Check the testing profile see if this function is present on this platform */
+    //TEST_RETURN_IF_UNSUPPORTED_FUNCTION( "wifi_getHalCapability" );
+
+    /* #TODO: Check the expected capabilites are the same as the capabilites returned */
+    //TEST_ASSERT_PROFILE_CHECK( "wifi_getHalCapability", caps );
+}
 
 static UT_test_suite_t * pSuite = NULL;
 
@@ -54,7 +94,7 @@ int test_wifi_generic_register( void )
     }
 
     UT_add_test( pSuite, "wifi_init", test_generic_wifi_init);
-		UT_add_test( pSuite, "wifi_getHalCapability" , test_generic_wifi_getHalCapability);
+    UT_add_test( pSuite, "wifi_getHalCapability" , test_generic_wifi_getHalCapability);
 
     return 0;
 }

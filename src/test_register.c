@@ -39,7 +39,7 @@ int register_hal_l1_tests( void )
     int registerFailed=0;
 
     registerFailed |= test_wifi_generic_register();
-    registerFailed |= test_wifi_client_mgr_register();
+    //registerFailed |= test_wifi_client_mgr_register(); /* #TODO: API to be confirmed whether it's required or not, tests yet to be implemented */
     registerFailed |= test_wifi_extender_register();
     registerFailed |= test_wifi_radio_register();
     registerFailed |= test_wifi_sta_register();

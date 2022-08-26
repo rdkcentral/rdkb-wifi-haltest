@@ -28,17 +28,23 @@
 
 void test_sta_wifi_connect(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_sta_wifi_disconnect(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_sta_wifi_staConnectionStatus_callback_register(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 static UT_test_suite_t * pSuite = NULL;

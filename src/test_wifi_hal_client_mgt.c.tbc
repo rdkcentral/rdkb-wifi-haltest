@@ -28,207 +28,289 @@
 
 void test_client_mgt_wifi_getBandSteeringEnable(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringEnable(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringApGroup(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringApGroup(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringBandUtilizationThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringBandUtilizationThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringRSSIThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringRSSIThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringPhyRateThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringPhyRateThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringOverloadInactiveTime(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringOverloadInactiveTime(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringIdleInactiveTime(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBandSteeringIdleInactiveTime(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBandSteeringLog(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getApAssociatedDevicesHighWatermarkThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setApAssociatedDevicesHighWatermarkThreshold(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getApAssociatedDevicesHighWatermarkThresholdReached(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getApAssociatedDevicesHighWatermark(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getApAssociatedDevicesHighWatermarkDate(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFastBSSTransitionActivated(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBSSTransitionActivated(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setEAP_Param(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getEAP_Param(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getFTOverDSActivated(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFTOverDSActivated(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getFTMobilityDomainID(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFTMobilityDomainID(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getFTResourceRequestSupported(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFTResourceRequestSupported(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getFTR0KeyLifetime(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFTR0KeyLifetime(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getFTR0KeyHolderID(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFTR0KeyHolderID(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getFTR1KeyHolderID(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setFTR1KeyHolderID(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_pushApFastTransitionConfig(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setBSSTransitionActivation(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getBSSTransitionActivation(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_setNeighborReportActivation(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 void test_client_mgt_wifi_getNeighborReportActivation(void)
 {
-	UT_FAIL("Need to implement"); 
+	UT_FAIL("Need to implement");
+    /* Positive */
+    /* Negative */
 }
 
 static UT_test_suite_t * pSuite = NULL;
