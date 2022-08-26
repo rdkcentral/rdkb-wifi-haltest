@@ -22,39 +22,51 @@
 #include <setjmp.h>
 
 #include "wifi_hal.h"
-#include "wifi_hal_generic.h"
+#include "wifi_hal_radio.h"
 
 #include <ut.h>
 
-void test_generic_wifi_init(void)
+void test_radio_wifi_getRadioTransmitPower(void)
 {
 	UT_FAIL("Need to implement"); 
 }
 
-void test_generic_wifi_getHalCapability(void)
+void test_radio_wifi_getRadioOperatingChannelBandwidth(void)
+{
+	UT_FAIL("Need to implement"); 
+}
+
+void test_radio_wifi_setRadioOperatingParameters(void)
+{
+	UT_FAIL("Need to implement"); 
+}
+
+void test_radio_wifi_scanResults_callback_register(void)
 {
 	UT_FAIL("Need to implement"); 
 }
 
 
-static UT_test_suite_t * pSuite = NULL;
+static UT_test_suite_t *pSuite = NULL;
 
 /**
  * @brief Register the main tests for this module
  * 
  * @return int - 0 on success, otherwise failure
  */
-int test_wifi_generic_register( void )
+INT test_wifi_radio_register( void )
 {
     /* add a suite to the registry */
-    pSuite = UT_add_suite("[L1 wifi-generic]", NULL, NULL);
+    pSuite = UT_add_suite("[L1 wifi-radio]", NULL, NULL);
     if (NULL == pSuite) 
     {
         return -1;
     }
 
-    UT_add_test( pSuite, "wifi_init", test_generic_wifi_init);
-		UT_add_test( pSuite, "wifi_getHalCapability" , test_generic_wifi_getHalCapability);
+    UT_add_test( pSuite, "wifi_getRadioTransmitPower", test_radio_wifi_getRadioTransmitPower);
+		UT_add_test( pSuite, "wifi_getRadioOperatingChannelBandwidth)", test_radio_wifi_getRadioOperatingChannelBandwidth);
+		UT_add_test( pSuite, "wifi_setRadioOperatingParameters", test_radio_wifi_setRadioOperatingParameters);
+		UT_add_test( pSuite, "wifi_scanResults_callback_register)", test_radio_wifi_scanResults_callback_register);
 
-    return 0;
+  return 0;
 }

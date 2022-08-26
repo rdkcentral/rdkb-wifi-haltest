@@ -17,18 +17,38 @@
  * limitations under the License.
 */
 
+#include <string.h>
+#include <stdlib.h>
+#include <setjmp.h>
+
+#include "wifi_hal.h"
+#include "wifi_hal_extender.h"
+
 #include <ut.h>
 
-extern int register_hal_l1_tests( void );
-extern int register_hal_l2_tests( void );
 
-int main(int argc, char** argv) 
+void test_extender_wifi_getRadioChannelStats(void)
 {
-    /* Register tests as required, then call the UT-main to support switches and triggering */
-    UT_init( argc, argv );
+	UT_FAIL("Need to implement"); 
+}
 
-    register_hal_l1_tests();
-    register_hal_l2_tests();
+static UT_test_suite_t *pSuite = NULL;
 
-    UT_run_tests();
+/**
+ * @brief Register the main tests for this module
+ * 
+ * @return int - 0 on success, otherwise failure
+ */
+int test_wifi_extender_register( void )
+{
+    /* add a suite to the registry */
+    pSuite = UT_add_suite("[L1 wifi-extender]", NULL, NULL);
+    if (NULL == pSuite) 
+    {
+        return -1;
+    }
+
+    UT_add_test( pSuite, "wifi_getRadioChannelStats", test_extender_wifi_getRadioChannelStats);
+
+    return 0;
 }

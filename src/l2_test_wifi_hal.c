@@ -1,21 +1,22 @@
-/* ******************************************************************************
-* Copyright (C) 2022 Sky group of companies, All Rights Reserved
-* * --------------------------------------------------------------------------
-* * THIS SOFTWARE CONTRIBUTION IS PROVIDED ON BEHALF OF SKY PLC. 
-* * BY THE CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
-* * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-* * A PARTICULAR PURPOSE ARE DISCLAIMED
-* ******************************************************************************
-*
-*   ** Project      : wifi
-*   ** @addtogroup  : ut_wifi
-*   ** @author      : gerald.weatherup@sky.uk
-*   ** @date        : 19/08/22
-*   **
-*   ** @brief : Unit testing level 2
-*   **
-*
-* ******************************************************************************/
+/*
+ * If not stated otherwise in this file or this component's LICENSE file the
+ * following copyright and licenses apply:
+ *
+ * Copyright 2016 RDK Management
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+*/
+
 
 #include <stddef.h>
 #include "test_utils.h"
@@ -140,6 +141,7 @@ void test_wifi_hal_L2_setNULLSSID_6Ghz(void)
 * Negative case * WIFI_HAL_ERROR *
 * Try to Enable AP  with wrong AP indexes * Here 25,26,27 are taken as wrong indeces */
 
+#if 0
 void test_wifi_hal_L2_setApDisable_2GHz(void)
 {
     int result;
@@ -504,8 +506,6 @@ void test_wifi_L2_set_InvalidIndex_bandwidth_6Ghz(void)
     return;
 }
 
-
-
 void test_wifi_L2_set_valid_bandwidth_5Ghz_80MHz(void)
 {
     /* set 5 GHz bandwidth */
@@ -668,9 +668,9 @@ void test_wifi_L2_set_valid_bandwidth_6Ghz_80_80MHz(void)
     UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
     return;
 }
+#endif
 
-
-static CU_pSuite pSuite = NULL;
+static UT_test_suite_t *pSuite = NULL;
 
 /**
  * @brief Init the test system
@@ -714,6 +714,8 @@ int test_wifi_hal_l2_register( void )
     UT_add_test( pSuite, "set_Valid_SSID_6GHz", test_wifi_hal_L2_setValidSSID_6Ghz);
     UT_add_test( pSuite, "set_InValidIndex_SSID_6GHz", test_wifi_hal_L2_setInValidIndexSSID_6Ghz);
     UT_add_test( pSuite, "set_NULL_SSID_6GHz", test_wifi_hal_L2_setNULLSSID_6Ghz);
+
+#if 0
     UT_add_test( pSuite, "set_ap_Disable_2GHz", test_wifi_hal_L2_setApDisable_2GHz);
     UT_add_test( pSuite, "set_ap_Disable_5GHz", test_wifi_hal_L2_setApDisable_5GHz);
     UT_add_test( pSuite, "set_ap_Disable_6GHz", test_wifi_hal_L2_setApDisable_6GHz);
@@ -749,6 +751,7 @@ int test_wifi_hal_l2_register( void )
     UT_add_test( pSuite, "set_Valid_bandwidth_6GHz_80_80MHz",test_wifi_L2_set_valid_bandwidth_6Ghz_80_80MHz);
     UT_add_test( pSuite, "set_InValid_bandwidth_6GHz",test_wifi_L2_set_Invalid_bandwidth_6Ghz);
     UT_add_test( pSuite, "set_InValidIndex_bandwidth_6GHz",test_wifi_L2_set_InvalidIndex_bandwidth_6Ghz);
+#endif
 
     return 0;
 }

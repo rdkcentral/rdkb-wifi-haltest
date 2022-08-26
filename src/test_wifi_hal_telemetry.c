@@ -22,20 +22,29 @@
 #include <setjmp.h>
 
 #include "wifi_hal.h"
-#include "wifi_hal_generic.h"
+#include "wifi_hal_telemetry.h"
 
 #include <ut.h>
 
-void test_generic_wifi_init(void)
+void test_telemetry_wifi_getRadioBandUtilization(void)
 {
 	UT_FAIL("Need to implement"); 
 }
 
-void test_generic_wifi_getHalCapability(void)
+void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 {
 	UT_FAIL("Need to implement"); 
 }
 
+void test_telemetry_wifi_getApAssociatedClientDiagnosticResult(void)
+{
+  UT_FAIL("Need to implement"); 
+}
+
+void test_telemetry_wifi_getRadioTrafficStats2(void)
+{
+  UT_FAIL("Need to implement"); 
+}
 
 static UT_test_suite_t * pSuite = NULL;
 
@@ -44,17 +53,19 @@ static UT_test_suite_t * pSuite = NULL;
  * 
  * @return int - 0 on success, otherwise failure
  */
-int test_wifi_generic_register( void )
+int test_wifi_telemetry_register( void )
 {
     /* add a suite to the registry */
-    pSuite = UT_add_suite("[L1 wifi-generic]", NULL, NULL);
+    pSuite = UT_add_suite("[L1 wifi-telemetry]", NULL, NULL);
     if (NULL == pSuite) 
     {
         return -1;
     }
 
-    UT_add_test( pSuite, "wifi_init", test_generic_wifi_init);
-		UT_add_test( pSuite, "wifi_getHalCapability" , test_generic_wifi_getHalCapability);
+    UT_add_test( pSuite, "wifi_getRadioBandUtilization", test_telemetry_wifi_getRadioBandUtilization);
+		UT_add_test( pSuite, "wifi_getApAssociatedDeviceDiagnosticResult3", test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3);
+		UT_add_test( pSuite, "wifi_getApAssociatedClientDiagnosticResult", test_telemetry_wifi_getApAssociatedClientDiagnosticResult);
+		UT_add_test( pSuite, "wifi_getRadioTrafficStats2", test_telemetry_wifi_getRadioTrafficStats2);
 
     return 0;
 }

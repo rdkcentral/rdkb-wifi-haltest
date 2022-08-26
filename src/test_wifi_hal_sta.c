@@ -22,20 +22,24 @@
 #include <setjmp.h>
 
 #include "wifi_hal.h"
-#include "wifi_hal_generic.h"
+#include "wifi_hal_sta.h"
 
 #include <ut.h>
 
-void test_generic_wifi_init(void)
+void test_sta_wifi_connect(void)
 {
 	UT_FAIL("Need to implement"); 
 }
 
-void test_generic_wifi_getHalCapability(void)
+void test_sta_wifi_disconnect(void)
 {
 	UT_FAIL("Need to implement"); 
 }
 
+void test_sta_wifi_staConnectionStatus_callback_register(void)
+{
+	UT_FAIL("Need to implement"); 
+}
 
 static UT_test_suite_t * pSuite = NULL;
 
@@ -44,17 +48,18 @@ static UT_test_suite_t * pSuite = NULL;
  * 
  * @return int - 0 on success, otherwise failure
  */
-int test_wifi_generic_register( void )
+INT test_wifi_sta_register( void )
 {
     /* add a suite to the registry */
-    pSuite = UT_add_suite("[L1 wifi-generic]", NULL, NULL);
+    pSuite = UT_add_suite("[L1 wifi-sta]", NULL, NULL);
     if (NULL == pSuite) 
     {
         return -1;
     }
 
-    UT_add_test( pSuite, "wifi_init", test_generic_wifi_init);
-		UT_add_test( pSuite, "wifi_getHalCapability" , test_generic_wifi_getHalCapability);
+    UT_add_test( pSuite, "wifi_connect", test_sta_wifi_connect);
+		UT_add_test( pSuite, "wifi_disconnect", test_sta_wifi_disconnect);
+    UT_add_test( pSuite, "wifi_staConnectionStatus_callback_register", test_sta_wifi_staConnectionStatus_callback_register);
 
     return 0;
 }
