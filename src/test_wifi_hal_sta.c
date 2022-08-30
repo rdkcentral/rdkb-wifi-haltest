@@ -64,7 +64,7 @@ INT test_wifi_sta_register( void )
     }
 
     UT_add_test( pSuite, "wifi_connect", test_sta_wifi_connect);
-		UT_add_test( pSuite, "wifi_disconnect", test_sta_wifi_disconnect);
+    UT_add_test( pSuite, "wifi_disconnect", test_sta_wifi_disconnect);
     UT_add_test( pSuite, "wifi_staConnectionStatus_callback_register", test_sta_wifi_staConnectionStatus_callback_register);
 
     return 0;
