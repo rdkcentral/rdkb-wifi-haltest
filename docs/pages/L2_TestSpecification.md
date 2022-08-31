@@ -1,4 +1,4 @@
-# Level 2 HAL Testing Specification (Template)
+# Level 2 HAL Testing Specification (TBC)
 
 ## History
 

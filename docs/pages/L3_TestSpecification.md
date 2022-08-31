@@ -1,4 +1,4 @@
-# Level 3 HAL Testing Specification (Template)
+# Level 3 HAL Testing Specification (Draft)
 
 ## History
 
