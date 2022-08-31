@@ -81,6 +81,8 @@ INT wifi_getApAssociatedDevice(INT apIndex, mac_address_t *opDeviceMacAddArray, 
     UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
 }
 
+#if 0 /* Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
+
 void test_wifi_enableCSIEngine(void)
 {
     INT result;
@@ -117,6 +119,7 @@ void test_wifi_enableCSIEngine(void)
     UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
 
 }
+#endif
 
 void test_wifi_createVAP(void)
 {
@@ -181,6 +184,8 @@ void test_wifi_getRadioVapInfoMap(void)
     UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
 }
 
+#if 0 /* Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
+
 static INT test_wifi_receivedMgmtFrame_callback(INT apIndex, UCHAR *sta_mac, UCHAR *frame, UINT len, wifi_mgmtFrameType_t type, wifi_direction_t dir)
 {
     (void)apIndex;   
@@ -211,6 +216,7 @@ void test_wifi_mgmt_frame_callbacks_register(void)
     /* Negative */
     /* TODO: Negative case ? How can this be triggered, I expect this function to be void and not INT result */
 }
+#endif
 
 static INT test_wifi_newApAssociatedDevice_callback(INT apIndex, wifi_associated_dev_t *associated_dev)
 {
@@ -284,10 +290,10 @@ INT test_wifi_ap_register( void )
     }
 
     UT_add_test( pSuite, "wifi_getApAssociatedDevice", test_wifi_getApAssociatedDevice);
-    UT_add_test( pSuite, "wifi_enableCSIEngine", test_wifi_enableCSIEngine);
+    //UT_add_test( pSuite, "wifi_enableCSIEngine", test_wifi_enableCSIEngine);  /* Needs review */
     UT_add_test( pSuite, "wifi_getRadioVapInfoMap", test_wifi_getRadioVapInfoMap);
     UT_add_test( pSuite, "wifi_createVAP", test_wifi_createVAP);
-    UT_add_test( pSuite, "wifi_mgmt_frame_callbacks_register", test_wifi_mgmt_frame_callbacks_register);
+    //UT_add_test( pSuite, "wifi_mgmt_frame_callbacks_register", test_wifi_mgmt_frame_callbacks_register);  /* Needs review */
     UT_add_test( pSuite, "wifi_newApAssociatedDevice_callback_register", test_wifi_newApAssociatedDevice_callback_register);
     UT_add_test( pSuite, "wifi_apDeAuthEvent_callback_register", test_wifi_apDeAuthEvent_callback_register);
     UT_add_test( pSuite, "wifi_apDisassociatedDevice_callback_register", test_wifi_apDisassociatedDevice_callback_register);

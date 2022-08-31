@@ -35,12 +35,13 @@ $(info TARGET [$(TARGET)])
 
 ifeq ($(TARGET),arm)
 HAL_LIB_DIR := $(ROOT_DIR)/libs
-LDFLAGS = -Wl,-rpath,$(HAL_LIB_DIR) -L$(HAL_LIB_DIR) -lhal_wifi
+YLDFLAGS = -Wl,-rpath,$(HAL_LIB_DIR) -L$(HAL_LIB_DIR) -lhal_wifi
 endif
 
 .PHONY: clean list all
 
-export LDFLAGS
+# Here is a list of exports from this makefile to the next
+export YLDFLAGS
 export BIN_DIR
 export SRC_DIRS
 export INC_DIRS
