@@ -47,6 +47,7 @@ export SRC_DIRS
 export INC_DIRS
 export TARGET
 export TOP_DIR
+export HAL_LIB_DIR
 
 .PHONY: clean list build
 
