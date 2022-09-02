@@ -1,3 +1,10 @@
+# User defined
+temp/
+hts-keep/
+ut-core/
+.vscode/
+obj
+
 # Prerequisites
 *.d
 
