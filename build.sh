@@ -4,7 +4,7 @@
 TEST_REPO=git@github.com:comcast-sky/rdk-components-ut-core.git
 
 # This will look up the last tag in the git repo, depending on the project this may require modification
-PROJECT_VERSION=develop
+PROJECT_VERSION=master
 
 # Check if the common document configuration is present, if not clone it
 if [ -d "./ut-core" ]; then
