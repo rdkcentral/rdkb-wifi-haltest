@@ -12,12 +12,17 @@ In order to design 3PE-HAL-Test-Suite we can refer this documnet.
 ## Original spreadsheet Link :
 [Original Spreadsheet](https://wiki.rdkcentral.com/download/attachments/213600196/WIFIHAL_Component_TestCases.xls?version=1&modificationDate=1660196147000&api=v2)
 
-## Tests Specification Identifiers
+## Tests Specification Identifiers :
+- **ID**:Test case ID is serial number of test case from the original spreadsheet.
 - **Test Case Objectives**: Purpose of the test
 - **Test Items: Items** (e.g., requirement specifications, design specifications, code, etc.) required to run a particular test case. This should be provided in “Notes” or “Attachment” feature. It describes the features and conditions required for testing.
 - **Input Specifications**: Description of what is required (step-by-step) to execute the test case (e.g., input files, values that must be entered into a field, etc.). This should be provided in “Action” field.
 - **Output Specifications**: Description of what the system should look like after the test case is run. This should be provided in the “Expected Results” field.
 - **Environmental Needs**: Description of any special environmental needs. This includes system architectures, Hardware & Software tools, records or files, interfaces, etc
+- **Test script**:Test script name for HAL API testing.
+- **Test case ID**:Test case identifier which is unique for every test case, in order to clearly find the test.
+- **Test objective**:Purpose or outcomes of the tests.
+- **Review**:This includes info regarding whether API being tested is available anymore or not and also test case is Required/Not required or Unclear.Also it includes additional API requirement for Level 2 API testing.
 
 ## Abbreviations :
 |Acronym | Full form|
@@ -35,7 +40,7 @@ In order to design 3PE-HAL-Test-Suite we can refer this documnet.
 |RSSI |Relative Received Signal Strength|
 |FT |Fast Transition|
 |DS |Distribution System|
-|FTR |Fast Transition R |
+|FTR |Fast Transition R0/R1 |
 |BSS |Basic Service Set|
 
 

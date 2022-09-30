@@ -18,6 +18,10 @@ In order to design 3PE-HAL-Test-Suite we can refer this documnet.
 - **Input Specifications**: Description of what is required (step-by-step) to execute the test case (e.g., input files, values that must be entered into a field, etc.). This should be provided in “Action” field.
 - **Output Specifications**: Description of what the system should look like after the test case is run. This should be provided in the “Expected Results” field.
 - **Environmental Needs**: Description of any special environmental needs. This includes system architectures, Hardware & Software tools, records or files, interfaces, etc
+- **Test script**:Test script name for HAL API testing.
+- **Test case ID**:Test case identifier which is unique for every test case, in order to clearly find the test.
+- **Test objective**:Purpose or outcomes of the tests.
+- **Review**:This includes info regarding whether API being tested is available anymore or not and also test case is Required/Not required or Unclear.Also it includes additional API requirement for Level 2 API testing.
  
  ## Abbreviations :
 |Acronym| Full form|
@@ -35,7 +39,7 @@ In order to design 3PE-HAL-Test-Suite we can refer this documnet.
 |RSSI |Relative Received Signal Strength|
 |FT |Fast Transition|
 |DS |Distribution System|
-|FTR |Fast Transition R |
+|FTR |Fast Transition R0/R1 |
 |BSS |Basic Service Set|
 
 ## TDK Testing Table
