@@ -33,8 +33,8 @@ endif
 
 $(info TARGET [$(TARGET)])
 
-ifeq ($(TARGET),arm)
 HAL_LIB_DIR := $(ROOT_DIR)/libs
+ifeq ($(TARGET),arm)
 YLDFLAGS = -Wl,-rpath,$(HAL_LIB_DIR) -L$(HAL_LIB_DIR) -lhal_wifi
 endif
 
