@@ -22,6 +22,14 @@ INT wifi_getRadioOperatingChannelBandwidth(INT radioIndex, CHAR* output_string)
   return (INT)0;
 }
 
+INT wifi_getRadioOperatingParameters(wifi_radio_index_t index, wifi_radio_operationParam_t* operationParam)
+{
+  /*TODO: Implement Me!*/
+  (void)index;
+  (void)operationParam;
+  return (INT)0;
+}
+
 INT wifi_setRadioOperatingParameters(wifi_radio_index_t index, wifi_radio_operationParam_t* operationParam)
 {
   /*TODO: Implement Me!*/

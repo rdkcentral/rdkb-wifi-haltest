@@ -26,25 +26,137 @@
 
 #include <ut.h>
 
+/* Values here should be read from a configuration file, that supports the test */
+#define TBC_CONFIG_MAX_RADIOS (2)
+#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
+
+#define TBC_RADIO_MAX_BW (4)
+#define TBC_CONFIG_MAX_BW (7)
+
 void test_sta_wifi_connect(void)
 {
-	UT_FAIL("Need to implement");
+    /* FIXME: Added if 0 to avoid build error. Getting error as this function is present in only in
+    OneWifi. Need OneWifi Build to avoid this error*/
+#if 0
+    INT result;
+    INT ap_index = 0;
+    wifi_bss_info_t *bss;
+
     /* Positive */
+    result = wifi_connect(ap_index,bss);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
     /* Negative */
+    result = wifi_connect(-1, bss);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_connect(1, NULL);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_connect(2, bss);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+#endif
 }
 
 void test_sta_wifi_disconnect(void)
 {
-	UT_FAIL("Need to implement");
+    /* FIXME: Added if 0 to avoid build error. Getting error as this function is present in only in
+    OneWifi. Need OneWifi Build to avoid this error*/
+#if 0
+    INT result;
+    INT ap_index = 0;
+    wifi_bss_info_t *bss;
+
     /* Positive */
+    //TODO: A client should be connected when this function is called
+    result = wifi_disconnect(ap_index);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
     /* Negative */
+    result = wifi_disconnect(-1);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_disconnect(1);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_disconnect(2);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+#endif
 }
+
+/* TODO: This function is commented as it will be invoked only by test_sta_wifi_staConnectionStatus_callback_register */
+#if 0
+INT test_sta_wifi_staConnectionStatus_callback(INT apIndex, wifi_bss_info_t *bss_dev, wifi_station_stats_t *sta)
+{
+    (void) apIndex;
+    (void) bss_dev;
+    (void) sta;
+    /* Should not be triggered during this test */
+    UT_FAIL( "This function isn't expected to be triggered" );
+    return (INT)0;
+
+}
+#endif
 
 void test_sta_wifi_staConnectionStatus_callback_register(void)
 {
-	UT_FAIL("Need to implement");
-    /* Positive */
+    /* FIXME: Added if 0 to avoid build error. Getting error as this function is present in only in
+    OneWifi. Need OneWifi Build to avoid this error*/
+#if 0
+	/* Positive */
+    wifi_staConnectionStatus_callback_register(&test_sta_wifi_staConnectionStatus_callback);
+    wifi_staConnectionStatus_callback_register(NULL);
     /* Negative */
+#endif
+}
+
+void test_sta_wifi_startScan(void)
+{
+    /* FIXME: Added if 0 to avoid build error. Getting error as this function is present in only in
+    OneWifi. Need OneWifi Build to avoid this error*/
+#if 0
+    INT result;
+    INT i;
+    wifi_neighborScanMode_t scan_mode;
+    INT dwell_time;
+    UINT num;
+    UINT chan_list[2];
+
+    /* Positive */
+    for(i = 0; i < TBC_CONFIG_MAX_RADIOS; i++)
+    {
+        if( i == 0 )
+        {
+            for(int j = 0 ; j < 2; j++)
+            {
+                chan_list[j] = 1 + (5 * j);
+            }
+            result = wifi_startScan(i, 1, 0, 2, chan_list);
+            UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS );
+        }
+        else
+        {
+            for(int j = 0 ; j < 2; j++)
+            {
+                chan_list[j] = 36 + (4 * j);
+            }
+            result = wifi_startScan(i, 1, 0, 2, chan_list);
+            UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS );
+        }
+    }
+
+    /* Negative */
+    /* This scan function will throw error when it is called successively without any delay */
+    i = 0;
+    for(int j = 0 ; j < 2; j++)
+    {
+        chan_list[j] = 1 + (5 * j);
+    }
+    result = wifi_startScan(i, 1, 0, 2, chan_list);
+    result = wifi_startScan(i, 1, 0, 2, chan_list);
+    UT_ASSERT_EQUAL(result, WIFI_HAL_ERROR );
+
+#endif
 }
 
 static UT_test_suite_t * pSuite = NULL;
@@ -63,9 +175,10 @@ INT test_wifi_sta_register( void )
         return -1;
     }
 
+    UT_add_test( pSuite, "wifi_staConnectionStatus_callback_register", test_sta_wifi_staConnectionStatus_callback_register);
+    UT_add_test( pSuite, "wifi_startScan", test_sta_wifi_startScan);
     UT_add_test( pSuite, "wifi_connect", test_sta_wifi_connect);
     UT_add_test( pSuite, "wifi_disconnect", test_sta_wifi_disconnect);
-    UT_add_test( pSuite, "wifi_staConnectionStatus_callback_register", test_sta_wifi_staConnectionStatus_callback_register);
 
     return 0;
 }

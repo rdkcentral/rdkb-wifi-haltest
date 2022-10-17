@@ -104,6 +104,14 @@ void test_wifi_enableCSIEngine(void)
     enable = TRUE;
     apIndex = 0;
 
+    result = wifi_getApAssociatedDeviceDiagnosticResult3(apIndex, &associated_dev_array, &output_array_size);
+    UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
+
+    if(associated_dev_array && output_array_size > 0 && result == WIFI_HAL_SUCCESS)
+    {
+                   memcpy(&sta, associated_dev_array[0].cli_MACAddress,sizeof(sta));
+    }
+
     result=wifi_enableCSIEngine( apIndex, sta, enable );
     UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
 
@@ -141,7 +149,7 @@ void test_wifi_createVAP(void)
         UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
 
         map.vap_array[ap_pointing_index].vap_index = ap_index;
-        //map.vap_array[ap_pointing_index].u.bss_info.ssid[0] ='\0';
+        map.vap_array[ap_pointing_index].u.bss_info.ssid[0] =0;
 
         result = wifi_createVAP(radioIndex,&map);
         UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
@@ -271,7 +279,7 @@ void test_wifi_apDisassociatedDevice_callback_register(void)
     wifi_apDisassociatedDevice_callback_register(NULL);
 
     /* Negative - N/A */
-}    
+}
 
 static UT_test_suite_t * pSuite = NULL;
 
