@@ -30,5 +30,8 @@ int main(int argc, char** argv)
     register_hal_l1_tests();
     register_hal_l2_tests();
 
+    /* WiFi Initialization */
+    UT_WiFi_init();
+
     UT_run_tests();
 }

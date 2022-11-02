@@ -48,4 +48,8 @@ extern INT test_utils_setBandwidth(INT radioIndex, UINT bandwidth);
 extern INT test_utils_setValidSSID(INT radioIndex, INT ap_index, INT ap_pointing_index);
 extern INT test_utils_setInValidIndexSSID(INT radioIndex, INT ap_index, INT ap_pointing_index);
 extern INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_index);
+
+/* GET NUMBER OF RADIOS */
+extern INT test_utils_getMaxNumberOfRadio(UINT *maxRadio);
+
 /* UTILITY FUNCTIONS END */
