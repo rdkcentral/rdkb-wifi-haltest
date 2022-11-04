@@ -38,8 +38,6 @@ ifeq ($(TARGET),arm)
 YLDFLAGS = -Wl,-rpath,$(HAL_LIB_DIR) -L$(HAL_LIB_DIR) -lhal_wifi -lrdk_wifihal
 endif
 
-SRC_DIRS += $(ROOT_DIR)/Logger
-
 .PHONY: clean list all
 
 # Here is a list of exports from this makefile to the next

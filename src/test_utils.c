@@ -99,6 +99,12 @@ INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_index)
     return result;
 }
 
+/**function to retrieve the number of radios applicable
+*IN/OUT : maxRadio
+*RETURN : returns non-zero or zero value depending on whether 
+*         number of radios is successfully retrieved or not
+*         respectively
+**/
 INT test_utils_getMaxNumberOfRadio(UINT *maxRadio)
 {
     int result = 0;

@@ -19,30 +19,96 @@
 ##########################################################################
 */
 
-#include <stdio.h>
+#include "wifi_hal.h"
 
-#include "wifi_hal_generic.h"
-
-#include <ut.h>
-#include "Logger.h"
 #include "PreReqUtility.h"
 
+/**function to perform WiFi initialization
+*IN : None
+*OUT : returns success or failure status of WiFi initialization
+**/
 int WiFiPreReq()
 {
-    LOG("Inside the WiFi initialization pre-reqsuite function...", __func__, __LINE__);
+
+    UT_LOG("Inside the WiFi initialization pre-reqsuite function...");
+
     int ret = 0;
-	
+    int numOfRadios = 0;
+    int radioIndex = 0;
+    wifi_hal_capability_t cap;
+    wifi_radio_operationParam_t operationParam;
+    int radioSuccess = 0;
+
     /* Invoke wifi_init() */
     ret = wifi_init();
     if (ret == 0)
     {
-        LOG("WiFi initialization pre-reqsuite success", __func__, __LINE__);
+        UT_LOG("WiFi init returned success");
+
+        /* Invoke wifi_getHalCapability() */
+        ret = wifi_getHalCapability(&cap);
+        if (ret == 0)
+        {
+            UT_LOG("WiFi getHalCapability returned success");
+
+            /* Get the number of radios applicable */
+            numOfRadios = cap.wifi_prop.numRadios;
+
+            UT_LOG("Number of Radios : %u", numOfRadios);
+
+            /* Invoke wifi_setRadioOperatingParameters for all applicable radios */
+            for (radioIndex = 0; radioIndex < numOfRadios; radioIndex++)
+            {
+                /* Get the radio configuration */
+                ret = get_radio_config(radioIndex, &operationParam); 
+
+                if (ret == 0)
+                {
+                    UT_LOG("get_radio_config for radio %d returns : %d", radioIndex, ret);
+
+                    ret = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                    if (ret == 0)
+                    {                        
+                        UT_LOG("WiFi setRadioOperatingParameters returned success");
+                        radioSuccess++;
+                    }
+                    else
+                    {                        
+                        UT_LOG("WiFi setRadioOperatingParameters returned failure");
+                        break;
+                    }
+                }
+                else
+                {
+                    UT_LOG("Unable to parse the radio config file");
+                    UT_LOG("WiFi initialization pre-reqsuite failed");
+                    break;
+                }
+            }
+
+            /* Check if radio set operating pararmeters is success for all applicable radios */
+            if (radioSuccess == numOfRadios)
+            {
+                UT_LOG("WiFi initialization pre-reqsuite success");
+            }
+            else
+            {
+                UT_LOG("WiFi initialization pre-reqsuite failed");
+            }
+        }
+        else
+        {                        
+            UT_LOG("WiFi getHalCapability returned failure");
+            UT_LOG("WiFi initialization pre-reqsuite failed");
+        }
     }
     else
     {
-        LOG("WiFi initialization pre-reqsuite failed", __func__, __LINE__);
+        UT_LOG("WiFi init returned failure");
+        UT_LOG("WiFi initialization pre-reqsuite failed");
     }	
 
-    LOG("Exited the the WiFi initialization pre-reqsuite function...", __func__, __LINE__);    
+    UT_LOG("Exited the the WiFi initialization pre-reqsuite function...");    
     return ret;
+
 }
