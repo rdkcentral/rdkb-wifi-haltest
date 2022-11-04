@@ -21,4 +21,9 @@
 #include <stdlib.h>
 #include <wifi_hal.h>
 
+/**function to read the radio configuration from json config file
+*IN : radio index
+*IN : radio_info - the buffer to hold radio config
+*OUT : returns success or failure status of the operation
+**/
 int get_radio_config(int index, wifi_radio_operationParam_t *radio_info);

@@ -5,7 +5,7 @@
 			"RadioName": "radio1",
 			"Enabled": true,
 			"FreqBand": 1,
-			"AutoChannelEnabled": false,
+			"AutoChannelEnabled": true,
 			"Channel": 1,
 			"NumSecondaryChannels": 0,
 			"SecondaryChannelsList": " ",
