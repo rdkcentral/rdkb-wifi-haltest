@@ -35,7 +35,7 @@
 int WiFiPreReq()
 {
 
-    UT_LOG("Inside the WiFi initialization pre-reqsuite function...");
+    UT_LOG("Inside the WiFi initialization pre-requisite function...");
 
     int ret = 0;
     int numOfRadios = 0;
@@ -86,34 +86,34 @@ int WiFiPreReq()
                 else
                 {
                     UT_LOG("Unable to parse the radio config file");
-                    UT_LOG("WiFi initialization pre-reqsuite failed");
+                    UT_LOG("WiFi initialization pre-requisite failed");
                     break;
                 }
             }
 
-            /* Check if radio set operating pararmeters is success for all applicable radios */
+            /* Check if radio set operating parameters is success for all applicable radios */
             if (radioSuccess == numOfRadios)
             {
-                UT_LOG("WiFi initialization pre-reqsuite success");
+                UT_LOG("WiFi initialization pre-requisite success");
             }
             else
             {
-                UT_LOG("WiFi initialization pre-reqsuite failed");
+                UT_LOG("WiFi initialization pre-requisite failed");
             }
         }
         else
         {                        
             UT_LOG("WiFi getHalCapability returned failure");
-            UT_LOG("WiFi initialization pre-reqsuite failed");
+            UT_LOG("WiFi initialization pre-requisite failed");
         }
     }
     else
     {
         UT_LOG("WiFi init returned failure");
-        UT_LOG("WiFi initialization pre-reqsuite failed");
+        UT_LOG("WiFi initialization pre-requisite failed");
     }	
 
-    UT_LOG("Exited the the WiFi initialization pre-reqsuite function...");    
+    UT_LOG("Exited the the WiFi initialization pre-requisite function...");    
     return ret;
 
 }
