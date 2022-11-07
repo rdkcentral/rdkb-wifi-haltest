@@ -15,6 +15,7 @@ static const char* CMockString_wifi_getRadioOperatingChannelBandwidth = "wifi_ge
 static const char* CMockString_wifi_getRadioTransmitPower = "wifi_getRadioTransmitPower";
 static const char* CMockString_wifi_scanResults_callback_register = "wifi_scanResults_callback_register";
 static const char* CMockString_wifi_setRadioOperatingParameters = "wifi_setRadioOperatingParameters";
+static const char* CMockString_wifi_getRadioOperatingParameters = "wifi_getRadioOperatingParameters";
 
 typedef struct _CMOCK_wifi_getRadioTransmitPower_CALL_INSTANCE
 {
@@ -33,6 +34,15 @@ typedef struct _CMOCK_wifi_getRadioOperatingChannelBandwidth_CALL_INSTANCE
   CHAR* Expected_output_string;
 
 } CMOCK_wifi_getRadioOperatingChannelBandwidth_CALL_INSTANCE;
+
+typedef struct _CMOCK_wifi_getRadioOperatingParameters_CALL_INSTANCE
+{
+  UNITY_LINE_TYPE LineNumber;
+  INT ReturnVal;
+  wifi_radio_index_t Expected_index;
+  wifi_radio_operationParam_t* Expected_operationParam;
+
+} CMOCK_wifi_getRadioOperatingParameters_CALL_INSTANCE;
 
 typedef struct _CMOCK_wifi_setRadioOperatingParameters_CALL_INSTANCE
 {
@@ -55,6 +65,7 @@ static struct Mockwifi_hal_radioInstance
   CMOCK_MEM_INDEX_TYPE wifi_getRadioTransmitPower_CallInstance;
   CMOCK_MEM_INDEX_TYPE wifi_getRadioOperatingChannelBandwidth_CallInstance;
   CMOCK_MEM_INDEX_TYPE wifi_setRadioOperatingParameters_CallInstance;
+  CMOCK_MEM_INDEX_TYPE wifi_getRadioOperatingParameters_CallInstance;
   CMOCK_MEM_INDEX_TYPE wifi_scanResults_callback_register_CallInstance;
 } Mock;
 
@@ -76,6 +87,13 @@ void Mockwifi_hal_radio_Verify(void)
     UNITY_SET_DETAIL(CMockString_wifi_getRadioOperatingChannelBandwidth);
     UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
   }
+  call_instance = Mock.wifi_getRadioOperatingParameters_CallInstance;
+  if (CMOCK_GUTS_NONE != call_instance)
+  {
+    UNITY_SET_DETAIL(CMockString_wifi_getRadioOperatingParameters);
+    UNITY_TEST_FAIL(cmock_line, CMockStringCalledLess);
+  }
+
   call_instance = Mock.wifi_setRadioOperatingParameters_CallInstance;
   if (CMOCK_GUTS_NONE != call_instance)
   {

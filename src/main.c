@@ -18,17 +18,58 @@
 */
 
 #include <ut.h>
+#include "PreReqUtility.h"
 
 extern int register_hal_l1_tests( void );
 extern int register_hal_l2_tests( void );
 
 int main(int argc, char** argv) 
 {
+    int registerReturn = 0;
+    int preReqReturn = 0;
+
     /* Register tests as required, then call the UT-main to support switches and triggering */
     UT_init( argc, argv );
 
-    register_hal_l1_tests();
-    register_hal_l2_tests();
+    /* Check if tests are registered successfully */
+    registerReturn = register_hal_l1_tests();
+    if (registerReturn == 0)
+    {
+        printf("\nregister_hal_l1_tests() returned success");
+    }
+    else
+    {
+        printf("\nregister_hal_l1_tests() returned failure");
+        return 1;
+    }
 
+    registerReturn = register_hal_l2_tests();
+    if (registerReturn == 0)
+    {
+        printf("\nregister_hal_l2_tests() returned success");
+    }
+    else
+    {
+        printf("\nregister_hal_l2_tests() returned failure");
+        return 1;
+    }
+
+    /* TODO : Can explore the possibility of doing initialization using CU_InitializeFunc and CU_add_suite */
+    /* WiFi Initialization */
+    preReqReturn = WiFiPreReq();
+    printf("\nWiFi Pre-Requisite routine returns : %d", preReqReturn);
+    if (preReqReturn == 0)
+    {
+        printf("\nWiFi Pre-Requisite set successfully");
+    }
+    else
+    {
+        printf("\nWiFi Pre-Requisite not set successfully");
+    }
+
+    /* Begin test executions */
     UT_run_tests();
+
+    return 0;
+
 }

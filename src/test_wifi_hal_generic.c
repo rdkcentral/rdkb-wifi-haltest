@@ -25,26 +25,39 @@
 #include "wifi_hal_generic.h"
 
 #include <ut.h>
+#include <ut_log.h>
 
+/**
+ * @brief Tests requirements for L1 testing wifi_int()
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_generic_wifi_init( void )
 {
-    int result;
 
-    /* Positive result */
+    UT_LOG("Entering init...");
+
+    int result = 0;
+
+    /* Positive Test WIFI_HAL_SUCCESS */
+    UT_LOG("Test Case 1");
     result = wifi_init();
     UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
 
-    /*calling wifi_init should succeed, As it will return with Already initalized message */
-    result = wifi_init();
-    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
+    UT_LOG("Init API returns : %d", result);
 
-    /* #TODO: Unclear how the function will fail, maybe this function should be void? */
+    UT_LOG("Exiting init...");
+
 }
 
 /**
  * @brief Tests requirements for L1 testing wifi_getHalCapability()
  * 
- * Test Coverage:
+ * Test Coverage: Positive and Negative Scenarios
  * 
  * @retval WIFI_HAL_SUCCESS             -> tested
  * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
@@ -53,28 +66,28 @@ void test_generic_wifi_init( void )
  */
 void test_generic_wifi_getHalCapability(void)
 {
+    UT_LOG("Entering getHalCapability...");
+
     wifi_hal_capability_t cap;
-    INT result;
-
-    /* L1 Test */
-
-    /* Negative Test cause */
-    result = wifi_getHalCapability(NULL);
-    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS  );
+    int result = 0;
 
     /* Positive Test WIFI_HAL_SUCCESS */
+    /* Passing a valid buffer to retrieve the HAL capability and expecting the API to return success*/
+    UT_LOG("Test Case 1");
     result = wifi_getHalCapability(&cap);
     UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS  );
 
-    /* Check each element of the profile */
-    UT_ASSERT_EQUAL( cap.version.major , 3 );
-    UT_ASSERT_EQUAL( cap.version.minor, 0 );
+    UT_LOG("Passing valid buffer to the API returns : %d", result);
 
-    /* #TODO: Check the testing profile see if this function is present on this platform */
-    //TEST_RETURN_IF_UNSUPPORTED_FUNCTION( "wifi_getHalCapability" );
+    /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+    /* Passing a NULL buffer input to retrieve the HAL capability and expecting the API to return failure */
+    UT_LOG("Test Case 2");
+    result = wifi_getHalCapability(NULL);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS  );
 
-    /* #TODO: Check the expected capabilites are the same as the capabilites returned */
-    //TEST_ASSERT_PROFILE_CHECK( "wifi_getHalCapability", caps );
+    UT_LOG("Passing NULL buffer to the API returns : %d", result);
+
+    UT_LOG("Exiting getHalCapability...");
 }
 
 static UT_test_suite_t * pSuite = NULL;

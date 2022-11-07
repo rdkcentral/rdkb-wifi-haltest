@@ -99,6 +99,27 @@ INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_index)
     return result;
 }
 
+/**function to retrieve the number of radios applicable
+*IN/OUT : maxRadio
+*RETURN : returns non-zero or zero value depending on whether 
+*         number of radios is successfully retrieved or not
+*         respectively
+**/
+INT test_utils_getMaxNumberOfRadio(UINT *maxRadio)
+{
+    int result = 0;
+    wifi_hal_capability_t cap;
+
+    result = wifi_getHalCapability(&cap);
+
+    if(result == WIFI_HAL_SUCCESS)
+        *maxRadio = cap.wifi_prop.numRadios;
+    else
+        *maxRadio = 0;
+
+   return result;
+}
+
 #if 0
 INT test_utils_setBandwidth(INT radioIndex, UINT bandwidth)
 {

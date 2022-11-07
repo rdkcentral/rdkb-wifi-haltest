@@ -26,26 +26,75 @@
 
 #include <ut.h>
 
-
+#define TBC_CONFIG_MAX_RADIOS (2)
+#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
 void test_extender_wifi_getRadioChannelStats(void)
 {
-	UT_FAIL("Need to implement");
+/*
+ * #FIXME Should we use wifi_getRadioChannelStats to get the stats of current channel alone? Or
+ * Should we use it to get all the channels?
+ *
+ * #BUG If wifi_getRadioChannelStats is used to collect stats of all channels, wifi_getRadioPossibleChannels should be called, which is not present in the list of function
+*/
+
+    INT result = -1;
+    INT radioIndex = 0;
+    INT i = 0;
+    wifi_channelStats_t input_output_channelStats_array;
+
     /* Positive */
+    for ( radioIndex = 0; radioIndex < TBC_CONFIG_MAX_RADIOS; radioIndex++)
+    {
+        if(radioIndex == 0)
+        {
+            input_output_channelStats_array.ch_number = 11;
+        }
+        else
+        {
+            input_output_channelStats_array.ch_number = 36;
+        }
+
+        input_output_channelStats_array.ch_in_pool = 1;
+
+        /* BUG: There is a similar function wifi_getRadioChannelStats2. Should we implement this function  */
+        /* TODO: Need to check the value returned by this function */
+
+        result = wifi_getRadioChannelStats(radioIndex, &input_output_channelStats_array, 1);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+    }
+
     /* Negative */
+    result = wifi_getRadioChannelStats(-1, &input_output_channelStats_array, i);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_getRadioChannelStats(2, &input_output_channelStats_array, i);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_getRadioChannelStats(0, NULL, i);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    input_output_channelStats_array.ch_number = 206;
+
+    result = wifi_getRadioChannelStats(0, &input_output_channelStats_array, i);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+    result = wifi_getRadioChannelStats(0, &input_output_channelStats_array, -1);
+    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
 }
 
 static UT_test_suite_t *pSuite = NULL;
 
 /**
  * @brief Register the main tests for this module
- * 
+ *
  * @return int - 0 on success, otherwise failure
  */
 int test_wifi_extender_register( void )
 {
     /* add a suite to the registry */
     pSuite = UT_add_suite("[L1 wifi-extender]", NULL, NULL);
-    if (NULL == pSuite) 
+    if (NULL == pSuite)
     {
         return -1;
     }
