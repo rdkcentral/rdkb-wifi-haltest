@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "config_parser.h"
+#include "cJSON.h"
 
 #define RADIO_CONFIG "radio_config"
 #define VAP_CONFIG "vap_config"

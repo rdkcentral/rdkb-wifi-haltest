@@ -25,7 +25,7 @@
 #include "wifi_hal_generic.h"
 
 #include <ut.h>
-#include <Logger.h>
+#include <ut_log.h>
 
 /**
  * @brief Tests requirements for L1 testing wifi_int()

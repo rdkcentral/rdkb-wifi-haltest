@@ -19,9 +19,14 @@
 ##########################################################################
 */
 
+#include <stdlib.h>
+#include <ut.h>
+#include <ut_log.h>
+
 #include "wifi_hal.h"
 
 #include "PreReqUtility.h"
+#include "config_parser.h"
 
 /**function to perform WiFi initialization
 *IN : None

@@ -23,11 +23,6 @@
 #define PRE_REQ_UTILITY_H
 
 #include <stdio.h>
-#include <stdlib.h>
-
-#include <ut.h>
-#include <Logger.h>
-#include "config_parser.h"
 
 /**function to perform WiFi initialization
 *IN : None

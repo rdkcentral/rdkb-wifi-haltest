@@ -17,7 +17,6 @@
  * limitations under the License.
 */
 
-#include "cJSON.h"
 #include <stdlib.h>
 #include <wifi_hal.h>
 

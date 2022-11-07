@@ -18,8 +18,6 @@
 */
 
 #include <ut.h>
-#include <Logger.h>
-
 #include "PreReqUtility.h"
 
 extern int register_hal_l1_tests( void );
@@ -27,7 +25,6 @@ extern int register_hal_l2_tests( void );
 
 int main(int argc, char** argv) 
 {
-
     int registerReturn = 0;
     int preReqReturn = 0;
 
@@ -56,9 +53,6 @@ int main(int argc, char** argv)
         printf("\nregister_hal_l2_tests() returned failure");
         return 1;
     }
-
-    /* Create a log file to capture execution logs */
-    UT_CreateLogfile(logFileName);
 
     /* TODO : Can explore the possibility of doing initialization using CU_InitializeFunc and CU_add_suite */
     /* WiFi Initialization */

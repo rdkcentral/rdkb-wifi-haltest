@@ -25,7 +25,7 @@
 #include "wifi_hal_radio.h"
 
 #include <ut.h>
-#include <Logger.h>
+#include <ut_log.h>
 
 #include "config_parser.h"
 #include "test_utils.h"
