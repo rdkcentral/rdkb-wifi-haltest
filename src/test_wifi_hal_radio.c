@@ -25,6 +25,10 @@
 #include "wifi_hal_radio.h"
 
 #include <ut.h>
+#include <ut_log.h>
+
+#include "config_parser.h"
+#include "test_utils.h"
 
 /* Values here should be read from a configuration file, that supports the test */
 #define TBC_CONFIG_MAX_RADIOS (2)
@@ -61,33 +65,106 @@ void test_radio_wifi_getRadioTransmitPower(void)
    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
 }
 
+/**
+ * @brief Tests requirements for L1 testing wifi_getRadioOperatingChannelBandwidth()
+ *
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_radio_wifi_getRadioOperatingChannelBandwidth(void)
 {
-   INT result;
-   char channel_bandwidth[10] = {'\0'};
-   INT radioIndex = 0;
 
-   /* Positive */
-   for (radioIndex=0; radioIndex < TBC_CONFIG_MAX_RADIOS; radioIndex++)
-   {
-      /* TODO: Need to check the value returned by this function */
-      result = wifi_getRadioOperatingChannelBandwidth(radioIndex, channel_bandwidth);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
-   }
+    UT_LOG("Entering getRadioOperatingChannelBandwidth...");
 
-   /* Negative */
-   /* FIXME: Need to check when this function will return WIFI_HAL_INVALID_ARGUMENTS */
-   result = wifi_getRadioOperatingChannelBandwidth(TBC_RADIO_INDEX_OUT_OF_RANGE, channel_bandwidth);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    int result = 0;
+    char channel_bandwidth[10] = {'\0'};
+    int radioIndex = 0;
+    unsigned int numRadios = 0;
+    int returnStatus = 0;
+    int radioIndex_outOfRange = 99;
+    int radioIndex_negative = -1;
 
-   result = wifi_getRadioOperatingChannelBandwidth(-1, channel_bandwidth);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
-   result = wifi_getRadioOperatingChannelBandwidth(2, channel_bandwidth);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
 
-   result = wifi_getRadioOperatingChannelBandwidth(0, NULL);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Passing valid channel bandwidth buffer and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_getRadioOperatingChannelBandwidth(radioIndex, channel_bandwidth);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
+
+            UT_LOG("Passing valid buffer as channel bandwidth for radio %d returns : %d", radioIndex, result);
+
+            if (NULL != strstr(channel_bandwidth, "MHz"))
+            {
+                UT_LOG("Channel Bandwidth of radio %d is %s which is a valid bandwidth", radioIndex, channel_bandwidth); 
+                UT_PASS("Channel Bandwidth validation success");				
+            }
+            else
+            {
+                UT_LOG("Channel Bandwidth of radio %d is %s which is NOT a valid bandwidth", radioIndex, channel_bandwidth); 
+                UT_FAIL("Channel Bandwidth validation fail");
+            }
+        }
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing NULL Buffer as input to channel bandwidth and expecting the API to return failure */
+        UT_LOG("Test Case 2");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_getRadioOperatingChannelBandwidth(radioIndex, NULL);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+
+            UT_LOG("Passing NULL buffer as channel bandwidth for radio %d returns : %d", radioIndex, result);
+        }
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing a positive out of range radio index, valid channel bandwidth buffer and expecting the API to return failure */
+        UT_LOG("Test Case 3");
+
+        result = wifi_getRadioOperatingChannelBandwidth(radioIndex_outOfRange, channel_bandwidth);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+
+        UT_LOG("Passing an out of range positive radio index %d and valid buffer as channel bandwidth returns : %d", radioIndex_outOfRange, result);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing a negative radio index, valid channel bandwidth buffer and expecting the API to return failure */
+        UT_LOG("Test Case 4");
+
+        result = wifi_getRadioOperatingChannelBandwidth(radioIndex_negative, channel_bandwidth);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+
+        UT_LOG("Passing negative radio index %d and valid buffer as channel bandwidth returns : %d", radioIndex_negative, result);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing an invalid radio index, channel bandwidth as NULL buffer and expecting the API to return failure */
+        UT_LOG("Test Case 5");
+
+        result = wifi_getRadioOperatingChannelBandwidth(radioIndex_outOfRange, NULL);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+
+        UT_LOG("Passing invalid radio index %d and NULL buffer as channel bandwidth returns : %d", radioIndex_outOfRange, result);
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting getRadioOperatingChannelBandwidth...");
+    return;
+
 }
 
 /* TODO: Need to add other instances for this function like stubs*/
@@ -117,35 +194,76 @@ void test_radio_wifi_getRadioOperatingParameters(void)
    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
 }
 
+/**
+ * @brief Tests requirements for L1 testing wifi_setRadioOperatingParameters()
+ *
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_radio_wifi_setRadioOperatingParameters(void)
 {
-   INT result;
-   INT radioIndex = 0;
-   wifi_radio_operationParam_t operationParam;
+    UT_LOG("Entering setRadioOperatingParameters...");
 
-   /* Positive */
-   for (radioIndex = 0; radioIndex < TBC_CONFIG_MAX_RADIOS; radioIndex++)
-   {
-      result = wifi_getRadioOperatingParameters(radioIndex, &operationParam);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+    int result = 0;
+    unsigned int numRadios = 0;
+    int returnStatus = 0;
+    int radioIndex = 0;
+    wifi_radio_operationParam_t operationParam;
 
-      operationParam.channelWidth = 2;
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
-      result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
-   }
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
 
-   /* Negative */
-   for (radioIndex = 0; radioIndex < TBC_CONFIG_MAX_RADIOS; radioIndex++)
-   {
-      result = wifi_getRadioOperatingParameters(radioIndex, &operationParam);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting valid radio operating parameters and expecting the API to return success */
+        UT_LOG("Test Case 1");
 
-      operationParam.channelWidth = 32;
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            /* Get the radio configuration */
+            returnStatus = get_radio_config(radioIndex, &operationParam); 
+            if (returnStatus == 0)
+            {
+                UT_LOG("get_radio_config for radio %d returns : %d", radioIndex, returnStatus);
 
-      result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
-   }
+                result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
+                UT_LOG("Setting valid operating parameters for radio %d returns : %d", radioIndex, result);
+            }
+            else
+            {
+                UT_LOG("Unable to parse the radio config file");
+            }	
+        }			
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing NULL Buffer as input to operating parameter structure and expecting the API to return failure */
+        UT_LOG("Test Case 2");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_setRadioOperatingParameters(radioIndex, NULL);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+            UT_LOG("Setting NULL buffer as operating parameter structure for radio %d returns : %d", radioIndex, result);
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting setRadioOperatingParameters...");
+    return;
+
 }
 
 #if 0 /* #FIXME: Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
