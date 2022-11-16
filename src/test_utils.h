@@ -52,4 +52,7 @@ extern INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_i
 /* GET NUMBER OF RADIOS */
 extern INT test_utils_getMaxNumberOfRadio(UINT *maxRadio);
 
+/* GET PRIVATE ACCESS POINT INDICES */
+extern INT test_utils_getApIndices(UINT maxRadio, INT apIndices[]);
+
 /* UTILITY FUNCTIONS END */

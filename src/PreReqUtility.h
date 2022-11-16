@@ -30,4 +30,11 @@
 **/
 int WiFiPreReq( void);
 
+/**function to create private access points
+* IN  : radioIndex for which private AP index needs to be created
+* IN  : AP index
+* OUT : returns success or failure status of AP creation
+**/
+int createVAP(int radioIndex, int apIndex);
+
 #endif /* PRE_REQ_UTILITY_H */

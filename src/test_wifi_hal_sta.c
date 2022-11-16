@@ -168,6 +168,7 @@ static UT_test_suite_t * pSuite = NULL;
  */
 INT test_wifi_sta_register( void )
 {
+    #if 0 // enable after adding test support
     /* add a suite to the registry */
     pSuite = UT_add_suite("[L1 wifi-sta]", NULL, NULL);
     if (NULL == pSuite) 
@@ -179,6 +180,7 @@ INT test_wifi_sta_register( void )
     UT_add_test( pSuite, "wifi_startScan", test_sta_wifi_startScan);
     UT_add_test( pSuite, "wifi_connect", test_sta_wifi_connect);
     UT_add_test( pSuite, "wifi_disconnect", test_sta_wifi_disconnect);
+    #endif
 
     return 0;
 }

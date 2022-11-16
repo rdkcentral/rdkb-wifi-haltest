@@ -17,19 +17,16 @@
  * limitations under the License.
 */
 
-#include <stdlib.h>
-#include <wifi_hal.h>
+#include "wifi_hal.h"
+#include "api_translator.h"
 
-/**function to read the radio configuration from json config file
-*IN : radio index
-*IN : radio_info - the buffer to hold radio config
-*OUT : returns success or failure status of the operation
-**/
-int get_radio_config(int index, wifi_radio_operationParam_t *radio_info);
-
-/**function to read the private VAP configuration from json config file
-*IN : index - VAP index
-*IN : vap_info - the buffer to hold private VAP config
-*OUT : returns success or failure status of the operation
-**/
-int get_private_vap_config(int index, wifi_vap_info_t *vap_info);
+/*Work around to test generic hal apis
+Enable below block while building for Linux target. This provides dummy definition for generic hal apis*/
+#if 0
+INT wifi_hal_init(){return 0;}
+INT wifi_hal_getHalCapability(wifi_hal_capability_t *hal){return 0;}
+INT wifi_hal_connect(INT ap_index, wifi_bss_info_t *bss){return 0;}
+INT wifi_hal_setRadioOperatingParameters(wifi_radio_index_t index, wifi_radio_operationParam_t *operationParam){return 0;}
+INT wifi_hal_createVAP(wifi_radio_index_t index, wifi_vap_info_map_t *map){return 0;}
+INT wifi_hal_getRadioVapInfoMap(wifi_radio_index_t index, wifi_vap_info_map_t *map){return 0;}
+#endif

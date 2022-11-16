@@ -24,6 +24,8 @@
 #include <test_utils.h>
 #include <wifi_hal.h>
 
+#include "api_translator.h"
+
 INT test_utils_setValidSSID(INT radioIndex, INT ap_index, INT ap_pointing_index)
 {
     char *ssid_Name = "test@1234";
@@ -40,7 +42,7 @@ INT test_utils_setValidSSID(INT radioIndex, INT ap_index, INT ap_pointing_index)
     snprintf(map.vap_array[ap_pointing_index].u.bss_info.ssid, strlen(ssid_Name)+1,"%s", ssid_Name);
 
     result = wifi_createVAP(radioIndex,&map);
-     
+
      /* check value using get for functional verification */
     result = wifi_getRadioVapInfoMap(radioIndex, &map);
 
@@ -101,7 +103,7 @@ INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_index)
 
 /**function to retrieve the number of radios applicable
 *IN/OUT : maxRadio
-*RETURN : returns non-zero or zero value depending on whether 
+*RETURN : returns non-zero or zero value depending on whether
 *         number of radios is successfully retrieved or not
 *         respectively
 **/
@@ -118,6 +120,34 @@ INT test_utils_getMaxNumberOfRadio(UINT *maxRadio)
         *maxRadio = 0;
 
    return result;
+}
+
+/**function to retrieve the number of radios applicable
+* IN     : maxRadio - number of radios supported
+* OUT    : returns an array of access point indices
+*          depending on the number of radios supported
+**/
+INT test_utils_getApIndices(UINT maxRadio, INT apIndices[])
+{
+    int result = 0;
+
+    if (maxRadio == 3)
+    {
+        apIndices [0] = 0;
+        apIndices [1] = 1;
+        apIndices [2] = 16;
+    }
+    else if (maxRadio == 2)
+    {
+        apIndices [0] = 0;
+        apIndices [1] = 1;
+    }
+    else
+    {
+        result = -1;
+    }
+
+    return result;
 }
 
 #if 0
@@ -174,15 +204,15 @@ INT test_utils_setApEnable (BOOL enable, INT ap_index)
     {
         return result;
     }
-    
+
     result = wifi_getApEnable(ap_index, &get_ap_enable);
 
     if (result != WIFI_HAL_SUCCESS)
     {
         return result;
     }
-     
-    if( get_ap_enable != enable ) 
+
+    if( get_ap_enable != enable )
     {
         return WIFI_HAL_ERROR;
     }
@@ -217,7 +247,7 @@ INT test_utils_channelPush(INT radioIndex, ULONG channel)
 
     operationParam.channel = channel;
     result =  wifi_setRadioOperatingParameters(radioIndex, &operationParam);
-    
+
     if (result != WIFI_HAL_SUCCESS)
     {
         return result;

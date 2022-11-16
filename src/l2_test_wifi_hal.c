@@ -699,6 +699,7 @@ int test_wifi_hal_clean(void)
  */
 int test_wifi_hal_l2_register( void )
 {
+#if 0
     /* add a suite to the registry */
     pSuite = UT_add_suite("[L2 test_wifi_hal]", &test_wifi_hal_init, &test_wifi_hal_clean);
     if (NULL == pSuite) 
@@ -715,7 +716,6 @@ int test_wifi_hal_l2_register( void )
     UT_add_test( pSuite, "set_InValidIndex_SSID_6GHz", test_wifi_hal_L2_setInValidIndexSSID_6Ghz);
     UT_add_test( pSuite, "set_NULL_SSID_6GHz", test_wifi_hal_L2_setNULLSSID_6Ghz);
 
-#if 0
     UT_add_test( pSuite, "set_ap_Disable_2GHz", test_wifi_hal_L2_setApDisable_2GHz);
     UT_add_test( pSuite, "set_ap_Disable_5GHz", test_wifi_hal_L2_setApDisable_5GHz);
     UT_add_test( pSuite, "set_ap_Disable_6GHz", test_wifi_hal_L2_setApDisable_6GHz);

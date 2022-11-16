@@ -92,6 +92,7 @@ static UT_test_suite_t *pSuite = NULL;
  */
 int test_wifi_extender_register( void )
 {
+    #if 0 // enable after adding test support
     /* add a suite to the registry */
     pSuite = UT_add_suite("[L1 wifi-extender]", NULL, NULL);
     if (NULL == pSuite)
@@ -100,6 +101,6 @@ int test_wifi_extender_register( void )
     }
 
     UT_add_test( pSuite, "wifi_getRadioChannelStats", test_extender_wifi_getRadioChannelStats);
-
+    #endif
     return 0;
 }
