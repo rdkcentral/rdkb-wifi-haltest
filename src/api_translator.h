@@ -27,6 +27,9 @@ INT wifi_hal_kickAssociatedDevice(INT ap_index, mac_address_t mac);
 INT wifi_hal_startScan(wifi_radio_index_t index, wifi_neighborScanMode_t scan_mode, INT dwell_time, UINT num, UINT *chan_list);
 INT wifi_hal_disconnect(INT ap_index);
 INT wifi_hal_getRadioVapInfoMap(wifi_radio_index_t index, wifi_vap_info_map_t *map);
+INT wifi_hal_startScan(wifi_radio_index_t index, wifi_neighborScanMode_t scan_mode, INT dwell_time, UINT num, UINT *chan_list);
+INT wifi_hal_connect(INT apIndex, wifi_bss_info_t *bss);
+INT wifi_hal_disconnect(INT apIndex);
 
 /*Work around to test generic hal apis*/
 #define wifi_init() wifi_hal_init()
@@ -38,3 +41,9 @@ INT wifi_hal_getRadioVapInfoMap(wifi_radio_index_t index, wifi_vap_info_map_t *m
 #define wifi_createVAP(index, map) wifi_hal_createVAP(index, map)
 
 #define wifi_getRadioVapInfoMap(index, map) wifi_hal_getRadioVapInfoMap(index, map)
+
+#define wifi_startScan(radioIndex, scan_mode, dwell_time, numOfFreq, chan_list) wifi_hal_startScan(radioIndex, scan_mode, dwell_time, numOfFreq, chan_list)
+
+#define wifi_connect(apIndex, bss) wifi_hal_connect(apIndex, bss)
+
+#define wifi_disconnect(apIndex) wifi_hal_disconnect(apIndex)

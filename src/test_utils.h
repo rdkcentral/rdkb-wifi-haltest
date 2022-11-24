@@ -17,6 +17,8 @@
  * limitations under the License.
 */
 
+#ifndef TEST_UTILS_H
+#define TEST_UTILS_H
 
 #include <stdint.h>
 
@@ -52,7 +54,14 @@ extern INT test_utils_setNULLSSID(INT radioIndex, INT ap_index,INT ap_pointing_i
 /* GET NUMBER OF RADIOS */
 extern INT test_utils_getMaxNumberOfRadio(UINT *maxRadio);
 
-/* GET PRIVATE ACCESS POINT INDICES */
-extern INT test_utils_getApIndices(UINT maxRadio, INT apIndices[]);
+/* GET ACCESS POINT INDICES */
+typedef enum {
+    PRIVATE,
+    STA
+} APTYPE;
+
+extern INT test_utils_getApIndices(UINT maxRadio, INT apIndices[], APTYPE type);
 
 /* UTILITY FUNCTIONS END */
+
+#endif /* TEST_UTILS_H */

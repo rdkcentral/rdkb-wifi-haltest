@@ -105,6 +105,50 @@
 					"VenueGroup": 0
 				}
 			}
+		},
+		{
+                        "VapIndex": 14,
+			"VapName": "mesh_sta_2g",
+			"BridgeName": "brlan1",
+			"VapMode": 1,
+			"RadioIndex": 0,
+			"SSID": "we.connect.yellowstone",
+			"BSSID": "00:00:00:00:00:00",
+			"MAC": "00:00:00:00:00:00",
+			"Enabled": false,
+			"ConnectStatus": false,
+			"Security": {
+				"MFPConfig": "Disabled",
+				"Mode": "WPA2-Personal",
+				"EncryptionMethod": "AES+TKIP",
+				"Passphrase": "SA2mNb5p8KHN=A8nDzxj-^HWZpAbjX4q"
+			},
+			"ScanParameters": {
+				"Period": 0,
+				"Channel": 0
+			}
+		},
+		{
+                        "VapIndex": 15,
+			"VapName": "mesh_sta_5g",
+			"BridgeName": "brlan1",
+			"VapMode": 1,
+			"RadioIndex": 1,
+			"SSID": "we.connect.yellowstone",
+			"BSSID": "00:00:00:00:00:00",
+			"MAC": "00:00:00:00:00:00",
+			"Enabled": false,
+			"ConnectStatus": false,
+			"Security": {
+				"MFPConfig": "Disabled",
+				"Mode": "WPA2-Personal",
+				"EncryptionMethod": "AES+TKIP",
+				"Passphrase": "SA2mNb5p8KHN=A8nDzxj-^HWZpAbjX4q"
+			},
+			"ScanParameters": {
+				"Period": 0,
+				"Channel": 0
+			}
 		}
 	]
 }

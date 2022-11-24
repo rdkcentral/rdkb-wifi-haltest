@@ -138,24 +138,26 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
    int returnStatus = 0;
    wifi_associated_dev3_t *associated_dev_array = NULL;
    uint output_array_size = 0;
-   char *macstr = "000000000000";  
+   char *macstr = "000000000000";
    wifi_associated_dev3_t dev;
-   int * apIndex = NULL;  
+   int * apIndex = NULL;
 
-   /* To get number of supported radios*/ 
+   /* To get number of supported radios*/
    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
    if (returnStatus == 0)
    {
        UT_LOG("Number of Radios : %u", numRadios);
-     
-       /* To get apIndex for supported number of radios */ 
-       apIndex = (int *)malloc( sizeof(int) * numRadios ); 
-          returnStatus = test_utils_getApIndices(numRadios, apIndex);
+
+       /* To get apIndex for supported number of radios */
+       apIndex = (int *)malloc( sizeof(int) * numRadios );
+       if (apIndex != NULL)
+       {
+          returnStatus = test_utils_getApIndices(numRadios, apIndex, PRIVATE);
           if(returnStatus == 0)
           {
             /* Postive Test WIFI_HAL_SUCCESS */
-            /* Passing valid apIndex , valid client mac buffer and valid array size and expecting the API to return success */ 
+            /* Passing valid apIndex , valid client mac buffer and valid array size and expecting the API to return success */
             UT_LOG("Test Case 1");
             for (index = 0; index < numRadios; index++)
             {
@@ -169,14 +171,14 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
                 {
                  UT_LOG("Output Array size is %d " , output_array_size);
                  UT_PASS("Device Diagnostic Result validation is success");
-                } 
+                }
                 else
                 {
                  UT_LOG("Output Array size %d ", output_array_size);
                  UT_FAIL("Device Diagnostic Result validation fail");
                 }
               }
-            }  
+            }
 
            /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
            /* Passing an invalid positive out of range apIndex, valid client mac buffer and valid array size and expecting the API to return failure */
@@ -214,25 +216,27 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
               UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
               UT_LOG("Passing an valid apIndex %d with valid client buffer and NULL size returns %d", apIndex[index], result);
           }
-       
+
         }
         else
         {
 
               UT_LOG("Unable to retrieve the access point indices");
         }
+	free(apIndex);
     }
     else
     {
+	    UT_LOG("Malloc operation failed");
+    }
+   }
+   else
+   {
         UT_LOG("Unable to retrieve the number of radios from HalCapability");
-    }
-    if(apIndex)
-    {
-       free(apIndex);
-       apIndex = NULL;
-    }
-    UT_LOG("Exiting getApAssociatedDeviceDiagnosticResult3... ");
-    return;
+   }
+
+   UT_LOG("Exiting getApAssociatedDeviceDiagnosticResult3... ");
+   return;
 
 }
 
@@ -241,49 +245,127 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 */
 
 /* TODO This function will return success only when a MAC of a client connected to this device is sent as a parameter.
-*  Note: MAC Address should be in this format: aabbccddeeff; Alphabets in MAC can be in upper or lower case. 
+*  Note: MAC Address should be in this format: aabbccddeeff; Alphabets in MAC can be in upper or lower case.
 */
-
+/**
+ * @brief Tests requirements for L1 testing wifi_getApAssociatedClientDiagnosticResult
+ *
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_telemetry_wifi_getApAssociatedClientDiagnosticResult(void)
 {
-   INT result;
-   INT apIndex = 0;
-   wifi_associated_dev3_t *associated_dev_array = NULL;
-   mac_address_t client_mac;
-   //char macAddr[12];
+     UT_LOG("Entering getApAssociatedClientDiagnosticResult... ");
 
-   UINT output_array_size = 0;
+     int returnStatus = 0;
+     unsigned int numRadios = 0;
+     int * apIndex = NULL;
+     int index = 0;
+     wifi_associated_dev3_t associated_dev_array;
+     int result = 0;
+     mac_address_t client_mac = {'\0'};
+     char macstr[] = "000000000000";
 
-   /* TODO: Need to check the value returned by this function */
-   result = wifi_getApAssociatedDeviceDiagnosticResult3(apIndex, &associated_dev_array, &output_array_size);
-   UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
 
-   if(associated_dev_array && output_array_size > 0 && result == WIFI_HAL_SUCCESS)
-   {
-      memcpy(&client_mac, associated_dev_array[0].cli_MACAddress,sizeof(client_mac));
-   }
-   free(associated_dev_array);
-   associated_dev_array = NULL;
+     /* Get the number of radios applicable */
+     returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+     if (returnStatus == 0)
+     {
+           UT_LOG("Number of Radios : %u", numRadios);
+           /* To get apIndex for supported number of radios */
+           apIndex = (int *)malloc( sizeof(int) * numRadios );
+           if (apIndex != NULL)
+	   {
+             returnStatus = test_utils_getApIndices(numRadios, apIndex, PRIVATE);
+             if(returnStatus == 0)
+             {
 
-   /* Positive */
+                     /* Postive Test WIFI_HAL_SUCCESS */
+                     /* Passing valid apIndex , valid client mac and valid device array buffer and expecting the API to return success */
+                     /* To-Do : To be implemented Later
+                     UT_LOG("Test Case 1");
+                     for (index = 0; index < numRadios; index++)
+                     {
+                             result = wifi_getApAssociatedClientDiagnosticResult(apIndex[index], client_mac, &associated_dev_array);
+                             UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
+                             UT_LOG("Passing valid apIndex %d with valid client mac and array buffer returns %d", apIndex[index], result);
+                             if (result == 0)
+                             {
+                                     UT_LOG("Mac address of client is %02X:%02X:%02X:%02X:%02X:%02X with valid apIndex  returns %d", client_mac[0],client_mac[1],client_mac[2],client_mac[3],client_mac[4],client_mac[5], result);
+                                     UT_PASS("Client mac validation is success");
+                             }
+                     }
+                     */
 
-   /* TODO: Need to check the value returned by this function */
-   result = wifi_getApAssociatedClientDiagnosticResult(apIndex, client_mac, associated_dev_array);
-   UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
+		     /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                     /* Passing an invalid positive out of range apIndex, valid client mac and valid device array buffer and expecting the API to return failure */
+                     UT_LOG("Test Case 2");
+                     memset(&associated_dev_array, 0, sizeof(wifi_associated_dev3_t));
+                     result = wifi_getApAssociatedClientDiagnosticResult(TBC_POSITIVE_INDEX_OUT_OF_RANGE, client_mac, &associated_dev_array);
+		     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                     UT_LOG("Passing an invalid apIndex %d with valid client mac and valid device array buffer returns %d", TBC_POSITIVE_INDEX_OUT_OF_RANGE, result);
 
-   /* Negative */
-   result = wifi_getApAssociatedClientDiagnosticResult(-1, client_mac, associated_dev_array);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+                     /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                     /* Passing an invalid negative out of range apIndex, valid client mac and valid device array buffer and expecting the API to return failure */
+                     UT_LOG("Test Case 3");
+                     memset(&associated_dev_array, 0, sizeof(wifi_associated_dev3_t));
+                     result = wifi_getApAssociatedClientDiagnosticResult(TBC_NEGATIVE_INDEX_OUT_OF_RANGE, client_mac, &associated_dev_array);
+		     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                     UT_LOG("Passing an invalid apIndex %d with valid client mac and valid device array buffer returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, result);
 
-   result = wifi_getApAssociatedClientDiagnosticResult(1, NULL, associated_dev_array);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+                     /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                     /* Passing apIndex as 1 , NULL client mac and valid device array buffer and expecting the API to return failure */
+                     UT_LOG("Test Case 4");
+                     index=1;
+                     memset(&associated_dev_array, 0, sizeof(wifi_associated_dev3_t));
+                     result = wifi_getApAssociatedClientDiagnosticResult(apIndex[index], NULL, &associated_dev_array);
+		     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                     UT_LOG("Passing valid apIndex %d with NULL client mac with valid array buffer  returns %d", apIndex[index], result);
 
-   result = wifi_getApAssociatedClientDiagnosticResult(0, client_mac, NULL);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+                     /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                     /* Passing apIndex as 1 , valid client mac and NULL array buffer and expecting the API to return failure */
+                     UT_LOG("Test Case 5");
+                     index=1;
+                     memset(&associated_dev_array, 0, sizeof(wifi_associated_dev3_t));
+                     result = wifi_getApAssociatedClientDiagnosticResult(apIndex[index], client_mac, NULL);
+		     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                     UT_LOG("Passing valid apIndex %d with valid client mac and NULL array buffer returns %d", apIndex[index], result);
 
-   free(associated_dev_array);
-   associated_dev_array = NULL;
+                     /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                     /* Passing valid apIndex, invalid client mac and NULL array buffer and expecting the API to return failure */
+                     UT_LOG("Test Case 6");
+                     for (index = 0; index < numRadios; index++)
+                     {
+                             memset(&associated_dev_array, 0, sizeof(wifi_associated_dev3_t));
+                             sscanf(macstr, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx", &client_mac[0], &client_mac[1], &client_mac[2], &client_mac[3], &client_mac[4], &client_mac[5]);
+                             result = wifi_getApAssociatedClientDiagnosticResult(apIndex[index], client_mac, NULL);
+			     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                             UT_LOG("Passing valid apIndex %d with invalid client mac %02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx with NULL array buffer returns %d", apIndex[index], client_mac[0],client_mac[1],client_mac[2],client_mac[3],client_mac[4],client_mac[5], result);
+                     }
+             }
+             else
+             {
+                     UT_LOG("Unable to retrieve the access point indices");
+             }
+	     free(apIndex);
+       }
+       else
+       {
+	     UT_LOG("Malloc operation failed");
+       }
+     }
+     else
+     {
+             UT_LOG("Unable to retrieve the number of radios from HalCapability");
+     }
+
+     UT_LOG("Exiting getApAssociatedClientDiagnosticResult...");
+     return;
 }
+
 
 /**
  * @brief Tests requirements for L1 testing wifi_getRadioTrafficStats2
@@ -374,21 +456,21 @@ static UT_test_suite_t * pSuite = NULL;
 
 /**
  * @brief Register the main tests for this module
- * 
+ *
  * @return int - 0 on success, otherwise failure
  */
 int test_wifi_telemetry_register( void )
 {
     /* add a suite to the registry */
     pSuite = UT_add_suite("[L1 wifi-telemetry]", NULL, NULL);
-    if (NULL == pSuite) 
+    if (NULL == pSuite)
     {
         return -1;
     }
 
     UT_add_test( pSuite, "wifi_getRadioBandUtilization", test_telemetry_wifi_getRadioBandUtilization);
 		UT_add_test( pSuite, "wifi_getApAssociatedDeviceDiagnosticResult3", test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3);
-		//UT_add_test( pSuite, "wifi_getApAssociatedClientDiagnosticResult", test_telemetry_wifi_getApAssociatedClientDiagnosticResult);
+		UT_add_test( pSuite, "wifi_getApAssociatedClientDiagnosticResult", test_telemetry_wifi_getApAssociatedClientDiagnosticResult);
 		UT_add_test( pSuite, "wifi_getRadioTrafficStats2", test_telemetry_wifi_getRadioTrafficStats2);
 
     return 0;

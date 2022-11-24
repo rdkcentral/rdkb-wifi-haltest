@@ -680,7 +680,7 @@ int get_private_vap_config(int index, wifi_vap_info_t *vap_info)
         return RET_ERR;
     }
     obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
-    if (!cJSON_IsArray(obj_vaps) || cJSON_GetArraySize(obj_vaps) < MIN_NUM_RADIOS || cJSON_GetArraySize(obj_vaps) > MAX_NUM_RADIOS)
+    if (!cJSON_IsArray(obj_vaps))
     {
         printf("VAP object not present or incorrect number of VAP objects\n");
         cJSON_Delete(json);
@@ -719,3 +719,129 @@ int get_private_vap_config(int index, wifi_vap_info_t *vap_info)
     printf("\n get_private_vap_config() VapName: %s \n", vap_info->vap_name);
     return ret;
 }
+
+
+int decode_scan_params_object(cJSON *scan_obj, wifi_scan_params_t *scan_info)
+{
+    cJSON  *param = NULL;
+
+    // period
+    if(decode_param_integer(scan_obj, "Period", &param))
+        return RET_ERR;
+    scan_info->period = param->valuedouble;
+
+    // channel
+    if(decode_param_integer(scan_obj, "Channel", &param))
+        return RET_ERR;
+    scan_info->channel.channel = param->valuedouble;
+
+    return RET_OK;
+}
+
+
+/**function to read the mesh_sta VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold mesh_sta VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_mesh_sta_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    cJSON *obj_vaps = NULL;
+    cJSON *json = NULL;
+    cJSON *vap = NULL;
+    cJSON *param = NULL;
+    cJSON *security = NULL;
+    cJSON *scan = NULL;
+    int ret = RET_ERR;
+
+    json = config_to_json(VAP_CONFIG);
+    if (json == NULL)
+    {
+        printf("Failed to parse config\n");
+        return RET_ERR;
+    }
+    obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
+    if (!cJSON_IsArray(obj_vaps))
+    {
+        printf("VAP object not present\n");
+        cJSON_Delete(json);
+        return RET_ERR;
+    }
+
+    cJSON_ArrayForEach(vap, obj_vaps)
+    {
+        param = cJSON_GetObjectItem(vap, "VapIndex");
+        if(param && (cJSON_IsNumber(param)) && param->valueint == index)
+        {
+            vap_info->vap_index = param->valuedouble;
+            //VAP Name
+            if(decode_param_string(vap, "VapName", &param))
+                break;
+            strcpy(vap_info->vap_name, param->valuestring);
+
+            // Radio Index
+            if(decode_param_integer(vap, "RadioIndex", &param))
+                break;
+            vap_info->radio_index = param->valuedouble;
+
+            // VAP Mode
+            if(decode_param_integer(vap, "VapMode", &param))
+                break;
+            vap_info->vap_mode = param->valuedouble;
+
+            //Bridge Name
+            if(decode_param_string(vap, "BridgeName", &param))
+                break;
+            strncpy(vap_info->bridge_name, param->valuestring,WIFI_BRIDGE_NAME_LEN-1);
+
+            // SSID
+            if(decode_param_string(vap, "SSID", &param))
+                break;
+            strcpy(vap_info->u.sta_info.ssid, param->valuestring);
+
+            // BSSID : TBD whether to use in set
+            /*if(decode_param_string(vap, "BSSID", &param))
+                break;
+            if((ret = string_mac_to_uint8_mac(vap_info->u.sta_info.bssid, param->valuestring)) == RET_ERR){
+                printf("string_mac_to_uint8_mac FAILED\n");
+                break;}*/
+
+            //MAC
+            if(decode_param_string(vap, "MAC", &param))
+                break;
+            if((ret = string_mac_to_uint8_mac(vap_info->u.sta_info.mac, param->valuestring)) == RET_ERR){
+                printf("string_mac_to_uint8_mac FAILED\n");
+                break;}
+
+            // Enabled
+            if(decode_param_bool(vap, "Enabled", &param))
+                break;
+            vap_info->u.bss_info.enabled = (param->type & cJSON_True) ? TRUE:FALSE;
+
+            // ConnectStatus
+            if(decode_param_bool(vap, "ConnectStatus", &param))
+                break;
+            vap_info->u.sta_info.conn_status = (param->type & cJSON_True) ? wifi_connection_status_connected:wifi_connection_status_disconnected;
+
+            if(decode_param_object(vap, "Security", &security))
+                break;
+            ret = decode_personal_security_object(security, &vap_info->u.sta_info.security);
+            if(ret == RET_ERR){
+                printf("\ndecode_personal_security_object failed");
+                break;}
+
+            if(decode_param_object(vap, "ScanParameters", &scan))
+                break;
+            ret = decode_scan_params_object(scan, &vap_info->u.sta_info.scan_params);
+            if(ret == RET_ERR){
+                printf("\ndecode_scan_params_object failed");
+                break;}
+            ret = RET_OK;
+         }
+    }
+
+    cJSON_Delete(json);
+    printf("\n get_mesh_sta_vap_config() VapName: %s \n", vap_info->vap_name);
+    return ret;
+}
+

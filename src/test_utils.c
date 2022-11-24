@@ -124,29 +124,56 @@ INT test_utils_getMaxNumberOfRadio(UINT *maxRadio)
 
 /**function to retrieve the number of radios applicable
 * IN     : maxRadio - number of radios supported
+* IN     : type - describes the type of access point (eg : Private, Sta)
 * OUT    : returns an array of access point indices
 *          depending on the number of radios supported
 **/
-INT test_utils_getApIndices(UINT maxRadio, INT apIndices[])
+INT test_utils_getApIndices(UINT maxRadio, INT apIndices[], APTYPE type)
 {
     int result = 0;
 
-    if (maxRadio == 3)
+    switch(type)
     {
-        apIndices [0] = 0;
-        apIndices [1] = 1;
-        apIndices [2] = 16;
-    }
-    else if (maxRadio == 2)
-    {
-        apIndices [0] = 0;
-        apIndices [1] = 1;
-    }
-    else
-    {
-        result = -1;
-    }
+        case PRIVATE :
+            if (maxRadio == 3)
+            {
+                apIndices [0] = 0;
+                apIndices [1] = 1;
+                apIndices [2] = 16;
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 0;
+                apIndices [1] = 1;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
 
+        case STA :
+            if (maxRadio == 3)
+            {
+                apIndices [0] = 14;
+                apIndices [1] = 15;
+                /* TODO : Add STA index for 6G  */
+                /* apIndices [2] = 24; */
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 14;
+                apIndices [1] = 15;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
+        default :
+            result = -1;
+    }
     return result;
 }
 

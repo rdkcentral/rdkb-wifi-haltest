@@ -26,7 +26,6 @@
 #include "wifi_hal.h"
 
 #include "PreReqUtility.h"
-#include "test_utils.h"
 #include "config_parser.h"
 #include "api_translator.h"
 
@@ -71,7 +70,7 @@ int WiFiPreReq()
 
             if (apIndices != NULL)
             {
-                ret = test_utils_getApIndices(numOfRadios, apIndices);
+                ret = test_utils_getApIndices(numOfRadios, apIndices, PRIVATE);
 
                 if (ret == 0)
                 {
@@ -94,7 +93,7 @@ int WiFiPreReq()
                                 radioSuccess++;
 
                                 /* Create VAP */
-                                ret = createVAP(radioIndex, apIndices[index]);
+                                ret = createVAP(radioIndex, apIndices[index], PRIVATE);
                                 if (ret == 0)
                                 {
                                     vapSuccess++;
@@ -160,15 +159,24 @@ int WiFiPreReq()
 /**function to create private access points
 * IN  : radioIndex for which private AP index needs to be created
 * IN  : AP index
+* IN  : Type of AP index (eg : Private, Sta)
 * OUT : returns success or failure status of AP creation
 **/
-int createVAP(int radioIndex, int apIndex)
+int createVAP(int radioIndex, int apIndex, APTYPE type)
 {
     int ret = 0;
     wifi_vap_info_map_t map;
 
     /* Get the vap configuration */
-    ret = get_private_vap_config(apIndex, &map.vap_array[0]);
+    switch(type)
+    {
+        case PRIVATE :
+            ret = get_private_vap_config(apIndex, &map.vap_array[0]);
+            break;
+        case STA :
+            ret = get_mesh_sta_vap_config(apIndex, &map.vap_array[0]);
+            break;
+    }
 
     if (ret == 0)
     {

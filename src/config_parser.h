@@ -33,3 +33,10 @@ int get_radio_config(int index, wifi_radio_operationParam_t *radio_info);
 *OUT : returns success or failure status of the operation
 **/
 int get_private_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the mesh_sta VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold mesh_sta VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_mesh_sta_vap_config(int index, wifi_vap_info_t *vap_info);

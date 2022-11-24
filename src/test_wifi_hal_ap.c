@@ -32,8 +32,8 @@
 /* Values here should be read from a configuration file, that supports the test */
 #define TBC_CONFIG_MAX_APS (1)
 #define TBC_CONFIG_MAX_RADIOS (2)
-#define TBC_CONFIG_AP_INDEX_OUT_OF_RANGE (-1)
-#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
+#define TBC_NEGATIVE_INDEX_OUT_OF_RANGE (-1)
+#define TBC_POSITIVE_INDEX_OUT_OF_RANGE (99)
 
 /**
  * @brief Tests requirements for L1 testing wifi_getApAssociatedDevice()
@@ -73,7 +73,7 @@ void test_wifi_getApAssociatedDevice(void)
         if (apIndices != NULL)
         {
             /* Get the list of private access points corresponding to each of the supported radios */
-            returnStatus = test_utils_getApIndices(numRadios, apIndices);
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
 
             if (returnStatus == 0)
             {
@@ -193,7 +193,7 @@ void test_wifi_enableCSIEngine(void)
         if (apIndices != NULL)
         {
             /* Get the list of private access points corresponding to each of the supported radios */
-            returnStatus = test_utils_getApIndices(numRadios, apIndices);
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
 
             if (returnStatus == 0)
             {
@@ -318,7 +318,7 @@ void test_wifi_createVAP(void)
         if (apIndices != NULL)
         {
             /* Get the list of private access points corresponding to each of the supported radios */
-            returnStatus = test_utils_getApIndices(numRadios, apIndices);
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
 
             if (returnStatus == 0)
             {
@@ -477,6 +477,103 @@ void test_wifi_getRadioVapInfoMap(void)
 
 }
 
+/**
+ * @brief Tests requirements for L1 testing wifi_kickAssociatedDevice
+ *
+ * Test Coverage: Negative Scenarios
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_wifi_kickAssociatedDevice(void)
+{
+   UT_LOG("Entering kickAssociatedDevice..." );
+
+   int result = 0;
+   int index = 0;
+   unsigned int numRadios = 0;
+   int returnStatus = 0;
+   wifi_device_t device;
+   int * apIndex = NULL;
+   char *mac = "AA:BB:CC:DD:EE:FF";
+
+   /* Get the number of radios applicable */
+   returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+   if (returnStatus == 0)
+   {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+   	/* To get apIndex for supported number of radios */
+        apIndex = (int *)malloc( sizeof(int) * numRadios );
+	if (apIndex != NULL)
+	{
+
+		returnStatus = test_utils_getApIndices(numRadios, apIndex, PRIVATE);
+		if(returnStatus == 0)
+		{
+	       		/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing an invalid positive out of range apIndex, valid device and expecting the API to return failure */
+	       		UT_LOG("Test Case 1");
+	       		memset(&device,0,sizeof(wifi_device_t));
+	       		result = wifi_kickAssociatedDevice(TBC_POSITIVE_INDEX_OUT_OF_RANGE, &device);
+			UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+	       		UT_LOG("Passing an invalid positive out of range apIndex %d with valid device returns %d", TBC_POSITIVE_INDEX_OUT_OF_RANGE, result);
+
+			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing an invalid negative apIndex, valid device and expecting the API to return failure */
+	       		UT_LOG("Test Case 2");
+	       		memset(&device,0,sizeof(wifi_device_t));
+	       		result = wifi_kickAssociatedDevice(TBC_NEGATIVE_INDEX_OUT_OF_RANGE, &device);
+	                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+			UT_LOG("Passing an invalid negative out of range apIndex %d with valid device returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, result);
+
+			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing valid apIndex, invalid device mac  and expecting the API to return failure */
+	       		UT_LOG("Test Case 3");
+	       		for (index = 0; index < numRadios; index++)
+	       		{
+	       			memset(&device,0,sizeof(wifi_device_t));
+	       			sscanf(mac, "%02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX", &device.wifi_devMacAddress[0], &device.wifi_devMacAddress[1], &device.wifi_devMacAddress[2], &device.wifi_devMacAddress[3], &device.wifi_devMacAddress[4], &device.wifi_devMacAddress[5]);
+	       			result = wifi_kickAssociatedDevice(apIndex[index], &device);
+	                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+				UT_LOG("Passing valid apIndex  %d with invalid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX device mac returns %d", apIndex[index], device.wifi_devMacAddress[0], device.wifi_devMacAddress[1], device.wifi_devMacAddress[2], device.wifi_devMacAddress[3], device.wifi_devMacAddress[4], device.wifi_devMacAddress[5], result);
+	       		}
+
+			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing valid apIndex, NULL device and expecting the API to return failure */
+	       		UT_LOG("Test Case 4");
+	       		for (index = 0; index < numRadios; index++)
+	       		{
+	       			memset(&device,0,sizeof(wifi_device_t));
+	       			result = wifi_kickAssociatedDevice(apIndex[index], NULL);
+	                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+				UT_LOG("Passing valid apIndex %d with NULL device returns %d", apIndex[index], result);
+	       		}
+		}
+		else
+		{
+			UT_LOG("Unable to retrieve the access point indices");
+		}
+		free(apIndex);
+	}
+	else
+	{
+		UT_LOG("Malloc operation failed");
+	}
+   }
+   else
+   {
+	   UT_LOG("Unable to retrieve the number of radios from HalCapability");
+   }
+
+   UT_LOG("Exiting kickAssociatedDevice..." );
+   return;
+
+}
+
+
 #if 0 /* Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
 
 static INT test_wifi_receivedMgmtFrame_callback(INT apIndex, UCHAR *sta_mac, UCHAR *frame, UINT len, wifi_mgmtFrameType_t type, wifi_direction_t dir)
@@ -590,6 +687,6 @@ INT test_wifi_ap_register( void )
     //UT_add_test( pSuite, "wifi_newApAssociatedDevice_callback_register", test_wifi_newApAssociatedDevice_callback_register);
     //UT_add_test( pSuite, "wifi_apDeAuthEvent_callback_register", test_wifi_apDeAuthEvent_callback_register);
     //UT_add_test( pSuite, "wifi_apDisassociatedDevice_callback_register", test_wifi_apDisassociatedDevice_callback_register);
-
+    UT_add_test( pSuite, "wifi_kickAssociatedDevice", test_wifi_kickAssociatedDevice);
     return 0;
 }

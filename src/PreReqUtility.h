@@ -23,6 +23,7 @@
 #define PRE_REQ_UTILITY_H
 
 #include <stdio.h>
+#include "test_utils.h"
 
 /**function to perform WiFi initialization
 *IN : None
@@ -33,8 +34,9 @@ int WiFiPreReq( void);
 /**function to create private access points
 * IN  : radioIndex for which private AP index needs to be created
 * IN  : AP index
+* IN  : Type of AP index (eg : Private, Sta)
 * OUT : returns success or failure status of AP creation
 **/
-int createVAP(int radioIndex, int apIndex);
+int createVAP(int radioIndex, int apIndex, APTYPE type);
 
 #endif /* PRE_REQ_UTILITY_H */
