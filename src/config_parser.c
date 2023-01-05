@@ -375,3 +375,473 @@ int get_radio_config(int index, wifi_radio_operationParam_t *radio_info)
     printf("Failed to parse radio config\n");
     return ret;
 }
+
+static int string_mac_to_uint8_mac(unsigned char *mac, char *s_mac)
+{
+
+    if((mac == NULL) || (s_mac == NULL))
+    {
+        printf("%s:%d:parameters is NULL\n", __func__, __LINE__);
+        return RET_ERR;
+    }
+    sscanf(s_mac, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx", &mac[0], &mac[1], &mac[2],&mac[3], &mac[4], &mac[5]);
+    return RET_OK;
+}
+
+static int decode_vap_common_object(cJSON *vap, wifi_vap_info_t *vap_info)
+{
+    cJSON  *param = NULL;
+
+    //VAP Name
+    if(decode_param_string(vap, "VapName", &param))
+        return RET_ERR;
+    strcpy(vap_info->vap_name, param->valuestring);
+
+    // VAP Index
+    if(decode_param_integer(vap, "VapIndex", &param))
+        return RET_ERR;
+    vap_info->vap_index = param->valuedouble;
+
+    // Radio Index
+    if(decode_param_integer(vap, "RadioIndex", &param))
+        return RET_ERR;
+    vap_info->radio_index = param->valuedouble;
+
+    // VAP Mode
+    if(decode_param_integer(vap, "VapMode", &param))
+        return RET_ERR;
+    vap_info->vap_mode = param->valuedouble;
+
+    //Bridge Name
+    if(decode_param_string(vap, "BridgeName", &param))
+        return RET_ERR;
+    strncpy(vap_info->bridge_name, param->valuestring,WIFI_BRIDGE_NAME_LEN-1);
+
+    // SSID
+    if(decode_param_string(vap, "SSID", &param))
+        return RET_ERR;
+    strcpy(vap_info->u.bss_info.ssid, param->valuestring);
+
+    // BSSID : TBD whether to use in set
+    /*if(decode_param_string(vap, "BSSID", &param))
+    if((ret = string_mac_to_uint8_mac(vap_info->u.bss_info.bssid, param->valuestring)) == RET_ERR){
+        printf("string_mac_to_uint8_mac FAILED\n");
+        goto cleanup;}*/
+
+    // Enabled
+    if(decode_param_bool(vap, "Enabled", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.enabled = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // Broadcast SSID
+    if(decode_param_bool(vap, "SSIDAdvertisementEnabled", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.showSsid = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // Isolation
+    if(decode_param_bool(vap, "IsolationEnable", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.isolation = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // ManagementFramePowerControl
+    if(decode_param_integer(vap, "ManagementFramePowerControl", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.mgmtPowerControl = param->valuedouble;
+
+    // BssMaxNumSta
+    if(decode_param_integer(vap, "BssMaxNumSta", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.bssMaxSta = param->valuedouble;
+
+    // BSSTransitionActivated
+    if(decode_param_bool(vap, "BSSTransitionActivated", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.bssTransitionActivated = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // NeighborReportActivated
+    if(decode_param_bool(vap, "NeighborReportActivated", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.nbrReportActivated = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // NetworkGreyList --> to be confirmed, available in onewifi, but not in github
+//    if(decode_param_bool(vap, "NetworkGreyList", &param))
+//        return RET_ERR;
+//    vap_info->u.bss_info.network_initiated_greylist = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // RapidReconnCountEnable
+/*    if(decode_param_bool(vap, "RapidReconnCountEnable", &param))
+          return RET_ERR;
+    vap_info->u.bss_info.rapidReconnectEnable = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // RapidReconnThreshold
+    if(decode_param_integer(vap, "RapidReconnThreshold", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.rapidReconnThreshold = param->valuedouble;
+
+    // VapStatsEnable
+    if(decode_param_bool(vap, "VapStatsEnable", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.vapStatsEnable = (param->type & cJSON_True) ? TRUE:FALSE;*/
+
+    // MacFilterEnable
+    if(decode_param_bool(vap, "MacFilterEnable", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.mac_filter_enable = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // MacFilterMode
+    if(decode_param_integer(vap, "MacFilterMode", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.mac_filter_mode = param->valuedouble;
+
+    // WmmEnabled
+    if(decode_param_bool(vap, "WmmEnabled", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.wmm_enabled = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    //UapsdEnabled
+    if(decode_param_bool(vap, "UapsdEnabled", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.UAPSDEnabled = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    //BeaconRate
+    if(decode_param_integer(vap, "BeaconRate", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.beaconRate = param->valuedouble;
+
+    // WmmNoAck
+    if(decode_param_integer(vap, "WmmNoAck", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.wmmNoAck = param->valuedouble;
+
+    // WepKeyLength
+    if(decode_param_integer(vap, "WepKeyLength", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.wepKeyLength = param->valuedouble;
+
+    // BssHotspot
+    if(decode_param_bool(vap, "BssHotspot", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.bssHotspot = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    // wpsPushButton
+    if(decode_param_integer(vap, "WpsPushButton", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.wpsPushButton = param->valuedouble;
+
+    //wpsEnable
+    if(decode_param_bool(vap, "WpsEnable", &param))
+        return RET_ERR;
+    vap_info->u.bss_info.wps.enable  = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    //wpsConfigMethodsEnabled
+    if(strstr(vap_info->vap_name, "private") != NULL) {
+        if(decode_param_integer(vap, "WpsConfigMethodsEnabled", &param))
+            return RET_ERR;
+        vap_info->u.bss_info.wps.methods = param->valuedouble;
+    }
+    //wpsPin
+    if(decode_param_string(vap, "WpsPin", &param))
+        return RET_ERR;
+    strncpy(vap_info->u.bss_info.wps.pin, param->valuestring, WIFI_AP_MAX_WPSPIN_LEN-1);
+
+    // BeaconRateCtl
+    if(decode_param_string(vap, "BeaconRateCtl", &param))
+        return RET_ERR;
+    strcpy(vap_info->u.bss_info.beaconRateCtl, param->valuestring);
+
+    return RET_OK;
+}
+
+static int decode_personal_security_object(cJSON *security, wifi_vap_security_t *security_info)
+{
+    cJSON *param = NULL;
+
+    // MFPConfig
+    if(decode_param_string(security, "MFPConfig", &param))
+        return RET_ERR;
+    if (strstr(param->valuestring, "Disabled")) {
+        security_info->mfp = wifi_mfp_cfg_disabled;
+    } else if (strstr(param->valuestring, "Required")) {
+        security_info->mfp = wifi_mfp_cfg_required;
+    } else if (strstr(param->valuestring, "Optional")) {
+        security_info->mfp = wifi_mfp_cfg_optional;
+    }
+    else
+        return RET_ERR;
+
+    if(decode_param_string(security, "Mode", &param))
+        return RET_ERR;
+    if (strcmp(param->valuestring, "None") == 0) {
+        security_info->mode = wifi_security_mode_none;
+    } else if (strcmp(param->valuestring, "WPA-Personal") == 0) {
+        security_info->mode = wifi_security_mode_wpa_personal;
+    } else if (strcmp(param->valuestring, "WPA2-Personal") == 0) {
+        security_info->mode = wifi_security_mode_wpa2_personal;
+    } else if (strcmp(param->valuestring, "WPA-WPA2-Personal") == 0) {
+        security_info->mode = wifi_security_mode_wpa_wpa2_personal;
+    } else if (strcmp(param->valuestring, "WPA3-Personal") == 0) {
+        security_info->mode = wifi_security_mode_wpa3_personal;
+        security_info->u.key.type = wifi_security_key_type_sae;
+    } else if (strcmp(param->valuestring, "WPA3-Personal-Transition") == 0) {
+        security_info->mode = wifi_security_mode_wpa3_transition;
+        security_info->u.key.type = wifi_security_key_type_psk_sae;
+    } else
+        return RET_ERR;
+
+    if(decode_param_string(security, "EncryptionMethod", &param))
+        return RET_ERR;
+    if (strcmp(param->valuestring, "TKIP") == 0) {
+        security_info->encr = wifi_encryption_tkip;
+    } else if(strcmp(param->valuestring, "AES") == 0) {
+        security_info->encr = wifi_encryption_aes;
+    } else if(strcmp(param->valuestring, "AES+TKIP") == 0) {
+        security_info->encr = wifi_encryption_aes_tkip;
+    } else if(strcmp(param->valuestring, "None") == 0) {
+        security_info->encr = wifi_encryption_none;
+    } else
+        return RET_ERR;
+
+    if(decode_param_string(security, "Passphrase", &param))
+        return RET_ERR;
+    strncpy(security_info->u.key.key, param->valuestring,sizeof(security_info->u.key.key) - 1);
+
+    return RET_OK;
+}
+
+static int decode_interworking_common_object(cJSON *interworking, wifi_interworking_t *interworking_info)
+{
+    cJSON *param, *venue = NULL;
+
+    if(decode_param_bool(interworking, "InterworkingEnable", &param))
+        return RET_ERR;
+    interworking_info->interworking.interworkingEnabled = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    if(decode_param_integer(interworking, "AccessNetworkType", &param))
+        return RET_ERR;
+    interworking_info->interworking.accessNetworkType = param->valuedouble;
+
+    if(decode_param_bool(interworking, "Internet", &param))
+        return RET_ERR;
+    interworking_info->interworking.internetAvailable = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    if(decode_param_bool(interworking, "ASRA", &param))
+        return RET_ERR;
+    interworking_info->interworking.asra = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    if(decode_param_bool(interworking, "ESR", &param))
+        return RET_ERR;
+    interworking_info->interworking.esr = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    if(decode_param_bool(interworking, "UESA", &param))
+        return RET_ERR;
+    interworking_info->interworking.uesa = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    if(decode_param_bool(interworking, "HESSOptionPresent", &param))
+        return RET_ERR;
+    interworking_info->interworking.hessOptionPresent = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    if(decode_param_string(interworking, "HESSID", &param))
+        return RET_ERR;
+    strcpy(interworking_info->interworking.hessid, param->valuestring);
+
+    if(decode_param_object(interworking, "Venue", &venue))
+        return RET_ERR;
+
+    if(decode_param_integer(venue, "VenueType", &param))
+        return RET_ERR;
+    interworking_info->interworking.venueType = param->valuedouble;
+
+    if(decode_param_integer(venue, "VenueGroup", &param))
+        return RET_ERR;
+    interworking_info->interworking.venueGroup = param->valuedouble;
+
+    return RET_OK;
+}
+
+/**function to read the private VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold private VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_private_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    cJSON *obj_vaps = NULL;
+    cJSON *json = NULL;
+    cJSON *obj_vap = NULL;
+    cJSON *param = NULL;
+    cJSON *security = NULL;
+    cJSON *interworking = NULL;
+    int ret = RET_OK;
+
+    json = config_to_json(VAP_CONFIG);
+    if (json == NULL)
+    {
+        printf("Failed to parse config\n");
+        return RET_ERR;
+    }
+    obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
+    if (!cJSON_IsArray(obj_vaps))
+    {
+        printf("VAP object not present or incorrect number of VAP objects\n");
+        cJSON_Delete(json);
+        return RET_ERR;
+    }
+
+    cJSON_ArrayForEach(obj_vap, obj_vaps)
+    {
+        param = cJSON_GetObjectItem(obj_vap, "VapIndex");
+        if(param && (cJSON_IsNumber(param)) && param->valueint == index)
+        {
+            ret = decode_vap_common_object(obj_vap, vap_info);
+            if(ret == RET_ERR){
+                printf("\ndecode_vap_common_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Security", &security))
+                break;
+            ret = decode_personal_security_object(security, &vap_info->u.bss_info.security);
+            if(ret == RET_ERR){
+                printf("\ndecode_personal_security_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Interworking", &interworking))
+                break;
+            ret = decode_interworking_common_object(interworking, &vap_info->u.bss_info.interworking);
+            if(ret == RET_ERR){
+                printf("\ndecode_interworking_common_object failed");
+                break;}
+
+            printf("\nget_private_vap_config() SUCCESS \n");
+         }
+    }
+
+    cJSON_Delete(json);
+    printf("\n get_private_vap_config() VapName: %s \n", vap_info->vap_name);
+    return ret;
+}
+
+
+int decode_scan_params_object(cJSON *scan_obj, wifi_scan_params_t *scan_info)
+{
+    cJSON  *param = NULL;
+
+    // period
+    if(decode_param_integer(scan_obj, "Period", &param))
+        return RET_ERR;
+    scan_info->period = param->valuedouble;
+
+    // channel
+    if(decode_param_integer(scan_obj, "Channel", &param))
+        return RET_ERR;
+    scan_info->channel.channel = param->valuedouble;
+
+    return RET_OK;
+}
+
+
+/**function to read the mesh_sta VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold mesh_sta VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_mesh_sta_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    cJSON *obj_vaps = NULL;
+    cJSON *json = NULL;
+    cJSON *vap = NULL;
+    cJSON *param = NULL;
+    cJSON *security = NULL;
+    cJSON *scan = NULL;
+    int ret = RET_ERR;
+
+    json = config_to_json(VAP_CONFIG);
+    if (json == NULL)
+    {
+        printf("Failed to parse config\n");
+        return RET_ERR;
+    }
+    obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
+    if (!cJSON_IsArray(obj_vaps))
+    {
+        printf("VAP object not present\n");
+        cJSON_Delete(json);
+        return RET_ERR;
+    }
+
+    cJSON_ArrayForEach(vap, obj_vaps)
+    {
+        param = cJSON_GetObjectItem(vap, "VapIndex");
+        if(param && (cJSON_IsNumber(param)) && param->valueint == index)
+        {
+            vap_info->vap_index = param->valuedouble;
+            //VAP Name
+            if(decode_param_string(vap, "VapName", &param))
+                break;
+            strcpy(vap_info->vap_name, param->valuestring);
+
+            // Radio Index
+            if(decode_param_integer(vap, "RadioIndex", &param))
+                break;
+            vap_info->radio_index = param->valuedouble;
+
+            // VAP Mode
+            if(decode_param_integer(vap, "VapMode", &param))
+                break;
+            vap_info->vap_mode = param->valuedouble;
+
+            //Bridge Name
+            if(decode_param_string(vap, "BridgeName", &param))
+                break;
+            strncpy(vap_info->bridge_name, param->valuestring,WIFI_BRIDGE_NAME_LEN-1);
+
+            // SSID
+            if(decode_param_string(vap, "SSID", &param))
+                break;
+            strcpy(vap_info->u.sta_info.ssid, param->valuestring);
+
+            // BSSID : TBD whether to use in set
+            /*if(decode_param_string(vap, "BSSID", &param))
+                break;
+            if((ret = string_mac_to_uint8_mac(vap_info->u.sta_info.bssid, param->valuestring)) == RET_ERR){
+                printf("string_mac_to_uint8_mac FAILED\n");
+                break;}*/
+
+            //MAC
+            if(decode_param_string(vap, "MAC", &param))
+                break;
+            if((ret = string_mac_to_uint8_mac(vap_info->u.sta_info.mac, param->valuestring)) == RET_ERR){
+                printf("string_mac_to_uint8_mac FAILED\n");
+                break;}
+
+            // Enabled
+            if(decode_param_bool(vap, "Enabled", &param))
+                break;
+            vap_info->u.bss_info.enabled = (param->type & cJSON_True) ? TRUE:FALSE;
+
+            // ConnectStatus
+            if(decode_param_bool(vap, "ConnectStatus", &param))
+                break;
+            vap_info->u.sta_info.conn_status = (param->type & cJSON_True) ? wifi_connection_status_connected:wifi_connection_status_disconnected;
+
+            if(decode_param_object(vap, "Security", &security))
+                break;
+            ret = decode_personal_security_object(security, &vap_info->u.sta_info.security);
+            if(ret == RET_ERR){
+                printf("\ndecode_personal_security_object failed");
+                break;}
+
+            if(decode_param_object(vap, "ScanParameters", &scan))
+                break;
+            ret = decode_scan_params_object(scan, &vap_info->u.sta_info.scan_params);
+            if(ret == RET_ERR){
+                printf("\ndecode_scan_params_object failed");
+                break;}
+            ret = RET_OK;
+         }
+    }
+
+    cJSON_Delete(json);
+    printf("\n get_mesh_sta_vap_config() VapName: %s \n", vap_info->vap_name);
+    return ret;
+}
+

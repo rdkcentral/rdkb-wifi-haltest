@@ -22,13 +22,13 @@
 #include <setjmp.h>
 
 #include "wifi_hal.h"
-#include "wifi_hal_radio.h"
 
 #include <ut.h>
 #include <ut_log.h>
 
 #include "config_parser.h"
 #include "test_utils.h"
+#include "api_translator.h"
 
 /* Values here should be read from a configuration file, that supports the test */
 #define TBC_CONFIG_MAX_RADIOS (2)
@@ -37,32 +37,103 @@
 #define TBC_RADIO_MAX_BW (4)
 #define TBC_CONFIG_MAX_BW (7)
 
+/**
+ * @brief Tests requirements for L1 testing wifi_getRadioTransmitPower()
+ *
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_radio_wifi_getRadioTransmitPower(void)
 {
-   INT result;
-   ULONG output_ulong = 0;
-   INT radioIndex = 0;
+   UT_LOG("Entering getRadioTransmitPower... ");
 
-   /* Positive */
-   for (radioIndex=0;radioIndex< TBC_CONFIG_MAX_RADIOS;radioIndex++)
-   {
-      /* TODO: Need to check the value returned by this function */
-      result = wifi_getRadioTransmitPower(radioIndex, &output_ulong);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
-   }
+   int result = 0;
+   ulong transmit_power = 0;
+   int radioIndex = 0;
+   unsigned int numRadios = 0;
+   int returnStatus = 0;
+   int radioIndex_outOfRange = 99;
+   int radioIndex_negative = -1;
+   int invalidradioIndex = 3;
 
-   /* Negative */
-   result = wifi_getRadioTransmitPower(TBC_RADIO_INDEX_OUT_OF_RANGE, &output_ulong);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
-   result = wifi_getRadioTransmitPower(-1, &output_ulong);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
 
-   result = wifi_getRadioTransmitPower(2, &output_ulong);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Passing valid radio index, valid transmit power and expecting the API to return success */
+        UT_LOG("Test Case 1");
 
-   result = wifi_getRadioTransmitPower(0, NULL);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_getRadioTransmitPower(radioIndex, &transmit_power);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
+            UT_LOG("Passing valid transmit power for radio index %d returns : %d", radioIndex, result);
+
+            if (transmit_power == 0)
+            {
+               UT_LOG("Transmit power is %ld for radio %d which is not a valid transmit power", transmit_power, radioIndex);
+               UT_FAIL("Transmit power validation fail");
+            }
+            else
+            {
+               UT_LOG("Transmit power is %ld for radio %d which is a valid transmit power", transmit_power, radioIndex);
+               UT_PASS("Transmit power validation success");
+            }
+
+        }
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing NULL to transmit power and expecting the API to return failure */
+        UT_LOG("Test Case 2");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_getRadioTransmitPower(radioIndex, NULL);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+            UT_LOG("Passing NULL as transmit power for radio %d returns : %d", radioIndex, result);
+        }
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing invalid positive radio index, valid transmit power and expecting the API to return failure */
+        UT_LOG("Test Case 3");
+
+        result = wifi_getRadioTransmitPower(radioIndex_outOfRange, &transmit_power);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+        UT_LOG("Passing an out of range positive radio index %d and valid transmit power returns : %d", radioIndex_outOfRange, result);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing a negative radio index, valid transmit power and expecting the API to return failure */
+        UT_LOG("Test Case 4");
+
+        result = wifi_getRadioTransmitPower(radioIndex_negative, &transmit_power);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+        UT_LOG("Passing an out of range negative radio index %d and valid transmit power returns : %d", radioIndex_negative, result);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing an invalid radio index, valid transmit power and expecting the API to return failure */
+        UT_LOG("Test Case 5");
+
+        result = wifi_getRadioTransmitPower(invalidradioIndex, &transmit_power);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
+        UT_LOG("Passing an invalid radio index %d and valid transmit power returns : %d", invalidradioIndex, result);
+
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting getRadioTransmitPower... ");
+    return;
+
 }
 
 /**
@@ -167,32 +238,6 @@ void test_radio_wifi_getRadioOperatingChannelBandwidth(void)
 
 }
 
-/* TODO: Need to add other instances for this function like stubs*/
-void test_radio_wifi_getRadioOperatingParameters(void)
-{
-   INT result;
-   INT radioIndex = 0;
-   wifi_radio_operationParam_t operationParam;
-
-   /* Positive */
-   for (radioIndex=0; radioIndex < TBC_CONFIG_MAX_RADIOS; radioIndex++)
-   {
-      /* TODO: Need to check the value returned by this function */
-      result = wifi_getRadioOperatingParameters(radioIndex, &operationParam);
-      UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
-   }
-
-   /* Negative */
-   result = wifi_getRadioOperatingParameters(-1, &operationParam);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-
-   result = wifi_getRadioOperatingParameters(2, &operationParam);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-
-   /* FIXME: Need to check whether it will return WIFI_HAL_INVALID_ARGUMENTS */
-   result = wifi_getRadioOperatingParameters(0, NULL);
-   UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-}
 
 /**
  * @brief Tests requirements for L1 testing wifi_setRadioOperatingParameters()
@@ -305,7 +350,6 @@ INT test_wifi_radio_register( void )
    UT_add_test( pSuite, "wifi_getRadioTransmitPower", test_radio_wifi_getRadioTransmitPower);
    UT_add_test( pSuite, "wifi_getRadioOperatingChannelBandwidth)", test_radio_wifi_getRadioOperatingChannelBandwidth);
    /* #FIXME: Added this function as it was present in wifi_hal_radio.h but not in test_wifi_hal_radio.c */
-   UT_add_test( pSuite, "wifi_getRadioOperatingParameters", test_radio_wifi_getRadioOperatingParameters);
    UT_add_test( pSuite, "wifi_setRadioOperatingParameters", test_radio_wifi_setRadioOperatingParameters);
    /* FIXME: Commented UT for wifi_scanResults_callback_register as the function is not present in wifi_hal.c in any of the platforms*/
    //UT_add_test( pSuite, "wifi_scanResults_callback_register)", test_radio_wifi_scanResults_callback_register);

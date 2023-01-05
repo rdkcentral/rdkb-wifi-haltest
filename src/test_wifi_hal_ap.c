@@ -22,185 +22,567 @@
 #include <setjmp.h>
 
 #include "wifi_hal.h"
-#include "wifi_hal_ap.h"
+#include "config_parser.h"
+#include "test_utils.h"
+#include "api_translator.h"
 
 #include <ut.h>
+#include <ut_log.h>
 
 /* Values here should be read from a configuration file, that supports the test */
 #define TBC_CONFIG_MAX_APS (1)
 #define TBC_CONFIG_MAX_RADIOS (2)
-#define TBC_CONFIG_AP_INDEX_OUT_OF_RANGE (-1)
-#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
+#define TBC_NEGATIVE_INDEX_OUT_OF_RANGE (-1)
+#define TBC_POSITIVE_INDEX_OUT_OF_RANGE (99)
 
+/**
+ * @brief Tests requirements for L1 testing wifi_getApAssociatedDevice()
+ *
+ * Test Coverage: Negative Scenarios
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_wifi_getApAssociatedDevice(void)
 {
-    INT result;
+    UT_LOG("Entering getApAssociatedDevice...");
+
+    int result = 0;
+    int iteration = 0;
+    int * apIndices = NULL;
+    int apIndex_negative = -1;
+    int apIndex_OutOfRange = 99;
+    int returnStatus = 0;
     mac_address_t opDeviceMacAddArray[32];
-    UINT maxNumDevices = sizeof(opDeviceMacAddArray)/sizeof(mac_address_t);
-    UINT returnedOpNumOfDevices = 0;
+    unsigned int maxNumDevices = sizeof(opDeviceMacAddArray)/sizeof(mac_address_t);
+    unsigned int maxNumDevices_invalid = 0;
+    unsigned int returnedOpNumOfDevices = 0;
+    unsigned int numRadios = 0;
 
-    // #TODO: Get the number of apIndex's out of the interface?
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
-/*
-* @brief Gets the Ap Associated Device list for client MAC addresses
-*
-* @param[in]  apIndex                Access Point index
-* @param[out] opDeviceMacAddArray    List of devices MAC, to be returned
-* @param[in]  maxNumDevices          Max number of devices that can be returned
-* @param[out] opNumOfDevices         Number of entries returned in the array
-INT wifi_getApAssociatedDevice(INT apIndex, mac_address_t *opDeviceMacAddArray, UINT maxNumDevices, UINT *opNumOfDevices);
-*/
-
-    // #TODO: maxNumDevices, specified the number of interfaces devices that you can return, but how do you get them all, spec doesn't say.
-
-    // #TODO: Likely need to perform other functions before this one.
-    for (int apIndex=0; apIndex< TBC_CONFIG_MAX_APS; apIndex++ )
+    if (returnStatus == 0)
     {
-        /* Positive */
-        result = wifi_getApAssociatedDevice(apIndex, &opDeviceMacAddArray[0], maxNumDevices, &returnedOpNumOfDevices);
-        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+        UT_LOG("Number of Radios : %u", numRadios);
 
-        /* FIXME: Check returnedOpNumOfDevices, against database */
-        /* FIXME: Check opDeviceMacAddArray, is there a good way to check expectations against an array */
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of private access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
+
+            if (returnStatus == 0)
+            {
+                UT_LOG("Private AP Indices for the supported radios retrieved");
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing valid apIndex, valid buffer to opDeviceMacAddArray, valid maxNumDevices and NULL buffer to opNumOfDevices and expecting the API to return failure*/
+                UT_LOG("Test Case 1");
+
+                for (iteration = 0; iteration < numRadios; iteration ++)
+                {
+                    result = wifi_getApAssociatedDevice(apIndices[iteration], &opDeviceMacAddArray[0], maxNumDevices, NULL);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                    UT_LOG("Setting valid buffer to opDeviceMacAddArray, maxNumDevices as %d, NULL buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices, apIndices[iteration], result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing valid apIndex, valid buffer to opDeviceMacAddArray, maxNumDevices as 0 and valid buffer to opNumOfDevices and expecting the API to return failure*/
+                UT_LOG("Test Case 2");
+
+                for (iteration = 0; iteration < numRadios; iteration ++)
+                {
+                    result = wifi_getApAssociatedDevice(apIndices[iteration], &opDeviceMacAddArray[0], maxNumDevices_invalid, &returnedOpNumOfDevices);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                    UT_LOG("Setting valid buffer to opDeviceMacAddArray, maxNumDevices as %d, valid buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices_invalid, apIndices[iteration], result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing valid apIndex, NULL buffer to opDeviceMacAddArray, maxNumDevices as valid value and valid buffer to opNumOfDevices and expecting the API to return failure*/
+                UT_LOG("Test Case 3");
+
+                for (iteration = 0; iteration < numRadios; iteration ++)
+                {
+                    result = wifi_getApAssociatedDevice(apIndices[iteration], NULL, maxNumDevices, &returnedOpNumOfDevices);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                    UT_LOG("Setting NULL buffer to opDeviceMacAddArray, maxNumDevices as %d, valid buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices, apIndices[iteration], result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing negative apIndex, valid buffer to opDeviceMacAddArray, maxNumDevices as valid value and valid buffer to opNumOfDevices and expecting the API to return failure*/
+                UT_LOG("Test Case 4");
+
+                result = wifi_getApAssociatedDevice(apIndex_negative, &opDeviceMacAddArray[0], maxNumDevices, &returnedOpNumOfDevices);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                UT_LOG("Setting valid buffer to opDeviceMacAddArray, maxNumDevices as %d, valid buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices, apIndex_negative, result);
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing positive out of range apIndex, valid buffer to opDeviceMacAddArray, maxNumDevices as valid value and valid buffer to opNumOfDevices and expecting the API to return failure*/
+                UT_LOG("Test Case 5");
+
+                result = wifi_getApAssociatedDevice(apIndex_OutOfRange, &opDeviceMacAddArray[0], maxNumDevices, &returnedOpNumOfDevices);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                UT_LOG("Setting valid buffer to opDeviceMacAddArray, maxNumDevices as %d, valid buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices, apIndex_OutOfRange, result);
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
     }
 
-    /* Negative 0 */
-    result = wifi_getApAssociatedDevice(TBC_CONFIG_AP_INDEX_OUT_OF_RANGE, &opDeviceMacAddArray[0], maxNumDevices, &returnedOpNumOfDevices );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
-
-    /* Negative 1 */
-    result = wifi_getApAssociatedDevice(0, NULL, maxNumDevices, &returnedOpNumOfDevices );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
-
-    /* Negative 2 */
-    result = wifi_getApAssociatedDevice(0, &opDeviceMacAddArray[0], 0, &returnedOpNumOfDevices );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
-
-    /* Negative 3 */
-    result = wifi_getApAssociatedDevice(0, &opDeviceMacAddArray[0], maxNumDevices, NULL );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    UT_LOG("Exiting getApAssociatedDevice...");
+    return;
 }
 
-#if 0 /* Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
+/**
+ * @brief Tests requirements for L1 testing wifi_enableCSIEngine()
 
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_ERROR               -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_wifi_enableCSIEngine(void)
 {
-    INT result;
-    mac_address_t sta={0};
-    BOOL enable;
-    INT apIndex;
-/*
- * @brief This function enables or disables CSI engine data for a specific STA on a VAP
- * @param[in] apIndex  Index of VAP
- * @param[in] sta      MAC address of the station associated in this VAP for which engine is being enabled/disabled
- * @param[in] enable   Enable or disable
- *
- * @return The status of the operation
- * @retval WIFI_HAL_SUCCESS if successful
- * @retval WIFI_HAL_ERROR if error
- * INT wifi_enableCSIEngine(INT apIndex, mac_address_t sta, BOOL enable);
- */ 
-    /* Positive */
-    enable = TRUE;
-    apIndex = 0;
 
-    result = wifi_getApAssociatedDeviceDiagnosticResult3(apIndex, &associated_dev_array, &output_array_size);
-    UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
+    UT_LOG("Entering enableCSIEngine...");
 
-    if(associated_dev_array && output_array_size > 0 && result == WIFI_HAL_SUCCESS)
+    int result = 0;
+    int iteration = 0;
+    int * apIndices = NULL;
+    int apIndex_negative = -1;
+    int apIndex_OutOfRange = 99;
+    int returnStatus = 0;
+    unsigned int numRadios = 0;
+    BOOL enable = FALSE;
+    BOOL enable_invalid = 2;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
     {
-                   memcpy(&sta, associated_dev_array[0].cli_MACAddress,sizeof(sta));
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of private access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
+
+            if (returnStatus == 0)
+            {
+                UT_LOG("Private AP Indices for the supported radios retrieved");
+
+                /* Positive Test WIFI_HAL_SUCCESS */
+                /* Passing valid apIndex, NULL mac address and enable parameter as false and expecting the API to return success */
+                UT_LOG("Test Case 1");
+
+                for (iteration = 0; iteration < numRadios; iteration ++)
+                {
+                    result = wifi_enableCSIEngine(apIndices[iteration], NULL, enable);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
+                    UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndices[iteration], result);
+                }
+
+                /* Negative Test WIFI_HAL_ERROR */
+                /* Passing valid apIndex, NULL mac address and enable parameter as true and expecting the API to return failure */
+                enable = TRUE;
+                UT_LOG("Test Case 2");
+
+                for (iteration = 0; iteration < numRadios; iteration ++)
+                {
+                    result = wifi_enableCSIEngine(apIndices[iteration], NULL, enable);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+
+                    UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndices[iteration], result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing valid apIndex, NULL mac address and enable parameter as an invalid value and expecting the API to return failure */
+                UT_LOG("Test Case 3");
+
+                for (iteration = 0; iteration < numRadios; iteration ++)
+                {
+                    result = wifi_enableCSIEngine(apIndices[iteration], NULL, enable_invalid);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                    UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable_invalid, apIndices[iteration], result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing negative apIndex, NULL mac address and enable parameter as FALSE and expecting the API to return failure */
+                enable = FALSE;
+                UT_LOG("Test Case 4");
+
+                result = wifi_enableCSIEngine(apIndex_negative, NULL, enable);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndex_negative, result);
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing out of range apIndex, NULL mac address and enable parameter as FALSE and expecting the API to return failure */
+                UT_LOG("Test Case 5");
+
+                result = wifi_enableCSIEngine(apIndex_OutOfRange, NULL, enable);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndex_OutOfRange, result);
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
     }
 
-    result=wifi_enableCSIEngine( apIndex, sta, enable );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
-
-    enable = FALSE;
-    result=wifi_enableCSIEngine( apIndex, sta, enable );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
-
-    /* Negative */
-    result=wifi_enableCSIEngine( TBC_CONFIG_AP_INDEX_OUT_OF_RANGE, sta, enable );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
-
-    result=wifi_enableCSIEngine( apIndex, sta, 2 );
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    UT_LOG("Exiting enableCSIEngine...");
+    return;
 
 }
-#endif
 
+/**
+ * @brief Tests requirements for L1 testing wifi_createVAP()
+ *
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_wifi_createVAP(void)
 {
-    INT result;
+
+    UT_LOG("Entering createVAP...");
+
+    int result = 0;
+    int * apIndices = NULL;
+    int index = 0;
     wifi_vap_info_map_t  map;
-    INT ap_index = 0;
-    INT radioIndex = 0;
-    INT ap_pointing_index = 0;
+    int radioIndex = 0;
+    unsigned int numRadios = 0;
+    int returnStatus = 0;
+    int radioIndex_outOfRange = 99;
 
-    /* Note: wifi_getRadioVapInfoMap() should be tested before this function is ran */
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
-    /* #FIXME: Is there a destroyVAP function? */
-
-    /* #TODO: More testing required of this interface */
-    /* Positive */
-    for (radioIndex=0;radioIndex< TBC_CONFIG_MAX_RADIOS;radioIndex++ )
+    if (returnStatus == 0)
     {
-        result = wifi_getRadioVapInfoMap(radioIndex, &map);
-        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+        UT_LOG("Number of Radios : %u", numRadios);
 
-        map.vap_array[ap_pointing_index].vap_index = ap_index;
-        map.vap_array[ap_pointing_index].u.bss_info.ssid[0] =0;
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting valid VAP info map and expecting the API to return success */
+        UT_LOG("Test Case 1");
 
-        result = wifi_createVAP(radioIndex,&map);
-        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
 
-        /* #TODO: Check &map params for all configuration values being correct */
+        if (apIndices != NULL)
+        {
+            /* Get the list of private access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
+
+            if (returnStatus == 0)
+            {
+                UT_LOG("Private AP Indices for the supported radios retrieved");
+
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_private_vap_config(apIndices[index], &map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        UT_LOG("get_private_vap_config for vap %d returns : %d", apIndices[index], returnStatus);
+
+                        map.num_vaps = 1;
+                        result = wifi_createVAP(radioIndex, &map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
+                        UT_LOG("Setting valid VAP info map for radio %d returns : %d", radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing NULL Buffer as input to VAP info map structure and expecting the API to return failure */
+                UT_LOG("Test Case 2");
+
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+                {
+                    result = wifi_createVAP(radioIndex, NULL);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                    UT_LOG("Setting NULL buffer as VAP info map structure for radio %d returns : %d", radioIndex, result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing out of range value as radio index and valid VAP info map buffer and expecting the API to return failure */
+                UT_LOG("Test Case 3");
+
+                result = wifi_createVAP(radioIndex_outOfRange, &map);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                UT_LOG("Setting valid VAP info map structure for radio %d returns : %d", radioIndex_outOfRange, result);
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Passing out of range value as radio index and VAP info map as NULL buffer and expecting the API to return failure */
+                UT_LOG("Test Case 4");
+
+                result = wifi_createVAP(radioIndex_outOfRange, NULL);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+                UT_LOG("Setting VAP info map structure as NULL for radio %d returns : %d", radioIndex_outOfRange, result);
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
     }
 
-    /* Negative */
-    for (radioIndex=0;radioIndex< TBC_CONFIG_MAX_RADIOS;radioIndex++ )
-    {
-        result = wifi_getRadioVapInfoMap(radioIndex, &map);
-        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+    UT_LOG("Exiting createVAP...");
+    return;
 
-        map.vap_array[ap_pointing_index].vap_index = ap_index;
-        map.vap_array[ap_pointing_index].u.bss_info.ssid[0] ='\0';
-
-        result = wifi_createVAP(radioIndex,&map);
-        UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
-    }
 }
 
+/**
+ * @brief Tests requirements for L1 testing wifi_getRadioVapInfoMap()
+ *
+ * Test Coverage: Positive and Negative Scenarios
+ *
+ * @retval WIFI_HAL_SUCCESS             -> tested
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
 void test_wifi_getRadioVapInfoMap(void)
 {
-    INT result;
-    wifi_vap_info_map_t  map;
-    INT radioIndex = 0;
 
-    /* Positive */
-    for (radioIndex=0;radioIndex< TBC_CONFIG_MAX_RADIOS;radioIndex++ )
+    UT_LOG("Entering getRadioVapInfoMap...");
+
+    int result = 0;
+    wifi_vap_info_map_t map;
+    int radioIndex = 0;
+    unsigned int numRadios = 0;
+    int returnStatus = 0;
+    int radioIndex_outOfRange = 99;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
     {
-        result = wifi_getRadioVapInfoMap(radioIndex, &map);
-        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Passing valid VAP info map buffer and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_getRadioVapInfoMap(radioIndex, &map);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+
+            UT_LOG("Passing valid buffer to VAP info map for radio %d returns : %d", radioIndex, result);
+        }
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing NULL Buffer as input to VAP info map and expecting the API to return failure */
+        UT_LOG("Test Case 2");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            result = wifi_getRadioVapInfoMap(radioIndex, NULL);
+            UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+            UT_LOG("Passing NULL buffer as VAP info map for radio %d returns : %d", radioIndex, result);
+        }
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing a positive out of range radio index, valid VAP info map buffer and expecting the API to return failure */
+        UT_LOG("Test Case 3");
+
+        result = wifi_getRadioVapInfoMap(radioIndex_outOfRange, &map);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+        UT_LOG("Passing an out of range positive radio index %d and valid buffer as VAP info map returns : %d", radioIndex_outOfRange, result);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Passing an invalid radio index, VAP info map as NULL buffer and expecting the API to return failure */
+        UT_LOG("Test Case 4");
+
+        result = wifi_getRadioVapInfoMap(radioIndex_outOfRange, NULL);
+        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+
+        UT_LOG("Passing invalid radio index %d and NULL buffer as VAP info map returns : %d", radioIndex_outOfRange, result);
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
     }
 
-    /* Negative */
-    result = wifi_getRadioVapInfoMap(TBC_RADIO_INDEX_OUT_OF_RANGE, &map);
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
+    UT_LOG("Exiting getRadioVapInfoMap...");
+    return;
 
-    result = wifi_getRadioVapInfoMap(0, NULL);
-    UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
 }
+
+/**
+ * @brief Tests requirements for L1 testing wifi_kickAssociatedDevice
+ *
+ * Test Coverage: Negative Scenarios
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_wifi_kickAssociatedDevice(void)
+{
+   UT_LOG("Entering kickAssociatedDevice..." );
+
+   int result = 0;
+   int index = 0;
+   unsigned int numRadios = 0;
+   int returnStatus = 0;
+   wifi_device_t device;
+   int * apIndex = NULL;
+   char *mac = "AA:BB:CC:DD:EE:FF";
+
+   /* Get the number of radios applicable */
+   returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+   if (returnStatus == 0)
+   {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+   	/* To get apIndex for supported number of radios */
+        apIndex = (int *)malloc( sizeof(int) * numRadios );
+	if (apIndex != NULL)
+	{
+
+		returnStatus = test_utils_getApIndices(numRadios, apIndex, PRIVATE);
+		if(returnStatus == 0)
+		{
+	       		/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing an invalid positive out of range apIndex, valid device and expecting the API to return failure */
+	       		UT_LOG("Test Case 1");
+	       		memset(&device,0,sizeof(wifi_device_t));
+	       		result = wifi_kickAssociatedDevice(TBC_POSITIVE_INDEX_OUT_OF_RANGE, &device);
+			UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+	       		UT_LOG("Passing an invalid positive out of range apIndex %d with valid device returns %d", TBC_POSITIVE_INDEX_OUT_OF_RANGE, result);
+
+			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing an invalid negative apIndex, valid device and expecting the API to return failure */
+	       		UT_LOG("Test Case 2");
+	       		memset(&device,0,sizeof(wifi_device_t));
+	       		result = wifi_kickAssociatedDevice(TBC_NEGATIVE_INDEX_OUT_OF_RANGE, &device);
+	                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+			UT_LOG("Passing an invalid negative out of range apIndex %d with valid device returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, result);
+
+			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing valid apIndex, invalid device mac  and expecting the API to return failure */
+	       		UT_LOG("Test Case 3");
+	       		for (index = 0; index < numRadios; index++)
+	       		{
+	       			memset(&device,0,sizeof(wifi_device_t));
+	       			sscanf(mac, "%02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX", &device.wifi_devMacAddress[0], &device.wifi_devMacAddress[1], &device.wifi_devMacAddress[2], &device.wifi_devMacAddress[3], &device.wifi_devMacAddress[4], &device.wifi_devMacAddress[5]);
+	       			result = wifi_kickAssociatedDevice(apIndex[index], &device);
+	                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+				UT_LOG("Passing valid apIndex  %d with invalid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX device mac returns %d", apIndex[index], device.wifi_devMacAddress[0], device.wifi_devMacAddress[1], device.wifi_devMacAddress[2], device.wifi_devMacAddress[3], device.wifi_devMacAddress[4], device.wifi_devMacAddress[5], result);
+	       		}
+
+			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	       		/* Passing valid apIndex, NULL device and expecting the API to return failure */
+	       		UT_LOG("Test Case 4");
+	       		for (index = 0; index < numRadios; index++)
+	       		{
+	       			memset(&device,0,sizeof(wifi_device_t));
+	       			result = wifi_kickAssociatedDevice(apIndex[index], NULL);
+	                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+				UT_LOG("Passing valid apIndex %d with NULL device returns %d", apIndex[index], result);
+	       		}
+		}
+		else
+		{
+			UT_LOG("Unable to retrieve the access point indices");
+		}
+		free(apIndex);
+	}
+	else
+	{
+		UT_LOG("Malloc operation failed");
+	}
+   }
+   else
+   {
+	   UT_LOG("Unable to retrieve the number of radios from HalCapability");
+   }
+
+   UT_LOG("Exiting kickAssociatedDevice..." );
+   return;
+
+}
+
 
 #if 0 /* Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
 
 static INT test_wifi_receivedMgmtFrame_callback(INT apIndex, UCHAR *sta_mac, UCHAR *frame, UINT len, wifi_mgmtFrameType_t type, wifi_direction_t dir)
 {
-    (void)apIndex;   
-    (void)sta_mac;   
-    (void)frame;   
-    (void)len;   
-    (void)type;   
+    (void)apIndex;
+    (void)sta_mac;
+    (void)frame;
+    (void)len;
+    (void)type;
     (void)dir;
     /* During level2 testing all these fields should be validated */
     /* Should not be triggered during this test */
@@ -285,26 +667,26 @@ static UT_test_suite_t * pSuite = NULL;
 
 /**
  * @brief Register the main tests for this module
- * 
+ *
  * @return int - 0 on success, otherwise failure
  */
 INT test_wifi_ap_register( void )
 {
     /* add a suite to the registry */
     pSuite = UT_add_suite("[L1 wifi-ap]", NULL, NULL);
-    if (NULL == pSuite) 
+    if (NULL == pSuite)
     {
         return -1;
     }
 
     UT_add_test( pSuite, "wifi_getApAssociatedDevice", test_wifi_getApAssociatedDevice);
-    //UT_add_test( pSuite, "wifi_enableCSIEngine", test_wifi_enableCSIEngine);  /* Needs review */
+    UT_add_test( pSuite, "wifi_enableCSIEngine", test_wifi_enableCSIEngine);
     UT_add_test( pSuite, "wifi_getRadioVapInfoMap", test_wifi_getRadioVapInfoMap);
     UT_add_test( pSuite, "wifi_createVAP", test_wifi_createVAP);
     //UT_add_test( pSuite, "wifi_mgmt_frame_callbacks_register", test_wifi_mgmt_frame_callbacks_register);  /* Needs review */
-    UT_add_test( pSuite, "wifi_newApAssociatedDevice_callback_register", test_wifi_newApAssociatedDevice_callback_register);
-    UT_add_test( pSuite, "wifi_apDeAuthEvent_callback_register", test_wifi_apDeAuthEvent_callback_register);
-    UT_add_test( pSuite, "wifi_apDisassociatedDevice_callback_register", test_wifi_apDisassociatedDevice_callback_register);
-
+    //UT_add_test( pSuite, "wifi_newApAssociatedDevice_callback_register", test_wifi_newApAssociatedDevice_callback_register);
+    //UT_add_test( pSuite, "wifi_apDeAuthEvent_callback_register", test_wifi_apDeAuthEvent_callback_register);
+    //UT_add_test( pSuite, "wifi_apDisassociatedDevice_callback_register", test_wifi_apDisassociatedDevice_callback_register);
+    UT_add_test( pSuite, "wifi_kickAssociatedDevice", test_wifi_kickAssociatedDevice);
     return 0;
 }

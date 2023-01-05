@@ -27,10 +27,11 @@
 
 #include "PreReqUtility.h"
 #include "config_parser.h"
+#include "api_translator.h"
 
 /**function to perform WiFi initialization
-*IN : None
-*OUT : returns success or failure status of WiFi initialization
+* IN : None
+* OUT : returns success or failure status of WiFi initialization
 **/
 int WiFiPreReq()
 {
@@ -43,6 +44,9 @@ int WiFiPreReq()
     wifi_hal_capability_t cap;
     wifi_radio_operationParam_t operationParam;
     int radioSuccess = 0;
+    int vapSuccess = 0;
+    int * apIndices = NULL;
+    int index = 0;
 
     /* Invoke wifi_init() */
     ret = wifi_init();
@@ -61,48 +65,82 @@ int WiFiPreReq()
 
             UT_LOG("Number of Radios : %u", numOfRadios);
 
-            /* Invoke wifi_setRadioOperatingParameters for all applicable radios */
-            for (radioIndex = 0; radioIndex < numOfRadios; radioIndex++)
+            /* Get the list of private access points corresponding to each of the supported radios */
+            apIndices = (int *)malloc( sizeof(int) * numOfRadios );
+
+            if (apIndices != NULL)
             {
-                /* Get the radio configuration */
-                ret = get_radio_config(radioIndex, &operationParam); 
+                ret = test_utils_getApIndices(numOfRadios, apIndices, PRIVATE);
 
                 if (ret == 0)
                 {
-                    UT_LOG("get_radio_config for radio %d returns : %d", radioIndex, ret);
+                    UT_LOG("Private AP Indices for the supported radios retrieved");
 
-                    ret = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
-                    if (ret == 0)
-                    {                        
-                        UT_LOG("WiFi setRadioOperatingParameters returned success");
-                        radioSuccess++;
+                    /* Invoke wifi_setRadioOperatingParameters for all applicable radios */
+                    for (radioIndex = 0; radioIndex < numOfRadios; radioIndex++, index++)
+                    {
+                        /* Get the radio configuration */
+                        ret = get_radio_config(radioIndex, &operationParam);
+
+                        if (ret == 0)
+                        {
+                            UT_LOG("get_radio_config for radio %d returns : %d", radioIndex, ret);
+
+                            ret = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                            if (ret == 0)
+                            {
+                                UT_LOG("WiFi setRadioOperatingParameters returned success");
+                                radioSuccess++;
+
+                                /* Create VAP */
+                                ret = createVAP(radioIndex, apIndices[index], PRIVATE);
+                                if (ret == 0)
+                                {
+                                    vapSuccess++;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                UT_LOG("WiFi setRadioOperatingParameters returned failure");
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            UT_LOG("Unable to parse the radio config file");
+                            UT_LOG("WiFi initialization pre-requisite failed");
+                            break;
+                        }
+                    }
+
+                    /* Check if radio set operating parameters and vap create is success for all applicable radios */
+                    if (radioSuccess == numOfRadios && vapSuccess == numOfRadios)
+                    {
+                        UT_LOG("WiFi initialization pre-requisite success");
                     }
                     else
-                    {                        
-                        UT_LOG("WiFi setRadioOperatingParameters returned failure");
-                        break;
+                    {
+                        UT_LOG("WiFi initialization pre-requisite failed");
                     }
                 }
                 else
                 {
-                    UT_LOG("Unable to parse the radio config file");
-                    UT_LOG("WiFi initialization pre-requisite failed");
-                    break;
+                    UT_LOG("Unable to retrieve the access point indices");
                 }
-            }
-
-            /* Check if radio set operating parameters is success for all applicable radios */
-            if (radioSuccess == numOfRadios)
-            {
-                UT_LOG("WiFi initialization pre-requisite success");
+                free(apIndices);
             }
             else
             {
+                UT_LOG("Malloc operation failed");
                 UT_LOG("WiFi initialization pre-requisite failed");
             }
         }
         else
-        {                        
+        {
             UT_LOG("WiFi getHalCapability returned failure");
             UT_LOG("WiFi initialization pre-requisite failed");
         }
@@ -111,9 +149,53 @@ int WiFiPreReq()
     {
         UT_LOG("WiFi init returned failure");
         UT_LOG("WiFi initialization pre-requisite failed");
-    }	
+    }
 
-    UT_LOG("Exited the the WiFi initialization pre-requisite function...");    
+    UT_LOG("Exited the the WiFi initialization pre-requisite function...");
     return ret;
 
+}
+
+/**function to create private access points
+* IN  : radioIndex for which private AP index needs to be created
+* IN  : AP index
+* IN  : Type of AP index (eg : Private, Sta)
+* OUT : returns success or failure status of AP creation
+**/
+int createVAP(int radioIndex, int apIndex, APTYPE type)
+{
+    int ret = 0;
+    wifi_vap_info_map_t map;
+
+    /* Get the vap configuration */
+    switch(type)
+    {
+        case PRIVATE :
+            ret = get_private_vap_config(apIndex, &map.vap_array[0]);
+            break;
+        case STA :
+            ret = get_mesh_sta_vap_config(apIndex, &map.vap_array[0]);
+            break;
+    }
+
+    if (ret == 0)
+    {
+        UT_LOG("get_private_vap_config for vap %d returns : %d", apIndex, ret);
+
+        map.num_vaps = 1;
+        ret = wifi_createVAP(radioIndex, &map);
+        if (ret == 0)
+        {
+            UT_LOG("WiFi create VAP returned success");
+        }
+        else
+        {
+            UT_LOG("WiFi create VAP returned failure");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to parse the vap config file");
+    }
+    return ret;
 }
