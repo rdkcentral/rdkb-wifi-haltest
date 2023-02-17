@@ -24,7 +24,8 @@
 
 // In order to get INT, BOOL Types
 #include <wifi_hal_generic.h>
-
+#include <wifi_hal_radio.h>
+#include <wifi_hal_ap.h>
 #define TEST_WIFI_HAL_VALID_SSID ("test@1234")
 
 /* #TODO -> Doxygen comments required */
@@ -61,7 +62,9 @@ typedef enum {
 } APTYPE;
 
 extern INT test_utils_getApIndices(UINT maxRadio, INT apIndices[], APTYPE type);
-
+extern INT l2_test_prerequisite();
+extern INT get_channel_list(int radioIndex, int *count, int channels[25]);
+extern INT get_channel_bandwidth(int radioIndex, int *count, wifi_channelBandwidth_t Width[5]);
 /* UTILITY FUNCTIONS END */
 
 #endif /* TEST_UTILS_H */

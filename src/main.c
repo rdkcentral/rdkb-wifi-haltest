@@ -19,9 +19,12 @@
 
 #include <ut.h>
 #include "PreReqUtility.h"
+#include "test_utils.h"
 
 extern int register_hal_l1_tests( void );
 extern int register_hal_l2_tests( void );
+wifi_radio_operationParam_t g_operationParam[3];
+wifi_vap_info_map_t g_org_map[3];
 
 int main(int argc, char** argv) 
 {
@@ -43,17 +46,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    registerReturn = register_hal_l2_tests();
-    if (registerReturn == 0)
-    {
-        printf("\nregister_hal_l2_tests() returned success");
-    }
-    else
-    {
-        printf("\nregister_hal_l2_tests() returned failure");
-        return 1;
-    }
-
     /* TODO : Can explore the possibility of doing initialization using CU_InitializeFunc and CU_add_suite */
     /* WiFi Initialization */
     preReqReturn = WiFiPreReq();
@@ -67,6 +59,27 @@ int main(int argc, char** argv)
         printf("\nWiFi Pre-Requisite not set successfully");
     }
 
+    registerReturn = register_hal_l2_tests();
+    if (registerReturn == 0)
+    {
+        printf("\nregister_hal_l2_tests() returned success");
+    }
+    else
+    {
+        printf("\nregister_hal_l2_tests() returned failure");
+        return 1;
+    }
+
+    preReqReturn = l2_test_prerequisite();
+    printf("\nL2 Pre-Requisite returns : %d", preReqReturn);
+    if (preReqReturn == 0)
+    {
+        printf("\nL2 Pre-Requisite set successfully");
+    }
+    else
+    {
+        printf("\nL2 Pre-Requisite not set successfully");
+    }    
     /* Begin test executions */
     UT_run_tests();
 
