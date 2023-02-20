@@ -28,6 +28,7 @@ ifeq ($(TARGET),)
 $(info TARGET NOT SET )
 $(info TARGET FORCED TO Linux)
 TARGET=linux
+CFLAGS = -DBUILD_LINUX
 SRC_DIRS += $(ROOT_DIR)/skeletons/src
 endif
 

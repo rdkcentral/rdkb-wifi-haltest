@@ -22,9 +22,15 @@
 
 /*Work around to test generic hal apis
 Enable below block while building for Linux target. This provides dummy definition for generic hal apis*/
-#if 0
+#if BUILD_LINUX
 INT wifi_hal_init(){return 0;}
-INT wifi_hal_getHalCapability(wifi_hal_capability_t *hal){return 0;}
+INT wifi_hal_getHalCapability(wifi_hal_capability_t *hal)
+{
+    /* To ensure that number of radios not returned as a junk value */
+    if(hal != NULL)
+        hal->wifi_prop.numRadios = 0;
+    return 0;
+}
 INT wifi_hal_connect(INT ap_index, wifi_bss_info_t *bss){return 0;}
 INT wifi_hal_setRadioOperatingParameters(wifi_radio_index_t index, wifi_radio_operationParam_t *operationParam){return 0;}
 INT wifi_hal_createVAP(wifi_radio_index_t index, wifi_vap_info_map_t *map){return 0;}
