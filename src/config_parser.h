@@ -40,3 +40,45 @@ int get_private_vap_config(int index, wifi_vap_info_t *vap_info);
 *OUT : returns success or failure status of the operation
 **/
 int get_mesh_sta_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the IOT VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold IOT VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_iot_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the mesh_backhaul VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold mesh_backhaul VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_mesh_backhaul_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the lnf_psk VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold lnf_psk VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_lnf_psk_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the lnf_radius VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold lnf_radius VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_lnf_radius_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the hotspot_open VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold hotspot_open VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_hotspot_open_vap_config(int index, wifi_vap_info_t *vap_info);
+
+/**function to read the hotspot_secure VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold hotspot_secure VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_hotspot_secure_vap_config(int index, wifi_vap_info_t *vap_info);

@@ -19,6 +19,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <arpa/inet.h>
 #include "config_parser.h"
 #include "cJSON.h"
 
@@ -538,11 +539,11 @@ static int decode_vap_common_object(cJSON *vap, wifi_vap_info_t *vap_info)
         if(decode_param_integer(vap, "WpsConfigMethodsEnabled", &param))
             return RET_ERR;
         vap_info->u.bss_info.wps.methods = param->valuedouble;
-    }
     //wpsPin
     if(decode_param_string(vap, "WpsPin", &param))
         return RET_ERR;
     strncpy(vap_info->u.bss_info.wps.pin, param->valuestring, WIFI_AP_MAX_WPSPIN_LEN-1);
+    }
 
     // BeaconRateCtl
     if(decode_param_string(vap, "BeaconRateCtl", &param))
@@ -711,12 +712,12 @@ int get_private_vap_config(int index, wifi_vap_info_t *vap_info)
                 printf("\ndecode_interworking_common_object failed");
                 break;}
 
-            printf("\nget_private_vap_config() SUCCESS \n");
+            printf("\nReading VAP config SUCCESS for VAP index %d\n",index);
          }
     }
 
     cJSON_Delete(json);
-    printf("\n get_private_vap_config() VapName: %s \n", vap_info->vap_name);
+    printf("\nExiting get vap config for VapName: %s \n", vap_info->vap_name);
     return ret;
 }
 
@@ -845,3 +846,499 @@ int get_mesh_sta_vap_config(int index, wifi_vap_info_t *vap_info)
     return ret;
 }
 
+
+/**function to read the IOT VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold IOT VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_iot_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    return get_private_vap_config(index, vap_info);
+}
+
+
+/**function to read the mesh_backhaul VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold mesh_backhaul VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_mesh_backhaul_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    return get_private_vap_config(index, vap_info);
+}
+
+
+/**function to check if an ipAddress is valid or not
+*IN : ip - ip to be decoded
+*OUT : returns success or failure status of the operation
+**/
+static int decode_ipv4_address(char *ip) {
+    struct sockaddr_in sa;
+    if (inet_pton(AF_INET,ip, &(sa.sin_addr)) != 1 ) {
+	return RET_ERR;
+    }
+    return RET_OK;
+}
+
+/**function to read the radius settings 
+*IN : radius - json radius object
+*IN : radius_info - wifi_radius_settings_t buffer to retreive radius info
+*OUT : returns success or failure status of the operation
+**/
+static int decode_radius_object(cJSON *radius, wifi_radius_settings_t *radius_info)
+{
+    cJSON *param = NULL;
+
+    //ip
+    if(decode_param_string(radius, "RadiusServerIPAddr", &param))
+	return RET_ERR;
+    if (decode_ipv4_address(param->valuestring) == RET_ERR) {
+            printf("%s:%d: Validation failed for RadiusServerIPAddr\n", __func__, __LINE__);
+            return RET_ERR;
+    }
+    #ifndef WIFI_HAL_VERSION_3_PHASE2
+    strcpy((char *)radius_info->ip,param->valuestring);
+    #else
+    /* check the INET family and update the radius ip address */
+    if(inet_pton(AF_INET, param->valuestring, &(radius_info->ip.u.IPv4addr)) > 0) {
+         radius_info->ip.family = wifi_ip_family_ipv4;
+    } else if(inet_pton(AF_INET6, param->valuestring, &(radius_info->ip.u.IPv6addr)) > 0) {
+        radius_info->ip.family = wifi_ip_family_ipv6;
+    } else {
+        printf("inet_pton() address conversion failed for RadiusServerIPAddr\n");
+        return RET_ERR;
+    }
+    #endif
+
+    //port
+    if(decode_param_integer(radius, "RadiusServerPort", &param))
+        return RET_ERR;
+    radius_info->port = param->valuedouble;
+
+    //key
+    if(decode_param_string(radius, "RadiusSecret", &param))
+        return RET_ERR;
+    strcpy(radius_info->key, param->valuestring);
+
+    //s_ip
+    if(decode_param_string(radius, "SecondaryRadiusServerIPAddr", &param))
+        return RET_ERR;
+    if (decode_ipv4_address(param->valuestring) == RET_ERR) {
+            printf("%s:%d: Validation failed for SecondaryRadiusServerIPAddr\n", __func__, __LINE__);
+	     return RET_ERR;
+    }
+    #ifndef WIFI_HAL_VERSION_3_PHASE2
+    strcpy((char *)radius_info->s_ip,param->valuestring);
+    #else
+    /* check the INET family and update the radius ip address */
+    if (inet_pton(AF_INET, param->valuestring, &(radius_info->s_ip.u.IPv4addr)) > 0) {
+        radius_info->s_ip.family = wifi_ip_family_ipv4;
+    } else if(inet_pton(AF_INET6, param->valuestring, &(radius_info->s_ip.u.IPv6addr)) > 0) {
+        radius_info->s_ip.family = wifi_ip_family_ipv6;
+    } else {
+        return RET_ERR;
+    }
+    #endif
+
+    //s_port
+    if(decode_param_integer(radius, "SecondaryRadiusServerPort", &param))
+        return RET_ERR;
+    radius_info->s_port = param->valuedouble;
+
+    //s_key
+    if(decode_param_string(radius, "SecondaryRadiusSecret", &param))
+        return RET_ERR;
+    strcpy(radius_info->s_key, param->valuestring);
+
+    //dasip
+    decode_param_string(radius, "DasServerIPAddr", &param);
+    if (decode_ipv4_address(param->valuestring) == RET_ERR) {
+            printf("%s:%d: Validation failed for DasServerIPAddr\n", __func__, __LINE__);
+            return RET_ERR;
+    }
+    if (inet_pton(AF_INET, param->valuestring, &(radius_info->dasip.u.IPv4addr)) > 0) {
+        radius_info->dasip.family = wifi_ip_family_ipv4;
+    } else if (inet_pton(AF_INET6, param->valuestring, &(radius_info->dasip.u.IPv6addr)) > 0) {
+        radius_info->dasip.family = wifi_ip_family_ipv6;
+    } else {
+        return RET_ERR;
+    }
+
+    //dasport
+    if(decode_param_integer(radius, "DasServerPort", &param))
+        return RET_ERR;
+    radius_info->dasport = param->valuedouble;
+
+    //daskey
+    if(decode_param_string(radius, "DasSecret", &param))
+        return RET_ERR;
+    strcpy(radius_info->daskey, param->valuestring);
+
+    //max_auth_attempts
+    if(decode_param_integer(radius, "MaxAuthAttempts", &param))
+        return RET_ERR;
+    radius_info->max_auth_attempts = param->valuedouble;
+
+    //blacklist_table_timeout
+    if(decode_param_integer(radius, "BlacklistTableTimeout", &param))
+        return RET_ERR;
+    radius_info->blacklist_table_timeout = param->valuedouble;
+
+    //identity_req_retry_interval
+    if(decode_param_integer(radius, "IdentityReqRetryInterval", &param))
+        return RET_ERR;
+    radius_info->identity_req_retry_interval = param->valuedouble;
+
+    //server_retries
+    if(decode_param_integer(radius, "ServerRetries", &param))
+        return RET_ERR;
+    radius_info->server_retries = param->valuedouble;
+
+    return RET_OK;
+}
+
+
+/**function to read the enterprise security object
+*IN : security - json enterprise-security object
+*IN : security_info - wifi_vap_security_t buffer to retreive security nfo
+*OUT : returns success or failure status of the operation
+**/
+static int decode_enterprise_security_object(cJSON *security, wifi_vap_security_t *security_info)
+{
+    cJSON *param = NULL;
+
+    //Mode
+    if(decode_param_string(security, "Mode", &param))
+        return RET_ERR;
+    if ((strcmp(param->valuestring, "WPA2-Enterprise") != 0) && (strcmp(param->valuestring, "WPA-WPA2-Enterprise") != 0)) {
+        printf("%s:%d: WiFi VAP security is not WPA2 Eneterprise, value:%s\n",
+            __func__, __LINE__, param->valuestring);
+        return RET_ERR;
+    }
+    if (strcmp(param->valuestring, "WPA2-Enterprise") == 0) {
+        security_info->mode = wifi_security_mode_wpa2_enterprise;
+    } else {
+        security_info->mode = wifi_security_mode_wpa_wpa2_enterprise;
+    }
+
+    //encr
+    if(decode_param_string(security, "EncryptionMethod", &param))
+        return RET_ERR;
+    if ((strcmp(param->valuestring, "AES") != 0) && (strcmp(param->valuestring, "AES+TKIP") != 0)) {
+        printf("%s:%d: WiFi VAP Encrytpion mode is Invalid:%s\n",
+                    __func__, __LINE__, param->valuestring);
+        return RET_ERR;
+    }
+    if (strcmp(param->valuestring, "AES") == 0) {
+        security_info->encr = wifi_encryption_aes;
+    } else {
+        security_info->encr = wifi_encryption_aes_tkip;
+    }
+
+    // MFPConfig
+    if(decode_param_string(security, "MFPConfig", &param))
+        return RET_ERR;
+    if ((strcmp(param->valuestring, "Disabled") != 0)
+        && (strcmp(param->valuestring, "Required") != 0)
+        && (strcmp(param->valuestring, "Optional") != 0)) {
+        printf("%s:%d: MFPConfig not valid, value:%s\n",
+                        __func__, __LINE__, param->valuestring);
+        return RET_ERR;
+    }
+    if (strstr(param->valuestring, "Disabled")) {
+        security_info->mfp = wifi_mfp_cfg_disabled;
+    } else if (strstr(param->valuestring, "Required")) {
+        security_info->mfp = wifi_mfp_cfg_required;
+    } else if (strstr(param->valuestring, "Optional")) {
+        security_info->mfp = wifi_mfp_cfg_optional;
+    }
+
+    //Wpa3_transition_disable
+    if(decode_param_bool(security, "Wpa3_transition_disable", &param))
+        return RET_ERR;
+    security_info->wpa3_transition_disable =  (param->type & cJSON_True) ? TRUE:FALSE;
+
+    //rekey_interval
+    if(decode_param_integer(security, "RekeyInterval", &param))
+        return RET_ERR;
+    security_info->rekey_interval = param->valuedouble;
+
+    //strict_rekey
+    if(decode_param_bool(security, "StrictRekey", &param))
+        return RET_ERR;
+    security_info->strict_rekey =  (param->type & cJSON_True) ? TRUE:FALSE;
+
+    //eapol_key_timeout
+    if(decode_param_integer(security, "EapolKeyTimeout", &param))
+        return RET_ERR;
+    security_info->eapol_key_timeout = param->valuedouble;
+
+    //eapol_key_retries
+    if(decode_param_integer(security, "EapolKeyRetries", &param))
+        return RET_ERR;
+    security_info->eapol_key_retries = param->valuedouble;
+
+    //eap_identity_req_timeout
+    if(decode_param_integer(security, "EapIdentityReqTimeout", &param))
+        return RET_ERR;
+    security_info->eap_identity_req_timeout = param->valuedouble;
+
+    //eap_identity_req_retries
+    if(decode_param_integer(security, "EapIdentityReqRetries", &param))
+        return RET_ERR;
+    security_info->eap_identity_req_retries = param->valuedouble;
+
+    //eap_req_timeout
+    if(decode_param_integer(security, "EapReqTimeout", &param))
+        return RET_ERR;
+    security_info->eap_req_timeout = param->valuedouble;
+
+    //eap_req_retries
+    if(decode_param_integer(security, "EapReqRetries", &param))
+        return RET_ERR;
+    security_info->eap_req_retries = param->valuedouble;
+
+     //disable_pmksa_caching
+    if(decode_param_bool(security, "DisablePmksaCaching", &param))
+        return RET_ERR;
+    security_info->disable_pmksa_caching = (param->type & cJSON_True) ? TRUE:FALSE;
+
+    //radius
+    if(decode_param_object(security, "RadiusSettings", &param))
+        return RET_ERR;
+    if (decode_radius_object(param, &security_info->u.radius) != 0) {
+        printf("%s:%d: Validation failed\n", __func__, __LINE__);
+        return RET_ERR;
+    }
+    return RET_OK;
+}
+
+
+/**function to read open-security object
+*IN : security - json open-security object
+*IN : security_info - wifi_vap_security_t buffer to retreive security nfo
+*OUT : returns success or failure status of the operation
+**/
+static int decode_no_security_object(cJSON *security, wifi_vap_security_t *security_info)
+{
+    cJSON *param = NULL;
+
+    //mode
+    if(decode_param_string(security, "Mode", &param))
+	return RET_ERR;
+    if (strcmp(param->valuestring, "None") != 0) {
+        printf("%s:%d: Decode error for open security object\n", __func__, __LINE__);
+	return RET_ERR;
+    }
+    security_info->mode = wifi_security_mode_none;
+
+    //radius
+    if(decode_param_object(security, "RadiusSettings", &param))
+	return RET_ERR;
+    if (decode_radius_object(param, &security_info->u.radius) != 0) {
+        printf("%s:%d: Validation failed for open_radius_object\n", __func__, __LINE__);
+	return RET_ERR;
+    }
+    return RET_OK;
+}
+
+/**function to read the hotspot_open VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold hotspot_open VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_hotspot_open_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    cJSON *obj_vaps = NULL;
+    cJSON *json = NULL;
+    cJSON *obj_vap = NULL;
+    cJSON *param = NULL;
+    cJSON *security = NULL;
+    cJSON *interworking = NULL;
+    int ret = RET_OK;
+
+    json = config_to_json(VAP_CONFIG);
+    if (json == NULL)
+    {
+        printf("Failed to parse config\n");
+        return RET_ERR;
+    }
+    obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
+    if (!cJSON_IsArray(obj_vaps))
+    {
+        printf("VAP object not present or incorrect number of VAP objects\n");
+        cJSON_Delete(json);
+        return RET_ERR;
+    }
+
+    cJSON_ArrayForEach(obj_vap, obj_vaps)
+    {
+        param = cJSON_GetObjectItem(obj_vap, "VapIndex");
+        if(param && (cJSON_IsNumber(param)) && param->valueint == index)
+        {
+            ret = decode_vap_common_object(obj_vap, vap_info);
+            if(ret == RET_ERR){
+                printf("\ndecode_vap_common_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Security", &security))
+                break;
+            ret = decode_no_security_object(security, &vap_info->u.bss_info.security);
+            if(ret == RET_ERR){
+                printf("\ndecode_no_security_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Interworking", &interworking))
+                break;
+            ret = decode_interworking_common_object(interworking, &vap_info->u.bss_info.interworking);
+            if(ret == RET_ERR){
+                printf("\ndecode_interworking_common_object failed");
+                break;}
+
+            printf("\nget_hotspot_open_vap_config() SUCCESS \n");
+         }
+    }
+
+    cJSON_Delete(json);
+    printf("\n get_hotspot_open_vap_config() VAPName: %s \n", vap_info->vap_name);
+    return ret;
+}
+
+/**function to read the hotspot_secure VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold hotspot_secure VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_hotspot_secure_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    cJSON *obj_vaps = NULL;
+    cJSON *json = NULL;
+    cJSON *obj_vap = NULL;
+    cJSON *param = NULL;
+    cJSON *security = NULL;
+    cJSON *interworking = NULL;
+    int ret = RET_OK;
+
+    json = config_to_json(VAP_CONFIG);
+    if (json == NULL)
+    {
+        printf("Failed to parse config\n");
+        return RET_ERR;
+    }
+    obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
+    if (!cJSON_IsArray(obj_vaps))
+    {
+        printf("VAP object not present or incorrect number of VAP objects\n");
+        cJSON_Delete(json);
+        return RET_ERR;
+    }
+
+    cJSON_ArrayForEach(obj_vap, obj_vaps)
+    {
+        param = cJSON_GetObjectItem(obj_vap, "VapIndex");
+        if(param && (cJSON_IsNumber(param)) && param->valueint == index)
+        {
+            ret = decode_vap_common_object(obj_vap, vap_info);
+            if(ret == RET_ERR){
+                printf("\ndecode_vap_common_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Security", &security))
+                break;
+            ret = decode_enterprise_security_object(security, &vap_info->u.bss_info.security);
+            if(ret == RET_ERR){
+                printf("\ndecode_enterprise_security_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Interworking", &interworking))
+                break;
+            /*for MVP, skipping passpoint/anqp object parsing as per Dev i/p */
+            //ret = decode_interworking_object(interworking, &vap_info->u.bss_info.interworking);
+            ret = decode_interworking_common_object(interworking, &vap_info->u.bss_info.interworking);
+            if(ret == RET_ERR){
+                printf("\ndecode_interworking_object failed");
+                break;}
+
+            printf("\nget_hotspot_secure_vap_config() SUCCESS \n");
+         }
+    }
+
+    cJSON_Delete(json);
+    printf("\n get_hotspot_secure_vap_config() VAPName: %s \n", vap_info->vap_name);
+    return ret;
+}
+
+
+/**function to read the lnf_psk VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold lnf_psk VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_lnf_psk_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    return get_private_vap_config(index, vap_info);
+}
+
+
+/**function to read the lnf_radius VAP configuration from json config file
+*IN : index - VAP index
+*IN : vap_info - the buffer to hold lnf_radius VAP config
+*OUT : returns success or failure status of the operation
+**/
+int get_lnf_radius_vap_config(int index, wifi_vap_info_t *vap_info)
+{
+    cJSON *obj_vaps = NULL;
+    cJSON *json = NULL;
+    cJSON *obj_vap = NULL;
+    cJSON *param = NULL;
+    cJSON *security = NULL;
+    cJSON *interworking = NULL;
+    int ret = RET_OK;
+
+    json = config_to_json(VAP_CONFIG);
+    if (json == NULL)
+    {
+        printf("Failed to parse config\n");
+        return RET_ERR;
+    }
+    obj_vaps = cJSON_GetObjectItem(json, "WifiVapConfig");
+    if (!cJSON_IsArray(obj_vaps))
+    {
+        printf("VAP object not present or incorrect number of VAP objects\n");
+        cJSON_Delete(json);
+        return RET_ERR;
+    }
+
+    cJSON_ArrayForEach(obj_vap, obj_vaps)
+    {
+        param = cJSON_GetObjectItem(obj_vap, "VapIndex");
+        if(param && (cJSON_IsNumber(param)) && param->valueint == index)
+        {
+            ret = decode_vap_common_object(obj_vap, vap_info);
+            if(ret == RET_ERR){
+                printf("\ndecode_vap_common_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Security", &security))
+                break;
+            ret = decode_enterprise_security_object(security, &vap_info->u.bss_info.security);
+            if(ret == RET_ERR){
+                printf("\ndecode_enterprise_security_object failed");
+                break;}
+
+            if(decode_param_object(obj_vap, "Interworking", &interworking))
+                break;
+            ret = decode_interworking_common_object(interworking, &vap_info->u.bss_info.interworking);
+            if(ret == RET_ERR){
+                printf("\ndecode_interworking_common_object failed");
+                break;}
+
+            printf("\nget_lnf_radius_vap_config() SUCCESS \n");
+         }
+    }
+
+    cJSON_Delete(json);
+    printf("\n get_lnf_radius_vap_config() VAPName: %s \n", vap_info->vap_name);
+    return ret;
+}

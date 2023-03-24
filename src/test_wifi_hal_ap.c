@@ -573,6 +573,2140 @@ void test_wifi_kickAssociatedDevice(void)
 
 }
 
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for PRIVATE ap_indices with security mode as wpa3-personal, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_private_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_private_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+	/* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-personal, Isolation Enabled as FALSE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of private access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+		    /* Get the vap configuration */
+                    returnStatus = get_private_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        UT_LOG("get_private_vap_config for vap %d returns : %d", apIndices[index], returnStatus);
+
+                        /* Initialize the values to be set */
+			tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-PERSONAL and disable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_personal;
+                        tmp_map.vap_array[0].u.bss_info.isolation = FALSE;
+
+			UT_LOG("Setting the security mode to wpa3-personal and Isolation Enabled as FALSE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-personal, Isolation Enabled as FALSE using wifi_createVAP for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+			/* Setting the config back to default values */
+			result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+	    }
+	    else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_private_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing wifi_createVAP() Invoke wifi_createVAP for PRIVATE ap_indices with security mode as wpa3-transition, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_private_valid_tc2(void)
+{
+    UT_LOG("Entering test_createVAP_private_valid_tc2...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-transition, Isolation Enabled as FALSE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of private access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_private_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        UT_LOG("get_private_vap_config for vap %d returns : %d", apIndices[index], returnStatus);
+
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-TRANSITION and disable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_transition;
+                        tmp_map.vap_array[0].u.bss_info.isolation = FALSE;
+
+                        UT_LOG("Setting the security mode to wpa3-transition and Isolation Enabled as FALSE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-transition, Isolation Enabled as FALSE using wifi_createVAP for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_private_valid_tc2...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing wifi_createVAP for PRIVATE ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_private_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_private_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and verify if API return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of private access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, PRIVATE);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_private_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        UT_LOG("get_private_vap_config for vap %d returns : %d", apIndices[index], returnStatus);
+
+                        /* Initialize the values to be set */
+			tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+			/* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_enterprise;
+
+                        UT_LOG("Setting the invalid security mode wpa2-enterprise");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+			if(result == WIFI_HAL_SUCCESS)
+		        {
+			    /* Setting the config back to default values */
+			    result = wifi_createVAP(radioIndex, &org_map);
+			    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+			    UT_LOG("Setting the config back to default values for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+			}
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_private_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for STA ap_indices with security mode as wpa2-personal and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_meshsta_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_meshsta_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa2-personal and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of STA access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, STA);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+		{
+		     /* Get the vap configuration */
+                    returnStatus = get_mesh_sta_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+		        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+			/* Set security mode as WPA2-PERSONAL */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_personal;
+
+                        UT_LOG("Setting the security mode to wpa2-personal");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa2-personal using wifi_createVAP for sta ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for sta ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result); 
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_meshsta_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing wifi_createVAP() Invoke wifi_createVAP for STA ap_indices with security mode as wpa3-transition and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_meshsta_valid_tc2(void)
+{
+    UT_LOG("Entering test_createVAP_meshsta_valid_tc2...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-transition and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of STA access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, STA);
+
+            if (returnStatus == 0)
+            {
+               for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_sta_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+			tmp_map = org_map;
+			tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-TRANSITION  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_transition;
+
+                        UT_LOG("Setting the security mode to wpa3-transition");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-transition using wifi_createVAP for sta ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for sta ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result); 
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_meshsta_valid_tc2...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing wifi_createVAP() Invoke wifi_createVAP for STA ap_indices with security mode as wpa3-personal and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_meshsta_valid_tc3(void)
+{
+    UT_LOG("Entering test_createVAP_meshsta_valid_tc3...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-personal and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of STA access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, STA);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_sta_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-PERSONAL  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_personal;
+
+                        UT_LOG("Setting the security mode to wpa3-personal");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-personal using wifi_createVAP for sta ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+		        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for sta ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_meshsta_valid_tc3...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing wifi_createVAP for STA ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_meshsta_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_meshsta_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and verify if API return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of STA access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, STA);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_sta_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa_enterprise;
+
+                        UT_LOG("Setting the invalid security mode wpa-enterprise");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for sta ap_index %d of radio %d returns : %d", radioIndex, apIndices[index], result);
+
+                        if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_meshsta_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with security mode as wpa2-personal, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_iot_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_iot_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa2-personal, Isolation Enabled as FALSE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of IOT access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, IOT);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_iot_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA2-PERSONAL and disable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_personal;
+                        tmp_map.vap_array[0].u.bss_info.isolation = FALSE;
+
+                        UT_LOG("Setting the security mode as wpa2-personal and Isolation Enabled as FALSE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa2-personal, Isolation Enabled as FALSE using wifi_createVAP for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_iot_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with security mode as wpa3-transition, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_iot_valid_tc2(void)
+{
+    UT_LOG("Entering test_createVAP_iot_valid_tc2...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-transition, Isolation Enabled as FALSE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of IOT access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, IOT);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_iot_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+			tmp_map = org_map;
+			tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-TRANSITION and disable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_transition;
+                        tmp_map.vap_array[0].u.bss_info.isolation = FALSE;
+
+                        UT_LOG("Setting the security mode as wpa3-transition and Isolation Enabled as FALSE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-transition, Isolation Enabled as FALSE using wifi_createVAP for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_iot_valid_tc2...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with security mode as wpa3-personal, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_iot_valid_tc3(void)
+{
+    UT_LOG("Entering test_createVAP_iot_valid_tc3...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-personal, Isolation Enabled as FALSE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of IOT access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, IOT);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_iot_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-PERSONAL and disable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_personal;
+                        tmp_map.vap_array[0].u.bss_info.isolation = FALSE;
+
+                        UT_LOG("Setting the security mode as wpa3-personal and Isolation Enabled as FALSE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-personal, Isolation Enabled as FALSE using wifi_createVAP for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_iot_valid_tc3...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_iot_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_iot_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of IOT access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, IOT);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_iot_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+			/* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_enterprise;
+
+                        UT_LOG("Setting the invalid security mode wpa3-enterprise");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for iot ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+			if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_iot_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with security mode as wpa2-personal, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_backhaul_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_backhaul_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa2-personal, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of backhaul access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, BACKHAUL);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_backhaul_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+			tmp_map = org_map;
+			tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA2-PERSONAL and enable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_personal;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting the security mode as wpa2-personal and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa2-personal, Isolation Enabled as TRUE using wifi_createVAP for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+			/* Setting the config back to default values */
+			result = wifi_createVAP(radioIndex, &org_map);
+			UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+			UT_LOG("Setting the config back to default values for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_backhaul_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with security mode as wpa3-transition, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_backhaul_valid_tc2(void)
+{
+    UT_LOG("Entering test_createVAP_backhaul_valid_tc2...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-transition, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of backhaul access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, BACKHAUL);
+
+	    if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_backhaul_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+	                tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA3-TRANSITION and enable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_transition;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting the security mode as wpa3-transition and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-transition, Isolation Enabled as TRUE using wifi_createVAP for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_backhaul_valid_tc2...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with security mode as wpa3-personal, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_backhaul_valid_tc3(void)
+{
+    UT_LOG("Entering test_createVAP_backhaul_valid_tc3...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa3-personal, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of backhaul access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, BACKHAUL);
+
+	    if (returnStatus == 0)
+            {
+               for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_backhaul_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+			tmp_map = org_map;
+			tmp_map.num_vaps = 1;
+			/* Set security mode as WPA3-PERSONAL and enable isolation  */
+			tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_personal;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting the security mode as wpa3-personal and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa3-personal, Isolation Enabled as TRUE using wifi_createVAP for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_backhaul_valid_tc3...");
+    return;
+}	
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_backhaul_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_backhaul_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of backhaul access points corresponding to each of the supported radios */
+	    returnStatus = test_utils_getApIndices(numRadios, apIndices, BACKHAUL);
+
+	    if (returnStatus == 0)
+            {
+               for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_mesh_backhaul_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa_wpa2_enterprise;
+
+                        UT_LOG("Setting the invalid security mode wpa-wpa2-enterprise");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for backhaul ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+			if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for private ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_backhaul_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-PSK ap_indices with security mode as wpa2-personal, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_lnfpsk_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_lnfpsk_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa2-personal, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of LNF-PSK access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, LNF_PSK);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_lnf_psk_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA2-PERSONAL and disable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_personal;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting the security mode as wpa2-personal and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa2-personal, Isolation Enabled as TRUE using wifi_createVAP for lnf_psk ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for lnf_psk ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_lnfpsk_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-PSK ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_lnfpsk_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_lnfpsk_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of LNF-PSK access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, LNF_PSK);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_lnf_psk_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa_enterprise;
+
+                        UT_LOG("Setting the invalid security mode wpa-enterprise");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for lnf_psk ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for lnf_psk ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_lnfpsk_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-RADIUS ap_indices with security mode as wpa2-enterprise, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_lnfradius_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_lnfradius_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa2-enterprise, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of LNF-RADIUS access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, LNF_RADIUS);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_lnf_radius_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA2-ENTERPRISE and enable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_enterprise;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting the security mode as wpa2-enterprise and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa2-enterprise, Isolation Enabled as TRUE using wifi_createVAP for lnf_radius ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for lnf_radius ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_lnfradius_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-RADIUS ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_lnfradius_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_lnfradius_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of LNF-RADIUS access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, LNF_RADIUS);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_lnf_radius_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa_personal;
+
+                        UT_LOG("Setting the invalid security mode wpa-personal");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for lnf_radius ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for lnf_radius ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_lnfradius_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-OPEN ap_indices with security mode as none, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_hotspotopen_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_hotspotopen_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as none, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of HOTSPOT-OPEN access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, HOTSPOT_OPEN);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_hotspot_open_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as NONE and enable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_none;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting security mode as none and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as none, Isolation Enabled as TRUE using wifi_createVAP for hotspot_open ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for hotspot_open ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_hotspotopen_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-OPEN ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_hotspotopen_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_hotspotopen_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of HOTSPOT-OPEN access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, HOTSPOT_OPEN);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_hotspot_open_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_personal;
+
+                        UT_LOG("Setting the invalid security mode wpa3-personal");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for hotspot_open ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for hotspot_open ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_hotspotopen_invalid...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-SECURE ap_indices with security mode as wpa2-enterprise, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_hotspotsecure_valid_tc1(void)
+{
+    UT_LOG("Entering test_createVAP_hotspotsecure_valid_tc1...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting security mode as wpa2-enterprise, Isolation Enabled as TRUE and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of HOTSPOT-SECURE access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, HOTSPOT_SECURE);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_hotspot_secure_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set security mode as WPA2-ENTERPRISE and enable isolation  */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa2_enterprise;
+                        tmp_map.vap_array[0].u.bss_info.isolation = TRUE;
+
+                        UT_LOG("Setting the security mode as wpa2-enterprise and Isolation Enabled as TRUE");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting security mode as wpa2-enterprise, Isolation Enabled as TRUE using wifi_createVAP for hotspot_secure ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        /* Setting the config back to default values */
+                        result = wifi_createVAP(radioIndex, &org_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                        UT_LOG("Setting the config back to default values for hotspot_secure ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_hotspotsecure_valid_tc1...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-SECURE ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_createVAP_hotspotsecure_invalid(void)
+{
+    UT_LOG("Entering test_createVAP_hotspotsecure_invalid...");
+
+    int * apIndices = NULL;
+    int index = 0;
+    int result = 0;
+    int radioIndex = 0;
+    int returnStatus = 0;
+    wifi_vap_info_map_t  tmp_map, org_map;
+    unsigned int numRadios = 0;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid security mode and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        /* Allocate memory to store the apIndices */
+        apIndices = (int *)malloc( sizeof(int) * numRadios );
+
+        if (apIndices != NULL)
+        {
+            /* Get the list of HOTSPOT-SECURE access points corresponding to each of the supported radios */
+            returnStatus = test_utils_getApIndices(numRadios, apIndices, HOTSPOT_SECURE);
+
+            if (returnStatus == 0)
+            {
+                for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
+                {
+                    /* Get the vap configuration */
+                    returnStatus = get_hotspot_secure_vap_config(apIndices[index], &org_map.vap_array[0]);
+                    if (returnStatus == 0)
+                    {
+                        /* Initialize the values to be set */
+                        tmp_map = org_map;
+                        tmp_map.num_vaps = 1;
+                        /* Set invalid security mode */
+                        tmp_map.vap_array[0].u.bss_info.security.mode = wifi_security_mode_wpa3_personal;
+
+                        UT_LOG("Setting the invalid security mode wpa3-personal");
+                        result = wifi_createVAP(radioIndex, &tmp_map);
+                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                        UT_LOG("Setting invalid security mode using wifi_createVAP for hotspot_secure ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+
+                        if(result == WIFI_HAL_SUCCESS)
+                        {
+                            /* Setting the config back to default values */
+                            result = wifi_createVAP(radioIndex, &org_map);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                            UT_LOG("Setting the config back to default values for hotspot_secure ap_index %d of radio %d returns : %d", apIndices[index], radioIndex, result);
+                        }
+                    }
+                    else
+                    {
+                        UT_LOG("Unable to parse the vap config file");
+                    }
+                }
+            }
+            else
+            {
+                UT_LOG("Unable to retrieve the access point indices");
+            }
+            free(apIndices);
+        }
+        else
+        {
+            UT_LOG("Malloc operation failed");
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_createVAP_hotspotsecure_invalid...");
+    return;
+}
 
 #if 0 /* Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
 
@@ -688,5 +2822,29 @@ INT test_wifi_ap_register( void )
     //UT_add_test( pSuite, "wifi_apDeAuthEvent_callback_register", test_wifi_apDeAuthEvent_callback_register);
     //UT_add_test( pSuite, "wifi_apDisassociatedDevice_callback_register", test_wifi_apDisassociatedDevice_callback_register);
     UT_add_test( pSuite, "wifi_kickAssociatedDevice", test_wifi_kickAssociatedDevice);
+    UT_add_test( pSuite, "private_valid_tc1", test_createVAP_private_valid_tc1);
+    UT_add_test( pSuite, "private_valid_tc2", test_createVAP_private_valid_tc2);
+    UT_add_test( pSuite, "private_invalid", test_createVAP_private_invalid);
+    UT_add_test( pSuite, "meshsta_valid_tc1", test_createVAP_meshsta_valid_tc1);
+    UT_add_test( pSuite, "meshsta_valid_tc2", test_createVAP_meshsta_valid_tc2);
+    UT_add_test( pSuite, "meshsta_valid_tc3", test_createVAP_meshsta_valid_tc3);
+    UT_add_test( pSuite, "meshsta_invalid", test_createVAP_meshsta_invalid);
+    UT_add_test( pSuite, "iot_valid_tc1", test_createVAP_iot_valid_tc1);
+    UT_add_test( pSuite, "iot_valid_tc2", test_createVAP_iot_valid_tc2);
+    UT_add_test( pSuite, "iot_valid_tc3", test_createVAP_iot_valid_tc3);
+    UT_add_test( pSuite, "iot_invalid", test_createVAP_iot_invalid);
+    UT_add_test( pSuite, "backhaul_valid_tc1", test_createVAP_backhaul_valid_tc1);
+    UT_add_test( pSuite, "backhaul_valid_tc2", test_createVAP_backhaul_valid_tc2);
+    UT_add_test( pSuite, "backhaul_valid_tc3", test_createVAP_backhaul_valid_tc3);
+    UT_add_test( pSuite, "backhaul_invalid", test_createVAP_backhaul_invalid);
+    UT_add_test( pSuite, "lnfpsk_valid_tc1", test_createVAP_lnfpsk_valid_tc1);
+    UT_add_test( pSuite, "lnfpsk_invalid", test_createVAP_lnfpsk_invalid);
+    UT_add_test( pSuite, "lnfradius_valid_tc1", test_createVAP_lnfradius_valid_tc1);
+    UT_add_test( pSuite, "lnfradius_invalid", test_createVAP_lnfradius_invalid);
+    UT_add_test( pSuite, "hotspotopen_valid_tc1", test_createVAP_hotspotopen_valid_tc1);
+    UT_add_test( pSuite, "hotspotopen_invalid", test_createVAP_hotspotopen_invalid);
+    UT_add_test( pSuite, "hotspotsecure_valid_tc1", test_createVAP_hotspotsecure_valid_tc1);
+    UT_add_test( pSuite, "hotspotsecure_invalid", test_createVAP_hotspotsecure_invalid);
+
     return 0;
 }

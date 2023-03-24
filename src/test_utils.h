@@ -58,7 +58,13 @@ extern INT test_utils_getMaxNumberOfRadio(UINT *maxRadio);
 /* GET ACCESS POINT INDICES */
 typedef enum {
     PRIVATE,
-    STA
+    STA,
+    IOT,
+    BACKHAUL,
+    LNF_PSK,
+    LNF_RADIUS,
+    HOTSPOT_OPEN,
+    HOTSPOT_SECURE
 } APTYPE;
 
 extern INT test_utils_getApIndices(UINT maxRadio, INT apIndices[], APTYPE type);

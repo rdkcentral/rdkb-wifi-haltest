@@ -311,6 +311,354 @@ void test_radio_wifi_setRadioOperatingParameters(void)
 
 }
 
+/**
+ * @brief Tests requirements for L1 testing for setting valid channel values using wifi_setRadioOperatingParameters() and verify if it returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_setRadioOperatingParameters_valid_channel(void)
+{
+    UT_LOG("Entering test_setRadioOperatingParameters_valid_channel...");
+
+    int result = 0, returnStatus = 0, radioIndex = 0, column = 0, row = 0;
+    unsigned int numRadios = 0;
+    unsigned int ch_numbers[4][2] = {{3, 44}, {6, 116}, {9, 144}, {11, 157}};
+    wifi_radio_operationParam_t operationParam, tmp_radio;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Postive Test WIFI_HAL_SUCCESS */
+        /* Setting valid channel number and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            /* Get the radio configuration */
+            returnStatus = get_radio_config(radioIndex, &operationParam);
+            if (returnStatus == 0)
+            {
+                for(row = 0; row < 4; row++)
+                {
+                    column = radioIndex;
+                    tmp_radio = operationParam;
+                    tmp_radio.channel = ch_numbers[row][column];
+                    UT_LOG("Setting valid channel number %d", tmp_radio.channel);
+                    result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                    UT_LOG("Setting valid channel numbers for radio %d returns : %d", radioIndex, result);
+                }
+
+                /* Setting the config back to default values */
+                result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                UT_LOG("wifi_setRadioOperatingParameters after setting back to default values for radio %d returns : %d", radioIndex, result);
+            }
+            else
+            {
+                UT_LOG("Unable to parse the radio config file");
+            }
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_setRadioOperatingParameters_valid_channel...");
+    return;
+}
+
+static int convert_channelwidth_to_string(wifi_channelBandwidth_t width, char *chWidth)
+{
+    if( width == WIFI_CHANNELBANDWIDTH_20MHZ )
+    {
+        strcpy(chWidth, "20");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_40MHZ )
+    {
+        strcpy(chWidth, "40");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_80MHZ )
+    {
+        strcpy(chWidth, "80");
+    }
+    else
+    {
+        return -1;
+    }
+    return 0;
+}
+
+/**
+ * @brief Tests requirements for L1 testing for setting valid channelwidth value using wifi_setRadioOperatingParameters() and verify if it returns WIFI_HAL_SUCCESS
+ *
+ * Test Coverage: Positive Scenario
+ *
+ * @retval WIFI_HAL_SUCCESS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_setRadioOperatingParameters_valid_channelwidth(void)
+{
+    UT_LOG("Entering test_setRadioOperatingParameters_valid_channelwidth...");
+
+    int result = 0;
+    int returnStatus = 0;
+    int radioIndex = 0;
+    int i = 0;
+    unsigned int numRadios = 0;
+    char chWidth[10] = {'\0'};
+    wifi_radio_operationParam_t operationParam, tmp_radio;
+    wifi_channelBandwidth_t width[3] = {WIFI_CHANNELBANDWIDTH_20MHZ, WIFI_CHANNELBANDWIDTH_40MHZ, WIFI_CHANNELBANDWIDTH_80MHZ};
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Positive Test WIFI_HAL_SUCCESS */
+        /* Setting valid channel width and expecting the API to return success */
+        UT_LOG("Test Case 1");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            /* Get the radio configuration */
+            returnStatus = get_radio_config(radioIndex, &operationParam);
+            if (returnStatus == 0)
+            {
+                for(i = 0; i < 3; i++)
+                {
+                    /* Skip setting WIFI_CHANNELBANDWIDTH_80MHZ for radio 0 since its not a supported value */
+                    if( (radioIndex == 0) && (i == 2))
+                        break;
+                    /* Positive Test WIFI_HAL_SUCCESS */
+                    /* Setting valid channel bandwidth 40MHz and expecting the API to return success */
+                    tmp_radio = operationParam;
+                    tmp_radio.channelWidth = width[i];
+
+		    convert_channelwidth_to_string(tmp_radio.channelWidth, chWidth);
+                    UT_LOG("Setting channelWidth to %sMHz using setRadioOperatingParameters", chWidth);
+
+                    result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                    UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
+		}
+
+                /* Setting the config back to default values */
+                result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                UT_LOG("wifi_setRadioOperatingParameters after setting back to default values for radio %d returns : %d", radioIndex, result);
+            }
+            else
+            {
+                UT_LOG("Unable to parse the radio config file");
+            }
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_setRadioOperatingParameters_valid_channelwidth...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing for setting invalid channelwidth values using wifi_setRadioOperatingParameters() and verify if it returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_setRadioOperatingParameters_invalid_channelwidth(void)
+{
+    UT_LOG("Entering test_setRadioOperatingParameters_invalid_channelwidth...");
+
+    int result = 0;
+    int returnStatus = 0;
+    int radioIndex = 0;
+    unsigned int numRadios = 0;
+    wifi_radio_operationParam_t operationParam, tmp_radio;
+    wifi_channelBandwidth_t positive_width = 400;
+    wifi_channelBandwidth_t negative_width = -20;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid channel width and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            /* Get the radio configuration */
+            returnStatus = get_radio_config(radioIndex, &operationParam);
+            if (returnStatus == 0)
+            {
+	        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	        /* Setting invalid positive channel bandwidth 400 and expecting the API to return failure */
+	        UT_LOG("Test case 1");
+                tmp_radio = operationParam;
+                tmp_radio.channelWidth = positive_width;
+                UT_LOG("Setting channelWidth to %d using setRadioOperatingParameters", tmp_radio.channelWidth);
+
+		result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+		UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+		UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
+
+                if(result == WIFI_HAL_SUCCESS)
+                {
+                    /* Setting the config back to default values */
+                    result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                    UT_LOG("wifi_setRadioOperatingParameters after setting back to default values for radio %d returns : %d", radioIndex, result);
+                }
+
+                /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+                /* Setting invalid negative channel bandwidth -20 and expecting the API to return failure */
+                UT_LOG("Test case 2");
+                tmp_radio = operationParam;
+                tmp_radio.channelWidth = negative_width;
+                UT_LOG("Setting channelWidth to %d using setRadioOperatingParameters", tmp_radio.channelWidth);
+
+                result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
+
+                if(result == WIFI_HAL_SUCCESS)
+                {
+                    /* Setting the config back to default values  */
+                    result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                    UT_LOG("wifi_setRadioOperatingParameters after setting back to default values for radio %d returns : %d", radioIndex, result);
+                }		
+            }
+            else
+            {
+                UT_LOG("Unable to parse the radio config file");
+            }
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_setRadioOperatingParameters_invalid_channelwidth...");
+    return;
+}
+
+/**
+ * @brief Tests requirements for L1 testing for setting invalid channel values using wifi_setRadioOperatingParameters() and verify if it returns WIFI_HAL_INVALID_ARGUMENTS
+ *
+ * Test Coverage: Negative Scenario
+ *
+ * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
+ *
+ * @Note hal api is Synchronous
+ */
+
+void test_setRadioOperatingParameters_invalid_channel(void)
+{
+    UT_LOG("Entering test_setRadioOperatingParameters_invalid_channel...");
+
+    int result = 0;
+    int returnStatus = 0;
+    int radioIndex = 0;
+    unsigned int numRadios = 0;
+    wifi_radio_operationParam_t operationParam, tmp_radio;
+    unsigned int positive_channel = 250;
+    unsigned int negative_channel = -36;
+
+    /* Get the number of radios applicable */
+    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+
+    if (returnStatus == 0)
+    {
+        UT_LOG("Number of Radios : %u", numRadios);
+
+        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+        /* Setting invalid channel and expecting the API to return failure */
+        UT_LOG("Test Case 1");
+
+        for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
+        {
+            /* Get the radio configuration */
+            returnStatus = get_radio_config(radioIndex, &operationParam);
+            if (returnStatus == 0)
+            {
+	        /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
+	        /* Setting invalid positive channel 250 and expecting the API to return failure */
+	        UT_LOG("Test case 1");
+                tmp_radio = operationParam;
+                tmp_radio.channel = positive_channel;
+                UT_LOG("Setting channel to %d using setRadioOperatingParameters", tmp_radio.channel);
+
+                result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
+
+                if(result == WIFI_HAL_SUCCESS)
+                {
+                    /* Setting the config back to default values */
+                    result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                    UT_LOG("wifi_setRadioOperatingParameters after setting back to default values for radio %d returns : %d", radioIndex, result);
+                }
+
+                UT_LOG("Test case 2");
+                tmp_radio = operationParam;
+                tmp_radio.channel = negative_channel;
+                UT_LOG("Setting channel to %d using setRadioOperatingParameters", tmp_radio.channel);
+
+                result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
+                UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
+
+		if(result == WIFI_HAL_SUCCESS)
+		{
+		    /* Setting the config back to default values */
+		    result = wifi_setRadioOperatingParameters(radioIndex, &operationParam);
+                    UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+                    UT_LOG("wifi_setRadioOperatingParameters after setting back to default values for radio %d returns : %d", radioIndex, result);
+		}
+            }
+            else
+            {
+                UT_LOG("Unable to parse the radio config file");
+            }
+        }
+    }
+    else
+    {
+        UT_LOG("Unable to retrieve the number of radios from HalCapability");
+    }
+
+    UT_LOG("Exiting test_setRadioOperatingParameters_invalid_channel...");
+    return;
+}
+
 #if 0 /* #FIXME: Requires review, this is not defined in the wifi_hal, but maybe in later revisions */
 static INT test_wifi_scanResults_callback(INT radioIndex)
 {
@@ -353,6 +701,10 @@ INT test_wifi_radio_register( void )
    UT_add_test( pSuite, "wifi_setRadioOperatingParameters", test_radio_wifi_setRadioOperatingParameters);
    /* FIXME: Commented UT for wifi_scanResults_callback_register as the function is not present in wifi_hal.c in any of the platforms*/
    //UT_add_test( pSuite, "wifi_scanResults_callback_register)", test_radio_wifi_scanResults_callback_register);
+   UT_add_test( pSuite, "setRadioParameters_valid_channel", test_setRadioOperatingParameters_valid_channel);
+   UT_add_test( pSuite, "setRadioParameters_valid_chwidth", test_setRadioOperatingParameters_valid_channelwidth);
+   UT_add_test( pSuite, "setRadioParameters_invalidchwidth", test_setRadioOperatingParameters_invalid_channelwidth);
+   UT_add_test( pSuite, "setRadioParameters_invalidchannel", test_setRadioOperatingParameters_invalid_channel);
 
   return 0;
 }

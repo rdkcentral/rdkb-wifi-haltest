@@ -179,6 +179,114 @@ INT test_utils_getApIndices(UINT maxRadio, INT apIndices[], APTYPE type)
             }
             break;
 
+        case IOT :
+            if (maxRadio == 3)
+            {
+		/* TODO : Add IOT index for 6G  */
+                apIndices [0] = 2;
+                apIndices [1] = 3;
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 2;
+                apIndices [1] = 3;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
+        case BACKHAUL :
+            if (maxRadio == 3)
+            {
+		/* TODO : Add BACKHAUL index for 6G  */
+                apIndices [0] = 12;
+                apIndices [1] = 13;
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 12;
+                apIndices [1] = 13;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
+        case LNF_PSK :
+            if (maxRadio == 3)
+            {
+                apIndices [0] = 6;
+                apIndices [1] = 7;
+                /* TODO : Add LNF_PSK index for 6G  */
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 6;
+                apIndices [1] = 7;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
+        case LNF_RADIUS :
+            if (maxRadio == 3)
+            {
+                apIndices [0] = 10;
+                apIndices [1] = 11;
+                /* TODO : Add LNF_RADIUS index for 6G  */
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 10;
+                apIndices [1] = 11;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
+        case HOTSPOT_OPEN :
+            if (maxRadio == 3)
+            {
+                apIndices [0] = 4;
+                apIndices [1] = 5;
+                /* TODO : Add HOTSPOT_OPEN index for 6G  */
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 4;
+                apIndices [1] = 5;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
+        case HOTSPOT_SECURE :
+            if (maxRadio == 3)
+            {
+                apIndices [0] = 8;
+                apIndices [1] = 9;
+                /* TODO : Add HOTSPOT_SECURE index for 6G  */
+            }
+            else if (maxRadio == 2)
+            {
+                apIndices [0] = 8;
+                apIndices [1] = 9;
+            }
+            else
+            {
+                result = -1;
+            }
+            break;
+
         default :
             result = -1;
     }
