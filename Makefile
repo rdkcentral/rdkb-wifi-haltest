@@ -49,6 +49,7 @@ export INC_DIRS
 export TARGET
 export TOP_DIR
 export HAL_LIB_DIR
+export CFLAGS
 
 .PHONY: clean list build
 
