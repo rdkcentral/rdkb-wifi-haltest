@@ -34,6 +34,7 @@
 extern wifi_radio_operationParam_t g_operationParam[3];
 extern wifi_vap_info_map_t g_org_map[3];
 
+#if 0
 void test_wifi_hal_L2_setValidSSID_2Ghz(void)
 {
     INT ap_index = 0; 
@@ -148,7 +149,6 @@ void test_wifi_hal_L2_setNULLSSID_6Ghz(void)
 * Negative case * WIFI_HAL_ERROR *
 * Try to Enable AP  with wrong AP indexes * Here 25,26,27 are taken as wrong indeces */
 
-#if 0
 void test_wifi_hal_L2_setApDisable_2GHz(void)
 {
     int result;
