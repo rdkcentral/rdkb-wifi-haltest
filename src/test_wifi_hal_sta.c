@@ -31,13 +31,6 @@
 #include <ut.h>
 #include <ut_log.h>
 
-/* Values here should be read from a configuration file, that supports the test */
-#define TBC_CONFIG_MAX_RADIOS (2)
-#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
-
-#define TBC_RADIO_MAX_BW (4)
-#define TBC_CONFIG_MAX_BW (7)
-
 /* Static function prototypes */
 static void timeDelay (unsigned int seconds);
 static int sta_init_function();

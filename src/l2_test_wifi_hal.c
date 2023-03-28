@@ -677,7 +677,7 @@ void test_wifi_L2_set_valid_bandwidth_6Ghz_80_80MHz(void)
 }
 #endif
 
-int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandwidth_t *chbw)
+static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandwidth_t *chbw)
 {
     if( strcmp(channelwidth, "20MHz") == 0 )
     {
@@ -1131,14 +1131,14 @@ void test_createVAP_vapinfo_valid_tc1(void)
 
                 for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
                 {
-		    result = wifi_getRadioVapInfoMap(radioIndex, &map1);
+		    result = wifi_getRadioVapInfoMap(radioIndex, &map);
 		    UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
 
-		    for(i=0; i<map1.num_vaps; i++)
+		    for(i=0; i<map.num_vaps; i++)
 		    {
-	                if ((strstr(map1.vap_array[i].vap_name, "private_ssid") != NULL))
+	                if ((strstr(map.vap_array[i].vap_name, "private_ssid") != NULL))
 			{
-			    UT_LOG("The initial values are map1.vap_array[i].vap_name is %s, map1.vap_array[i].vap_index is %d, map1.vap_array[i].u.bss_info.enabled is %d, map1.vap_array[i].u.bss_info.showSsid is %d and map1.vap_array[i].u.bss_info.ssid is %s", map1.vap_array[i].vap_name, map1.vap_array[i].vap_index, map1.vap_array[i].u.bss_info.enabled, map1.vap_array[i].u.bss_info.showSsid, map1.vap_array[i].u.bss_info.ssid);
+			    UT_LOG("The initial values are map.vap_array[i].vap_name is %s, map.vap_array[i].vap_index is %d, map.vap_array[i].u.bss_info.enabled is %d, map.vap_array[i].u.bss_info.showSsid is %d and map.vap_array[i].u.bss_info.ssid is %s", map.vap_array[i].vap_name, map.vap_array[i].vap_index, map.vap_array[i].u.bss_info.enabled, map.vap_array[i].u.bss_info.showSsid, map.vap_array[i].u.bss_info.ssid);
 			}
 		    }
 
@@ -1242,14 +1242,14 @@ void test_createVAP_vapinfo_valid_tc2(void)
 
                 for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
                 {
-		    result = wifi_getRadioVapInfoMap(radioIndex, &map1);
+		    result = wifi_getRadioVapInfoMap(radioIndex, &map);
 		    UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
 
-		    for(i=0; i<map1.num_vaps; i++)
+		    for(i=0; i<map.num_vaps; i++)
 	            {
-	                if ((strstr(map1.vap_array[i].vap_name, "private_ssid") != NULL))
+	                if ((strstr(map.vap_array[i].vap_name, "private_ssid") != NULL))
 			{
-			    UT_LOG("The initial values are map1.vap_array[i].vap_name is %s, map1.vap_array[i].vap_index is %d, map1.vap_array[i].u.bss_info.enabled is %d, map1.vap_array[i].u.bss_info.showSsid is %d and map1.vap_array[i].u.bss_info.ssid is %s", map1.vap_array[i].vap_name, map1.vap_array[i].vap_index, map1.vap_array[i].u.bss_info.enabled, map1.vap_array[i].u.bss_info.showSsid, map1.vap_array[i].u.bss_info.ssid);
+			    UT_LOG("The initial values are map.vap_array[i].vap_name is %s, map.vap_array[i].vap_index is %d, map.vap_array[i].u.bss_info.enabled is %d, map.vap_array[i].u.bss_info.showSsid is %d and map.vap_array[i].u.bss_info.ssid is %s", map.vap_array[i].vap_name, map.vap_array[i].vap_index, map.vap_array[i].u.bss_info.enabled, map.vap_array[i].u.bss_info.showSsid, map.vap_array[i].u.bss_info.ssid);
 			}
 		    }
 
@@ -2689,7 +2689,7 @@ void test_wifi_getRadioChannelStats_inpool_true(void)
     if (returnStatus == 0)
     {
         UT_LOG("Number of Radios : %u", numRadios);
-        for (radioIndex = 0 ; radioIndex < 2; radioIndex ++)
+        for (radioIndex = 0 ; radioIndex < numRadios; radioIndex ++)
         {
             if(get_channel_list(radioIndex, &sizeOfchannelStatsArray, ch_numbers) == -1) {
                 UT_LOG("Unable to retrieve channel list");
@@ -2785,7 +2785,7 @@ void test_wifi_getRadioChannelStats_inpool_false(void)
     if (returnStatus == 0)
     {
         UT_LOG("Number of Radios : %u", numRadios);
-	for (radioIndex = 0 ; radioIndex < 2; radioIndex ++)
+	for (radioIndex = 0 ; radioIndex < numRadios; radioIndex ++)
 	{
             if(get_channel_list(radioIndex, &sizeOfchannelStatsArray, ch_numbers) == -1) {
                 UT_LOG("Unable to retrieve channel list");

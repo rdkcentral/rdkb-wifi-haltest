@@ -30,8 +30,6 @@
 #include <ut_log.h>
 
 /* Values here should be read from a configuration file, that supports the test */
-#define TBC_CONFIG_MAX_APS (1)
-#define TBC_CONFIG_MAX_RADIOS (2)
 #define TBC_NEGATIVE_INDEX_OUT_OF_RANGE (-1)
 #define TBC_POSITIVE_INDEX_OUT_OF_RANGE (99)
 

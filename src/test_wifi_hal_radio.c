@@ -30,13 +30,6 @@
 #include "test_utils.h"
 #include "api_translator.h"
 
-/* Values here should be read from a configuration file, that supports the test */
-#define TBC_CONFIG_MAX_RADIOS (2)
-#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
-
-#define TBC_RADIO_MAX_BW (4)
-#define TBC_CONFIG_MAX_BW (7)
-
 /**
  * @brief Tests requirements for L1 testing wifi_getRadioTransmitPower()
  *

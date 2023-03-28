@@ -27,9 +27,6 @@
 #include <ut.h>
 #include <ut_log.h>
 
-#define TBC_CONFIG_MAX_RADIOS (2)
-#define TBC_RADIO_INDEX_OUT_OF_RANGE (99)
-
 /**
  * @brief Tests requirements for L1 testing wifi_getRadioChannelStats()
 
