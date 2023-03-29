@@ -17,6 +17,22 @@
  * limitations under the License.
 */
 
+/**
+* @file l2_test_wifi_hal.c
+* @page WIFIHAL_L2 WiFi HAL Level 2 Tests - Radio, AP and Extender APIs
+* **Component Owner:** Soumya Munshi@n
+* **Component Architect:** Soumya Munshi@n
+* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
+*
+* ## Module's Role
+* This module includes Level 2 functional tests (success and failure scenarios).
+* This is to ensure that the APIs meet the operational requirements across all vendors.
+*
+* **Pre-Conditions:**  None@n
+* **Dependencies:** None@n
+*
+* Ref to API Definition specification documentation : [L2_TestSpecification.md](../../docs/pages/)
+*/
 
 #include <stddef.h>
 #include "test_utils.h"
@@ -148,7 +164,9 @@ void test_wifi_hal_L2_setNULLSSID_6Ghz(void)
 *
 * Negative case * WIFI_HAL_ERROR *
 * Try to Enable AP  with wrong AP indexes * Here 25,26,27 are taken as wrong indeces */
+#endif
 
+#if 0
 void test_wifi_hal_L2_setApDisable_2GHz(void)
 {
     int result;
@@ -703,15 +721,16 @@ static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandw
 }
 
 /**
- * @brief Tests requirements for L2 testing: get the supported channelwidths from wifi_getHalCapability(), set using wifi_setRadioOperatingParameters() and verify using wifi_getRadioOperatingChannelBandwidth()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test will get the supported channelwidths from wifi_getHalCapability(), set using wifi_setRadioOperatingParameters() 
+* and verify the set value using wifi_getRadioOperatingChannelBandwidth()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 001@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_getRadioOperatingChannelBandwidth_valid()
 {
     UT_LOG("Entering test_getRadioOperatingChannelBandwidth_valid...");
@@ -807,15 +826,16 @@ void test_getRadioOperatingChannelBandwidth_valid()
 }
 
 /**
- * @brief Tests requirements for L2 testing for setting invalid channelwidth values using wifi_getRadioOperatingChannelBandwidth() and verify with wifi_setRadioOperatingParameters()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test will verify setting invalid channelwidth values using wifi_getRadioOperatingChannelBandwidth() 
+* and verify with wifi_setRadioOperatingParameters()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 002@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
 {
     UT_LOG("Entering test_getRadioOperatingChannelBandwidth_invalid_channelwidth...");
@@ -907,15 +927,16 @@ void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_setRadioOperatingParameters() with invalid radioIndex values and verify with wifi_getRadioOperatingChannelBandwidth()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test will verify passing wifi_setRadioOperatingParameters() with invalid radioIndex values 
+* and verify if values remain uncorrupted using with wifi_getRadioOperatingChannelBandwidth()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 003@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_getRadioOperatingChannelBandwidth_invalid_radioIndex()
 {
     UT_LOG("Entering test_getRadioOperatingChannelBandwidth_invalid_radioIndex...");
@@ -1008,15 +1029,16 @@ void test_getRadioOperatingChannelBandwidth_invalid_radioIndex()
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_setRadioOperatingParameters() with operationParam as NULL and verify using wifi_getRadioOperatingChannelBandwidth()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_setRadioOperatingParameters() by passing operationParam as NULL and
+* verify if values remain uncorrupted using wifi_getRadioOperatingChannelBandwidth()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 004@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_getRadioOperatingChannelBandwidth_operationParamNULL()
 {
     UT_LOG("Entering test_getRadioOperatingChannelBandwidth_operationParamNULL...");
@@ -1088,15 +1110,16 @@ void test_getRadioOperatingChannelBandwidth_operationParamNULL()
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid vapinfo parameters value(enable as false) and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid vapinfo parameters value(enable as false)
+* and verify the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 005@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_vapinfo_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_vapinfoValid_tc1...");
@@ -1131,14 +1154,14 @@ void test_createVAP_vapinfo_valid_tc1(void)
 
                 for (radioIndex = 0; radioIndex < numRadios; radioIndex++, index++)
                 {
-		    result = wifi_getRadioVapInfoMap(radioIndex, &map);
+		    result = wifi_getRadioVapInfoMap(radioIndex, &map1);
 		    UT_ASSERT_EQUAL(result, WIFI_HAL_SUCCESS);
 
-		    for(i=0; i<map.num_vaps; i++)
+		    for(i=0; i<map1.num_vaps; i++)
 		    {
-	                if ((strstr(map.vap_array[i].vap_name, "private_ssid") != NULL))
+	                if ((strstr(map1.vap_array[i].vap_name, "private_ssid") != NULL))
 			{
-			    UT_LOG("The initial values are map.vap_array[i].vap_name is %s, map.vap_array[i].vap_index is %d, map.vap_array[i].u.bss_info.enabled is %d, map.vap_array[i].u.bss_info.showSsid is %d and map.vap_array[i].u.bss_info.ssid is %s", map.vap_array[i].vap_name, map.vap_array[i].vap_index, map.vap_array[i].u.bss_info.enabled, map.vap_array[i].u.bss_info.showSsid, map.vap_array[i].u.bss_info.ssid);
+			    UT_LOG("The initial values are map1.vap_array[i].vap_name is %s, map1.vap_array[i].vap_index is %d, map1.vap_array[i].u.bss_info.enabled is %d, map1.vap_array[i].u.bss_info.showSsid is %d and map1.vap_array[i].u.bss_info.ssid is %s", map1.vap_array[i].vap_name, map1.vap_array[i].vap_index, map1.vap_array[i].u.bss_info.enabled, map1.vap_array[i].u.bss_info.showSsid, map1.vap_array[i].u.bss_info.ssid);
 			}
 		    }
 
@@ -1199,15 +1222,16 @@ void test_createVAP_vapinfo_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid vapinfo parameters value(enable as true) and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid vapinfo parameters value(enable as true) and 
+* verify the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 006@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_vapinfo_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_vapinfoValid_tc2...");
@@ -1310,15 +1334,16 @@ void test_createVAP_vapinfo_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with invalid vapinfo parameters value and verify if values remain uncorrupted using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with invalid vapinfo parameters value and verify 
+* if values remain uncorrupted using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 007@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_vapinfoInvalid()
 {
     UT_LOG("Entering test_createVAP_vapinfoInvalid...");
@@ -1424,15 +1449,15 @@ void test_createVAP_vapinfoInvalid()
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with map as NULL and verify if values remain uncorrupted using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with map as NULL and verify if values remain uncorrupted using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 008@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_mapNULL(void)
 {
     UT_LOG("Entering test_createVAP_mapNULL...");
@@ -1529,15 +1554,16 @@ void test_createVAP_mapNULL(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid map, invalid radioIndex and verify if the values remain uncorrupted using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid map, invalid radioIndex and verify
+* if the values remain uncorrupted using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 009@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_invalidradio(void)
 {
     UT_LOG("Entering test_createVAP_invalidradio...");
@@ -1648,15 +1674,16 @@ void test_createVAP_invalidradio(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid security parameters value and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid security parameters value and verify
+* the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 010@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_security_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_securityValid_tc1...");
@@ -1760,15 +1787,16 @@ void test_createVAP_security_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid security parameters value and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid security parameters value and verify 
+* the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 011@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_security_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_securityValid_tc2...");
@@ -1872,15 +1900,16 @@ void test_createVAP_security_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with invalid security parameters value and verify if values remain uncorrupted using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with invalid security parameters value and verify
+* if values remain uncorrupted using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 012@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_security_Invalid(void)
 {
     UT_LOG("Entering test_createVAP_security_Invalid...");
@@ -1987,15 +2016,16 @@ void test_createVAP_security_Invalid(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid interworking parameters value and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid interworking parameters value and verify 
+* the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 013@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_interworking_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_interworking_valid_tc1...");
@@ -2097,15 +2127,16 @@ void test_createVAP_interworking_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid interworking parameters value and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid interworking parameters value and verify
+* the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 014@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_interworking_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_interworking_valid_tc2...");
@@ -2208,15 +2239,16 @@ void test_createVAP_interworking_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with invalid interworking vapinfo parameters value and verify if values remain uncorrupted using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with invalid interworking vapinfo parameters value and verify
+* if values remain uncorrupted using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 015@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_interworking_Invalid(void)
 {
     UT_LOG("Entering test_createVAP_interworking_Invalid...");
@@ -2323,15 +2355,16 @@ void test_createVAP_interworking_Invalid(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid wps parameters value and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid wps parameters value and verify
+* the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 016@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_wps_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_wps_valid_tc1...");
@@ -2434,15 +2467,16 @@ void test_createVAP_wps_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with valid wps parameters value and verify the set values using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with valid wps parameters value and verify
+* the set values using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 017@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_wps_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_wps_valid_tc2...");
@@ -2545,15 +2579,16 @@ void test_createVAP_wps_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing wifi_createVAP() with invalid wps parameters value and verify if values remain uncorrupted using wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test wifi_createVAP() with invalid wps parameters value and verify
+* if values remain uncorrupted using wifi_getRadioVapInfoMap()@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 018@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_createVAP_wps_Invalid(void)
 {
     UT_LOG("Entering test_createVAP_wps_Invalid...");
@@ -2661,15 +2696,16 @@ void test_createVAP_wps_Invalid(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing: get the channel list from wifi_getHalCapability() and fetch wifi_getRadioChannelStats() with in_pool as true 
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test will get the channel list from wifi_getHalCapability() and fetch 
+* wifi_getRadioChannelStats() with in_pool as true@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 019@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_wifi_getRadioChannelStats_inpool_true(void)
 {
     UT_LOG("Entering test_wifi_getRadioChannelStats_inpool_true...");
@@ -2756,15 +2792,16 @@ void test_wifi_getRadioChannelStats_inpool_true(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing: get the channel list from wifi_getHalCapability() and fetch wifi_getRadioChannelStats() with in_pool as false
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test will get the channel list from wifi_getHalCapability() and fetch 
+* wifi_getRadioChannelStats() with in_pool as false@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 020@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_wifi_getRadioChannelStats_inpool_false(void)
 {
     UT_LOG("Entering test_wifi_getRadioChannelStats_inpool_false...");
@@ -2844,15 +2881,16 @@ void test_wifi_getRadioChannelStats_inpool_false(void)
 }
 
 /**
- * @brief Tests requirements for L2 testing: get the channel list from wifi_getHalCapability() and fetch wifi_getRadioChannelStats() with invalid radioIndex and in_pool as true
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This module test will get the channel list from wifi_getHalCapability() and fetch
+* wifi_getRadioChannelStats() with invalid radioIndex and in_pool as true@n
+*
+* **Test Group ID:** 02@n
+* **Test Case ID:** 020@n
+* **Priority:** Low@n
+*
+* **Test Procedure:**
+* Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
+*/
 void test_wifi_getRadiochannelstats_invalidradio(void)
 {
     UT_LOG("Entering test_getRadiochannelstats_invalidradio...");

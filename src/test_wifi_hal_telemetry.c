@@ -17,6 +17,24 @@
  * limitations under the License.
 */
 
+/**
+* @file test_wifi_hal_telemetry.c
+* @page WIFIHAL_Telemetry WiFi HAL Level 1 Tests - Telemetry
+*
+* **Component Owner:** Soumya Munshi@n
+* **Component Architect:** Soumya Munshi@n
+* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
+*
+* ## Module's Role
+* This module includes Level 1 functional tests (success and failure scenarios).
+* This is to ensure that the wifi_getRadioBandUtilization(), wifi_getApAssociatedDeviceDiagnosticResult3(), wifi_getApAssociatedClientDiagnosticResult() and wifi_getRadioTrafficStats2() APIs meet the operational requirements across all vendors.
+*
+* **Pre-Conditions:**  None@n
+* **Dependencies:** None@n
+*
+* Ref to API Definition specification documentation : [halSpec.md](../../../docs/pages/)
+*/
+
 #include <string.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -33,15 +51,29 @@
 
 
 /**
- * @brief Tests requirements for L1 testing wifi_getRadioBandUtilization
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getRadioBandUtilization() works as expected
+*
+* Calls the header function wifi_getRadioBandUtilization() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 001@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getRadioBandUtilization() with valid Band Utilization for radio 0 | radioIndex=0, *output_percentage=valid buffer of type int | WIFI_HAL_SUCCESS| Should Pass |
+* |02|call wifi_getRadioBandUtilization() with valid Band Utilization for radio 1 | radioIndex=1, *output_percentage=valid buffer of type int | WIFI_HAL_SUCCESS| Should Pass |
+* |03|call wifi_getRadioBandUtilization() with invalid positive radio index | radioIndex=99, *output_percentage=valid buffer of type int | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_getRadioBandUtilization() with invalid negative radio index | radioIndex=-1, *output_percentage=valid buffer of type int | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getRadioBandUtilization() with NULL as Band Utilization for radio 0 | radioIndex=0, *output_percentage=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getRadioBandUtilization() with NULL as Band Utilization for radio 1 | radioIndex=1, *output_percentage=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_telemetry_wifi_getRadioBandUtilization(void)
 {
    UT_LOG("Entering getRadioBandUtilization... ");
@@ -117,15 +149,31 @@ void test_telemetry_wifi_getRadioBandUtilization(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_getApAssociatedDeviceDiagnosticResult3
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getApAssociatedDeviceDiagnosticResult3() works as expected
+*
+* Calls the header function wifi_getApAssociatedDeviceDiagnosticResult3() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 002@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getApAssociatedDeviceDiagnosticResult3() with valid arguments for apIndex 0 | apIndex=0, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=0 | WIFI_HAL_SUCCESS| Should Pass |
+* |02|call wifi_getApAssociatedDeviceDiagnosticResult3() with valid arguments for apIndex 1 | apIndex=1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=0 | WIFI_HAL_SUCCESS| Should Pass |
+* |03|call wifi_getApAssociatedDeviceDiagnosticResult3() with invalid positive out of range apIndex | apIndex=99, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=0 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_getApAssociatedDeviceDiagnosticResult3() with invalid negative out of range apIndex | apIndex=-1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 0 and invalid client mac buffer | apIndex=0, **associated_dev_array="000000000000",*output_array_size=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 1 and invalid client mac buffer | apIndex=1, **associated_dev_array="000000000000",*output_array_size=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |07|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 0 and NULL array size | apIndex=0, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |08|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 1 and NULL array size | apIndex=1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 {
    UT_LOG("Entering getApAssociatedDeviceDiagnosticResult3... ");
@@ -245,15 +293,31 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 /* TODO This function will return success only when a MAC of a client connected to this device is sent as a parameter.
 *  Note: MAC Address should be in this format: aabbccddeeff; Alphabets in MAC can be in upper or lower case.
 */
+
 /**
- * @brief Tests requirements for L1 testing wifi_getApAssociatedClientDiagnosticResult
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getApAssociatedClientDiagnosticResult() works as expected
+*
+* Calls the header function wifi_getApAssociatedClientDiagnosticResult() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 003@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getApAssociatedClientDiagnosticResult() with invalid positive out of range apIndex | apIndex=99, client_mac='\0', *associated_dev_array=valid buffer of type wifi_associated_dev3_t  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_getApAssociatedClientDiagnosticResult() with invalid negative out of range apIndex | apIndex=-1, client_mac='\0', *associated_dev_array=valid buffer of type wifi_associated_dev3_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |03|call wifi_getApAssociatedClientDiagnosticResult() with NULL client mac | apIndex=1, client_mac=NULL, *associated_dev_array=valid buffer of type wifi_associated_dev3_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_getApAssociatedClientDiagnosticResult() with NULL array buffer | apIndex=1, client_mac='\0', *associated_dev_array=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getApAssociatedClientDiagnosticResult() with apIndex as 0, invalid client mac and NULL array buffer | apIndex=0, client_mac="000000000000", *associated_dev_array=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getApAssociatedClientDiagnosticResult() with apIndex as 1, invalid client mac and NULL array buffer | apIndex=1, client_mac="000000000000", *associated_dev_array=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_telemetry_wifi_getApAssociatedClientDiagnosticResult(void)
 {
      UT_LOG("Entering getApAssociatedClientDiagnosticResult... ");
@@ -366,15 +430,29 @@ void test_telemetry_wifi_getApAssociatedClientDiagnosticResult(void)
 
 
 /**
- * @brief Tests requirements for L1 testing wifi_getRadioTrafficStats2
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getRadioTrafficStats2() works as expected
+*
+* Calls the header function wifi_getRadioTrafficStats2() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 004@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n    
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getRadioTrafficStats2() with valid arguments for radio 0 | radioIndex=0, output_struct=valid buffer of type wifi_radioTrafficStats2_t | WIFI_HAL_SUCCESS| Should Pass |
+* |02|call wifi_getRadioTrafficStats2() with valid arguments for radio 1 | radioIndex=1, output_struct=valid buffer of type wifi_radioTrafficStats2_t | WIFI_HAL_SUCCESS| Should Pass |
+* |03|call wifi_getRadioTrafficStats2() with invalid positive radio index | radioIndex=99, output_struct=valid buffer of type wifi_radioTrafficStats2_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_getRadioTrafficStats2() with invalid negative radio index | radioIndex=-1, output_struct=valid buffer of type wifi_radioTrafficStats2_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getRadioTrafficStats2() with output_struct as NULL for radio 0 | radioIndex=0, output_struct=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getRadioTrafficStats2() with output_struct as NULL for radio 1 | radioIndex=1, output_struct=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_telemetry_wifi_getRadioTrafficStats2(void)
 {
    UT_LOG("Entering getRadioTrafficStats2... ");

@@ -17,6 +17,24 @@
  * limitations under the License.
 */
 
+/**
+* @file test_wifi_hal_generic.c
+* @page WIFIHAL_Generic WiFi HAL Level 1 Tests - Generic
+*
+* **Component Owner:** Soumya Munshi@n
+* **Component Architect:** Soumya Munshi@n
+* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
+*
+* ## Module's Role
+* This module includes Level 1 functional tests (success and failure scenarios).
+* This is to ensure that the wifi_init() and wifi_getHalCapability() APIs meet the operational requirements across all vendors.
+*
+* **Pre-Conditions:**  None@n
+* **Dependencies:** None@n
+*
+* Ref to API Definition specification documentation : [halSpec.md](../../../docs/pages/)
+*/
+
 #include <string.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -28,14 +46,24 @@
 #include <ut_log.h>
 
 /**
- * @brief Tests requirements for L1 testing wifi_int()
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_init() works as expected
+*
+* Calls the header function wifi_init() with no params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 001@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n    
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01| invoke wifi_init()| Not Applicable| WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_generic_wifi_init( void )
 {
 
@@ -63,15 +91,25 @@ void test_generic_wifi_init( void )
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_getHalCapability()
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getHalCapability() works as expected
+*
+* Calls the header function wifi_getHalCapability() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 002@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n 
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getHalCapability() with a valid empty buffer | *cap=valid buffer of type wifi_hal_capability_t | WIFI_HAL_SUCCESS| Should Pass |
+* |02|call wifi_getHalCapability() with NULL buffer | *cap=NULL | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+*/
 void test_generic_wifi_getHalCapability(void)
 {
     UT_LOG("Entering getHalCapability...");

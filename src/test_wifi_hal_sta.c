@@ -17,6 +17,24 @@
  * limitations under the License.
 */
 
+/**
+* @file test_wifi_hal_sta.c
+* @page WIFIHAL_Sta WiFi HAL Level 1 Tests - STA
+*
+* **Component Owner:** Soumya Munshi@n
+* **Component Architect:** Soumya Munshi@n
+* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
+*
+* ## Module's Role
+* This module includes Level 1 functional tests (success and failure scenarios).
+* This is to ensure that the APIs: wifi_connect(), wifi_disconnect() and wifi_startScan() meets the operational requirements of the STA HAL across all vendors.
+*
+* **Pre-Conditions:**  None@n
+* **Dependencies:** None@n
+*
+* Ref to API Definition specification documentation : [halSpec.md](../../../docs/pages/)
+*/
+
 #include <string.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -36,15 +54,32 @@ static void timeDelay (unsigned int seconds);
 static int sta_init_function();
 
 /**
- * @brief Tests requirements for L1 testing wifi_connect()
- * Test Coverage: Negative Scenarios
- *
- * @retval WIFI_HAL_ERROR               -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-void test_sta_wifi_connect(void)
+* @brief This function checks that wifi_connect() operates correctly
+*
+* Calls the header function wifi_connect() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 001@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|invoke wifi_connect() with 2.4G sta apIndex and invalid bss info structure of type wifi_bss_info_t | apIndex=14, bss=0 | WIFI_HAL_ERROR | Should Fail |
+* |02|invoke wifi_connect() with 5G sta apIndex and invalid bss info structure of type wifi_bss_info_t | apIndex=15, bss=0 | WIFI_HAL_ERROR | Should Fail |
+* |03|invoke wifi_connect() with 2.4G sta apIndex and NULL bss info strcuture | apIndex=14, bss=NULL | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |04|invoke wifi_connect() with 5G sta apIndex and NULL bss info strcuture | apIndex=15, bss=NULL | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |05|invoke wifi_connect() with 2.4G private apIndex and invalid bss info structure of type wifi_bss_info_t | apIndex=0, bss=0 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |06|invoke wifi_connect() with 5G private apIndex and invalid bss info structure of type wifi_bss_info_t | apIndex=1, bss=0 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |07|invoke wifi_connect() with negative apIndex and invalid bss info structure of type wifi_bss_info_t | apIndex=-1, bss=0 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |08|invoke wifi_connect() with out of range positive apIndex and invalid bss info structure of type wifi_bss_info_t | apIndex=99, bss=0 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+*/
+void test_sta_wifi_connect( void )
 {
 
     UT_LOG("Entering wifi_connect...");
@@ -171,15 +206,30 @@ void test_sta_wifi_connect(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_disconnect()
- * Test Coverage: Negative Scenarios
- *
- * @retval WIFI_HAL_ERROR                      -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS          -> tested
- *
- * @Note hal api is Synchronous
- */
-void test_sta_wifi_disconnect(void)
+* @brief This function checks that wifi_disconnect() operates correctly
+*
+* Calls the header function wifi_disconnect() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 002@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:** @n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|invoke wifi_disconnect() with 2.4G sta apIndex without an actual STA connection | apIndex=14 | WIFI_HAL_ERROR | Should Fail |
+* |02|invoke wifi_disconnect() with 5G sta apIndex without an actual STA connection | apIndex=15 | WIFI_HAL_ERROR | Should Fail |
+* |03|invoke wifi_disconnect() with 2.4G private apIndex | apIndex=0 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |04|invoke wifi_disconnect() with 5G private apIndex | apIndex=1 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |05|invoke wifi_disconnect() with negative apIndex | apIndex=-1 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+* |06|invoke wifi_disconnect() with out of range positive apIndex | apIndex=99 | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+*/
+void test_sta_wifi_disconnect( void )
 {
 
     UT_LOG("Entering wifi_disconnect...");
@@ -320,16 +370,32 @@ void test_sta_wifi_staConnectionStatus_callback_register(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_startScan()
-
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_ERROR               -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks that wifi_startScan() operates correctly
+*
+* Calls the header function wifi_startScan() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 003@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|invoke wifi_startScan() with on channel scanning mode, zero dwell time, no frequency channel information and zero number of frequencies for 2.4G radio | radioIndex=0, scan_mode=2, dwell_time=0, numOfFreq=0, chan_list=NULL | WIFI_HAL_SUCCESS | Should Pass |
+* |02|invoke wifi_startScan() with on channel scanning mode, zero dwell time, no frequency channel information and zero number of frequencies for 5G radio | radioIndex=1, scan_mode=2, dwell_time=0, numOfFreq=0, chan_list=NULL | WIFI_HAL_SUCCESS | Should Pass |
+* |03|invoke wifi_startScan() with off channel scanning mode, zero dwell time and 2 frequency channel information for 2.4G radio | radioIndex=0, scan_mode=3, dwell_time=0, numOfFreq=2, chan_list=[1, 6] | WIFI_HAL_SUCCESS | Should Pass |
+* |04|invoke wifi_startScan() with off channel scanning mode, zero dwell time and 2 frequency channel information for 5G radio | radioIndex=1, scan_mode=3, dwell_time=0, numOfFreq=2, chan_list=[1, 6] | WIFI_HAL_SUCCESS | Should Pass |
+* |05|invoke wifi_startScan() with on channel scanning mode, invalid dwell time and no frequency channel information for 2.4G radio | radioIndex=0, scan_mode=2, dwell_time=-1, numOfFreq=0, chan_list=NULL | WIFI_HAL_INVALID_ARGUMENTS | Should Pass |
+* |06|invoke wifi_startScan() with on channel scanning mode, invalid dwell time and no frequency channel information for 5G radio | radioIndex=1, scan_mode=2, dwell_time=-1, numOfFreq=0, chan_list=NULL | WIFI_HAL_INVALID_ARGUMENTS | Should Pass |
+* |07|invoke wifi_startScan() with off channel scanning mode, zero dwell time and no frequency channel information even though the number of frequencies is passed as zero for 2.4G radio | radioIndex=0, scan_mode=3, dwell_time=0, numOfFreq=2, chan_list=NULL | WIFI_HAL_ERROR | Should Fail |
+* |08|invoke wifi_startScan() with off channel scanning mode, zero dwell time and no frequency channel information even though the number of frequencies is passed as zero for 5G radio | radioIndex=1, scan_mode=3, dwell_time=0, numOfFreq=2, chan_list=NULL | WIFI_HAL_ERROR | Should Fail |
+* |09|invoke wifi_startScan() with on channel scanning mode, zero dwell time, no frequency channel information and zero number of frequencies for an out of range radioIndex | radioIndex=99, scan_mode=2, dwell_time=0, numOfFreq=0, chan_list=NULL | WIFI_HAL_INVALID_ARGUMENTS | Should Fail |
+*/
 void test_sta_wifi_startScan(void)
 {
 

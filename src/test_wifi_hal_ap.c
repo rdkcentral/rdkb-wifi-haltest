@@ -17,6 +17,24 @@
  * limitations under the License.
 */
 
+/**
+* @file test_wifi_hal_ap.c
+* @page WIFIHAL_Ap WiFi HAL Level 1 Tests - AP
+*
+* **Component Owner:** Soumya Munshi@n
+* **Component Architect:** Soumya Munshi@n
+* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
+*
+* ## Module's Role
+* This module includes Level 1 functional tests (success and failure scenarios).
+* This is to ensure that the wifi_getApAssociatedDevice(), wifi_enableCSIEngine(), wifi_getRadioVapInfoMap(), wifi_kickAssociatedDevice() and wifi_createVAP() APIs meet the operational requirements across all vendors.
+*
+* **Pre-Conditions:**  None@n
+* **Dependencies:** None@n
+*
+* Ref to API Definition specification documentation : [halSpec.md](../../../docs/pages/)
+*/
+
 #include <string.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -34,14 +52,31 @@
 #define TBC_POSITIVE_INDEX_OUT_OF_RANGE (99)
 
 /**
- * @brief Tests requirements for L1 testing wifi_getApAssociatedDevice()
- *
- * Test Coverage: Negative Scenarios
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getApAssociatedDevice() works as expected
+*
+* Calls the header function wifi_getApAssociatedDevice() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 001@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getApAssociatedDevice() with apIndex 0 and NULL buffer to opNumOfDevices | apIndex=0, *opDeviceMacAddArray=valid buffer of type mac_address_t , maxNumDevices=32, opNumOfDevices=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_getApAssociatedDevice() with apIndex 1 and NULL buffer to opNumOfDevices | apIndex=1, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=32, opNumOfDevices=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |03|call wifi_getApAssociatedDevice() with maxNumDevices as 0 for apIndex 0 | apIndex=0, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_getApAssociatedDevice() with maxNumDevices as 0 for apIndex 1 | apIndex=1, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getApAssociatedDevice() with opDeviceMacAddArray as NULL for apIndex 0 | apIndex=0, *opDeviceMacAddArray=NULL, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getApAssociatedDevice() with opDeviceMacAddArray as NULL for apIndex 1 | apIndex=1, *opDeviceMacAddArray=NULL, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |07|call wifi_getApAssociatedDevice() with invalid negative apIndex | apIndex=-1, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |08|call wifi_getApAssociatedDevice() with invalid positive outofRange apIndex | apIndex=99, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_wifi_getApAssociatedDevice(void)
 {
     UT_LOG("Entering getApAssociatedDevice...");
@@ -153,16 +188,31 @@ void test_wifi_getApAssociatedDevice(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_enableCSIEngine()
-
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_ERROR               -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_enableCSIEngine() works as expected
+*
+* Calls the header function wifi_enableCSIEngine() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 002@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_enableCSIEngine() with apIndex as 0, NULL mac address and enable parameter as false | apIndex=0, sta=NULL , enable=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_enableCSIEngine() with apIndex as 1, NULL mac address and enable parameter as false | apIndex=1, sta=NULL , enable=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |03|call wifi_enableCSIEngine() with apIndex as 0, NULL mac address and enable parameter as true | apIndex=0, sta=NULL , enable=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |04|call wifi_enableCSIEngine() with apIndex as 1, NULL mac address and enable parameter as true | apIndex=1, sta=NULL , enable=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |05|call wifi_enableCSIEngine() with apIndex as 0, NULL mac address and enable parameter as an invalid value | apIndex=0, sta=NULL, enable=2 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_enableCSIEngine() with apIndex as 1, NULL mac address and enable parameter as an invalid value | apIndex=1, sta=NULL, enable=2 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |07|call wifi_enableCSIEngine() with negative apIndex, NULL mac address and enable parameter as FALSE | apIndex=-1, sta=NULL , enable=FALSE | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |08|call wifi_enableCSIEngine() with out of range apIndex, NULL mac address and enable parameter as FALSE | apIndex=99, sta=NULL , enable=FALSE | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_wifi_enableCSIEngine(void)
 {
 
@@ -276,15 +326,29 @@ void test_wifi_enableCSIEngine(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_createVAP()
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_createVAP() works as expected
+*
+* Calls the header function wifi_createVAP() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 003@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments | radioIndex=0, map.num_vaps=1, map=valid buffer of type wifi_vap_info_map_t | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments | radioIndex=1, map.num_vaps=1, map=valid buffer of type wifi_vap_info_map_t | WIFI_HAL_SUCCESS | Should Pass |
+* |03|call wifi_createVAP() with vap info map as NULL for radio 0 | radioIndex=0, map=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_createVAP() with vap info map as NULL for radio 1 | radioIndex=1, map=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_createVAP() with invalid radioIndex and valid vap info map | radioIndex=99, map=valid buffer of type wifi_vap_info_map_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_createVAP() with invalid radioIndex and vap info map as NULL | radioIndex=99, map=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_wifi_createVAP(void)
 {
 
@@ -395,15 +459,29 @@ void test_wifi_createVAP(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_getRadioVapInfoMap()
- *
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getRadioVapInfoMap() works as expected
+*
+* Calls the header function wifi_getRadioVapInfoMap() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 004@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getRadioVapInfoMap() with radioIndex 0 and valid VAP info map buffer | radioIndex=0, map=valid buffer of type wifi_vap_info_map_t | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_getRadioVapInfoMap() with radioIndex 1 and valid VAP info map buffer | radioIndex=1, map=valid buffer of type wifi_vap_info_map_t | WIFI_HAL_SUCCESS | Should Pass |
+* |03|call wifi_getRadioVapInfoMap() with radioIndex 0 and NULL Buffer as input to VAP info map | radioIndex=0, map=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_getRadioVapInfoMap() with radioIndex 1 and NULL Buffer as input to VAP info map | radioIndex=1, map=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getRadioVapInfoMap() with positive out of range radio index, valid VAP info map buffer | radioIndex=99, map=valid buffer of type wifi_vap_info_map_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getRadioVapInfoMap() with invalid radio index, VAP info map as NULL buffer | radioIndex=99, map=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_wifi_getRadioVapInfoMap(void)
 {
 
@@ -476,15 +554,29 @@ void test_wifi_getRadioVapInfoMap(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_kickAssociatedDevice
- *
- * Test Coverage: Negative Scenarios
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_kickAssociatedDevice() works as expected
+*
+* Calls the header function wifi_kickAssociatedDevice() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 005@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_kickAssociatedDevice() with positive out of range apIndex | apIndex=99, device=pass valid buffer of type wifi_device_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_kickAssociatedDevice() with negative out of range apIndex | apIndex=-1, device=pass valid buffer of type wifi_device_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |03|call wifi_kickAssociatedDevice() with apIndex as 0 and invalid device mac | apIndex=0, device="AA:BB:CC:DD:EE:FF" | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |04|call wifi_kickAssociatedDevice() with apIndex as 1 and invalid device mac | apIndex=1, device="AA:BB:CC:DD:EE:FF" | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_kickAssociatedDevice() with apIndex as 0 and device mac as NULL | apIndex=0, device=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_kickAssociatedDevice() with apIndex as 1 and device mac as NULL | apIndex=1, device=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_wifi_kickAssociatedDevice(void)
 {
    UT_LOG("Entering kickAssociatedDevice..." );
@@ -572,15 +664,25 @@ void test_wifi_kickAssociatedDevice(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for PRIVATE ap_indices with security mode as wpa3-personal, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-PERSONAL as security mode for private vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 006@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 0 | apIndex=0, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 1 | apIndex=1, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array.u.bss_info.security.mode=wifi_security_mode_wpa3_personal, map.vap_array.u.bss_info.isolation=FALSE with vap_array index as 0 | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_private_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_private_valid_tc1...");
@@ -666,15 +768,25 @@ void test_createVAP_private_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_createVAP() Invoke wifi_createVAP for PRIVATE ap_indices with security mode as wpa3-transition, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-TRANSITION as security mode for private vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 007@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 0 | apIndex=0, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 1 | apIndex=1, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_private_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_private_valid_tc2...");
@@ -760,15 +872,25 @@ void test_createVAP_private_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_createVAP for PRIVATE ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for private vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 008@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 0 | apIndex=0, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 1 | apIndex=1, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_private_invalid(void)
 {
     UT_LOG("Entering test_createVAP_private_invalid...");
@@ -856,15 +978,25 @@ void test_createVAP_private_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for STA ap_indices with security mode as wpa2-personal and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA2-PERSONAL as security mode for sta vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 009@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 14 | apIndex=14, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 15 | apIndex=15, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_meshsta_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_meshsta_valid_tc1...");
@@ -947,15 +1079,25 @@ void test_createVAP_meshsta_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_createVAP() Invoke wifi_createVAP for STA ap_indices with security mode as wpa3-transition and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-TRANSITION as security mode for sta vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 010@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 14 | apIndex=14, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 15 | apIndex=15, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_meshsta_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_meshsta_valid_tc2...");
@@ -1038,15 +1180,25 @@ void test_createVAP_meshsta_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_createVAP() Invoke wifi_createVAP for STA ap_indices with security mode as wpa3-personal and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-PERSONAL as security mode for sta vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 011@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 14 | apIndex=14, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 15 | apIndex=15, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_meshsta_valid_tc3(void)
 {
     UT_LOG("Entering test_createVAP_meshsta_valid_tc3...");
@@ -1129,15 +1281,25 @@ void test_createVAP_meshsta_valid_tc3(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing wifi_createVAP for STA ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for sta vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 012@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 14 | apIndex=14, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 15 | apIndex=15, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_meshsta_invalid(void)
 {
     UT_LOG("Entering test_createVAP_meshsta_invalid...");
@@ -1223,15 +1385,25 @@ void test_createVAP_meshsta_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with security mode as wpa2-personal, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA2-PERSONAL as security mode for iot vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 013@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 2 | apIndex=2, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 3 | apIndex=3, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_iot_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_iot_valid_tc1...");
@@ -1315,15 +1487,25 @@ void test_createVAP_iot_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with security mode as wpa3-transition, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-TRANSITION as security mode for iot vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 014@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 2 | apIndex=2, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 3 | apIndex=3, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_iot_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_iot_valid_tc2...");
@@ -1407,15 +1589,25 @@ void test_createVAP_iot_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with security mode as wpa3-personal, Isolation Enabled as FALSE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-PERSONAL as security mode for iot vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 015@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 2 | apIndex=2, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 3 | apIndex=3, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal, map.vap_array[0].u.bss_info.isolation=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_iot_valid_tc3(void)
 {
     UT_LOG("Entering test_createVAP_iot_valid_tc3...");
@@ -1499,15 +1691,25 @@ void test_createVAP_iot_valid_tc3(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for IOT ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for iot vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 016@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 2 | apIndex=2, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 3 | apIndex=3, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_iot_invalid(void)
 {
     UT_LOG("Entering test_createVAP_iot_invalid...");
@@ -1593,15 +1795,25 @@ void test_createVAP_iot_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with security mode as wpa2-personal, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA2-PERSONAL as security mode for backhaul vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 017@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 12 | apIndex=12, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 13 | apIndex=13, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_backhaul_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_backhaul_valid_tc1...");
@@ -1685,15 +1897,25 @@ void test_createVAP_backhaul_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with security mode as wpa3-transition, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-TRANSITION as security mode for backhaul vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 018@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 12 | apIndex=12, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 13 | apIndex=13, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_transition, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_backhaul_valid_tc2(void)
 {
     UT_LOG("Entering test_createVAP_backhaul_valid_tc2...");
@@ -1777,15 +1999,25 @@ void test_createVAP_backhaul_valid_tc2(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with security mode as wpa3-personal, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA3-PERSONAL as security mode for backhaul vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 019@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 12 | apIndex=12, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 13 | apIndex=13, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_backhaul_valid_tc3(void)
 {
     UT_LOG("Entering test_createVAP_backhaul_valid_tc3...");
@@ -1869,15 +2101,25 @@ void test_createVAP_backhaul_valid_tc3(void)
 }	
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for BACKHAUL ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for backhaul vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 020@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 12 | apIndex=12, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_wpa2_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 13 | apIndex=13, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_wpa2_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_backhaul_invalid(void)
 {
     UT_LOG("Entering test_createVAP_backhaul_invalid...");
@@ -1963,15 +2205,25 @@ void test_createVAP_backhaul_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-PSK ap_indices with security mode as wpa2-personal, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting WPA2-PERSONAL as security mode for lnf-psk vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 021@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 6 | apIndex=6, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 7 | apIndex=7, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_personal, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_lnfpsk_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_lnfpsk_valid_tc1...");
@@ -2055,15 +2307,25 @@ void test_createVAP_lnfpsk_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-PSK ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for lnf-psk vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 022@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 6 | apIndex=6, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 7 | apIndex=7, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_enterprise | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_lnfpsk_invalid(void)
 {
     UT_LOG("Entering test_createVAP_lnfpsk_invalid...");
@@ -2149,15 +2411,25 @@ void test_createVAP_lnfpsk_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-RADIUS ap_indices with security mode as wpa2-enterprise, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting wpa2-enterprise as security mode for lnf radius vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 023@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 10 | apIndex=10, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_enterprise, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 11 | apIndex=11, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_enterprise, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_lnfradius_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_lnfradius_valid_tc1...");
@@ -2241,15 +2513,25 @@ void test_createVAP_lnfradius_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for LNF-RADIUS ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for lnf-radius vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 024@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 10 | apIndex=10, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_personal | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 11 | apIndex=11, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa_personal | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_lnfradius_invalid(void)
 {
     UT_LOG("Entering test_createVAP_lnfradius_invalid...");
@@ -2335,15 +2617,25 @@ void test_createVAP_lnfradius_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-OPEN ap_indices with security mode as none, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting none as security mode for hotspot open vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 025@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 4 | apIndex=4, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_none, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 5 | apIndex=5, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_none, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_hotspotopen_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_hotspotopen_valid_tc1...");
@@ -2427,15 +2719,25 @@ void test_createVAP_hotspotopen_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-OPEN ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for hotspot open vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 026@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 4 | apIndex=4, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 5 | apIndex=5, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_hotspotopen_invalid(void)
 {
     UT_LOG("Entering test_createVAP_hotspotopen_invalid...");
@@ -2521,15 +2823,25 @@ void test_createVAP_hotspotopen_invalid(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-SECURE ap_indices with security mode as wpa2-enterprise, Isolation Enabled as TRUE and verify if API returns WIFI_HAL_SUCCESS
- *
- * Test Coverage: Positive Scenario
- *
- * @retval WIFI_HAL_SUCCESS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting wpa2-enterprise as security mode for hotspot secure vaps
+*
+* Calls the header function wifi_createVAP() with correct params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 027@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n     
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with valid arguments for apIndex 8 | apIndex=8, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_enterprise, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_createVAP() with valid arguments for apIndex 9 | apIndex=9, map=valid buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa2_enterprise, map.vap_array[0].u.bss_info.isolation=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+*/
 void test_createVAP_hotspotsecure_valid_tc1(void)
 {
     UT_LOG("Entering test_createVAP_hotspotsecure_valid_tc1...");
@@ -2613,15 +2925,25 @@ void test_createVAP_hotspotsecure_valid_tc1(void)
 }
 
 /**
- * @brief Tests requirements for L1 testing - Invoke wifi_createVAP() for HOTSPOT-SECURE ap_indices with invalid security mode and verify if API returns WIFI_HAL_INVALID_ARGUMENTS
- *
- * Test Coverage: Negative Scenario
- *
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
-
+* @brief This function checks if wifi_createVAP() works as expected on setting invalid security mode for hotspot secure vaps
+*
+* Calls the header function wifi_createVAP() with incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 028@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_createVAP() with invalid security mode for apIndex 8 | apIndex=8, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |02|call wifi_createVAP() with invalid security mode for apIndex 9 | apIndex=9, map=buffer of type wifi_vap_info_map_t with map.num_vaps=1, map.vap_array[0].u.bss_info.security.mode=wifi_security_mode_wpa3_personal | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_createVAP_hotspotsecure_invalid(void)
 {
     UT_LOG("Entering test_createVAP_hotspotsecure_invalid...");

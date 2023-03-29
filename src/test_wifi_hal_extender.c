@@ -17,6 +17,24 @@
  * limitations under the License.
 */
 
+/**
+* @file test_wifi_hal_extender.c
+* @page WIFIHAL_Extender WiFi HAL Level 1 Tests - Extender
+*
+* **Component Owner:** Soumya Munshi@n
+* **Component Architect:** Soumya Munshi@n
+* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
+*
+* ## Module's Role
+* This module includes Level 1 functional tests (success and failure scenarios).
+* This is to ensure that the wifi_getRadioChannelStats() API meets the operational requirements across all vendors.
+*
+* **Pre-Conditions:**  None@n
+* **Dependencies:** None@n
+*
+* Ref to API Definition specification documentation : [halSpec.md](../../../docs/pages/)
+*/
+
 #include <string.h>
 #include <stdlib.h>
 #include <setjmp.h>
@@ -28,15 +46,39 @@
 #include <ut_log.h>
 
 /**
- * @brief Tests requirements for L1 testing wifi_getRadioChannelStats()
-
- * Test Coverage: Positive and Negative Scenarios
- *
- * @retval WIFI_HAL_SUCCESS             -> tested
- * @retval WIFI_HAL_INVALID_ARGUMENTS   -> tested
- *
- * @Note hal api is Synchronous
- */
+* @brief This function checks if wifi_getRadioChannelStats() works as expected
+*
+* Calls the header function wifi_getRadioChannelStats() with correct and incorrect params
+*
+* **Test Group ID:** Basic: 01@n
+* **Test Case ID:** 001@n
+* **Priority:** Medium@n
+*
+* **Pre-Conditions:** None@n    
+* **Dependencies:** None@n
+* **User Interaction:** If user chose to run the test in interactive mode, then the test case has to be selected via console@n
+*
+* **Test Procedure:**@n
+*
+* |Variation / Step|Description|Test Data|Expected Result|Notes|
+* |:--:|---------|----------|--------------|-----|
+* |01|call wifi_getRadioChannelStats() with channel in pool as 1 and check if channelStats get populated for radio 0 | radioIndex=0, channelStatsArrayPtr[0].ch_number=1, channelStatsArrayPtr[0].ch_in_pool=1, channelStatsArrayPtr[1].ch_number=6, channelStatsArrayPtr[1].ch_in_pool=1, sizeOfchannelStatsArray=2 | WIFI_HAL_SUCCESS| Should Pass |
+* |02|call wifi_getRadioChannelStats() with channel in pool as 1 and check if channelStats get populated for radio 1 | radioIndex=1, channelStatsArrayPtr[0].ch_number=36, channelStatsArrayPtr[0].ch_in_pool=1, channelStatsArrayPtr[1].ch_number=48, channelStatsArrayPtr[1].ch_in_pool=1, sizeOfchannelStatsArray=2 | WIFI_HAL_SUCCESS| Should Pass |
+* |03|call wifi_getRadioChannelStats() with channel in pool as 0 and  check if channelStats are zeroes for radio 0 | radioIndex=0, channelStatsArrayPtr[0].ch_number=1, channelStatsArrayPtr[0].ch_in_pool=0, sizeOfchannelStatsArray=1 | WIFI_HAL_SUCCESS| Should Pass |
+* |04|call wifi_getRadioChannelStats() with channel in pool as 0 and  check if channelStats are zeroes for radio 1 | radioIndex=1, channelStatsArrayPtr[0].ch_number=36, channelStatsArrayPtr[0].ch_in_pool=0, sizeOfchannelStatsArray=1 | WIFI_HAL_SUCCESS| Should Pass |
+* |05|call wifi_getRadioChannelStats() with radioIndex as 0, sizeOfchannelStatsArray as 0 and check if ON channelStats are retrieved | radioIndex=0, channelStatsArrayPtr=0, sizeOfchannelStatsArray=1 | WIFI_HAL_SUCCESS | Should Pass |
+* |06|call wifi_getRadioChannelStats() with radioIndex as 1, sizeOfchannelStatsArray as 0 and check if ON channelStats are retrieved | radioIndex=1, channelStatsArrayPtr=0, sizeOfchannelStatsArray=1 | WIFI_HAL_SUCCESS | Should Pass |
+* |07|call wifi_getRadioChannelStats() with radioIndex as 0, one instance of channel in pool as 1, check if channelStats get populated and another instance of channel in pool as 0, check if channelStats are zeroes | radioIndex=0, channelStatsArrayPtr[0].ch_number=1, channelStatsArrayPtr[0].ch_in_pool=1, channelStatsArrayPtr[1].ch_number=6, channelStatsArrayPtr[1].ch_in_pool=0, sizeOfchannelStatsArray=2 | WIFI_HAL_SUCCESS| Should Pass |
+* |08|call wifi_getRadioChannelStats() with radioIndex as 1, one instance of channel in pool as 1, check if channelStats get populated and another instance of channel in pool as 0, check if channelStats are zeroes | radioIndex=1, channelStatsArrayPtr[0].ch_number=36, channelStatsArrayPtr[0].ch_in_pool=1, channelStatsArrayPtr[1].ch_number=48, channelStatsArrayPtr[1].ch_in_pool=0, sizeOfchannelStatsArray=2 | WIFI_HAL_SUCCESS| Should Pass |
+* |09|call wifi_getRadioChannelStats() with NULL buffer as channelStatsArrayPtr for radio 0 | radioIndex=0, channelStatsArrayPtr=NULL, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |10|call wifi_getRadioChannelStats() with NULL buffer as channelStatsArrayPtr for radio 1 | radioIndex=1, channelStatsArrayPtr=NULL, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |11|call wifi_getRadioChannelStats() with invalid positive channel number for radio 0 | radioIndex=0, channelStatsArrayPtr.ch_number=999, channelStatsArrayPtr.in_pool=1, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |12|call wifi_getRadioChannelStats() with invalid positive channel number for radio 1 | radioIndex=1, channelStatsArrayPtr.ch_number=999, channelStatsArrayPtr.in_pool=1, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |13|call wifi_getRadioChannelStats() with invalid negative channel number for radio 0 | radioIndex=0, channelStatsArrayPtr.ch_number=-1, channelStatsArrayPtr.in_pool=1, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |14|call wifi_getRadioChannelStats() with invalid negative channel number for radio 0 | radioIndex=1, channelStatsArrayPtr.ch_number=-36, channelStatsArrayPtr.in_pool=1, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |15|call wifi_getRadioChannelStats() with negative radioIndex | radioIndex=-1, channelStatsArrayPtr.ch_number=1, channelStatsArrayPtr.ch_in_pool=1, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |16|call wifi_getRadioChannelStats() with out of range positive radioIndex | radioIndex=99, channelStatsArrayPtr.ch_number=1, channelStatsArrayPtr.ch_in_pool=1, sizeOfchannelStatsArray=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+*/
 void test_extender_wifi_getRadioChannelStats(void)
 {
 
