@@ -98,6 +98,7 @@ void test_extender_wifi_getRadioChannelStats(void)
     wifi_channelStats_t * channelStatsArrayPtr = NULL;
     const int ch_numbers[][2] = {{1, 6}, {36, 48}, {1, 33}};
     const int ch_numbers_negative[3] = {-1, -36, -1};
+    int org_ch[2] = {0};
 
     /* Get the number of radios applicable */
     returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
@@ -269,8 +270,12 @@ void test_extender_wifi_getRadioChannelStats(void)
                 }
 
                 /* Instance 1 is in pool and Instance 2 is not in pool */
-                channelStatsArrayPtr[0].ch_in_pool = 0;
-                channelStatsArrayPtr[1].ch_in_pool = 1;
+                channelStatsArrayPtr[0].ch_in_pool = 1;
+                channelStatsArrayPtr[1].ch_in_pool = 0;
+
+		/* Copy the channel numbers to org_ch array before the API call */
+		org_ch[0] = channelStatsArrayPtr[0].ch_number;
+                org_ch[1] = channelStatsArrayPtr[1].ch_number;
 
                 UT_LOG("For Radio %d, Channel Number[0] : %d and Channel in Pool[0] : %d, Channel Number[1] : %d and Channel in Pool[1] : %d", radioIndex, channelStatsArrayPtr[0].ch_number, channelStatsArrayPtr[0].ch_in_pool, channelStatsArrayPtr[1].ch_number, channelStatsArrayPtr[1].ch_in_pool);
 
@@ -278,7 +283,7 @@ void test_extender_wifi_getRadioChannelStats(void)
                 result = wifi_getRadioChannelStats(radioIndex, channelStatsArrayPtr, sizeOfchannelStatsArray);
                 UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
 
-                UT_LOG("Passing radioIndex as %d, valid channelStatsArrayPtr buffer (with valid channel number and channel in pool as 1 and another instance with valid channel number and channel in pool as 0) and sizeOfchannelStatsArray as %d returns : %d", radioIndex, sizeOfchannelStatsArray, result);
+                UT_LOG("Passing radioIndex as %d, valid channelStatsArrayPtr buffer (with valid channel number %d and channel in pool as 1 and another instance with valid channel number %d and channel in pool as 0) and sizeOfchannelStatsArray as %d returns : %d", radioIndex, channelStatsArrayPtr[0].ch_number, channelStatsArrayPtr[1].ch_number, sizeOfchannelStatsArray, result);
 
                 if (result == WIFI_HAL_SUCCESS)
                 {
@@ -286,6 +291,13 @@ void test_extender_wifi_getRadioChannelStats(void)
                     {
                         UT_LOG("Channel Stats : ch_number=%d, ch_in_pool=%d, ch_noise=%d, ch_radar_noise=%d, ch_max_80211_rssi=%d, ch_non_80211_noise=%d, ch_utilization=%d, ch_utilization_total=%llu, ch_utilization_busy=%llu, ch_utilization_busy_tx=%llu, ch_utilization_busy_rx=%llu, ch_utilization_busy_self=%llu, ch_utilization_busy_ext=%llu", channelStatsArrayPtr[column].ch_number, channelStatsArrayPtr[column].ch_in_pool, channelStatsArrayPtr[column].ch_noise, channelStatsArrayPtr[column].ch_radar_noise, channelStatsArrayPtr[column].ch_max_80211_rssi, channelStatsArrayPtr[column].ch_non_80211_noise, channelStatsArrayPtr[column].ch_utilization, channelStatsArrayPtr[column].ch_utilization_total, channelStatsArrayPtr[column].ch_utilization_busy, channelStatsArrayPtr[column].ch_utilization_busy_tx, channelStatsArrayPtr[column].ch_utilization_busy_rx, channelStatsArrayPtr[column].ch_utilization_busy_self, channelStatsArrayPtr[column].ch_utilization_busy_ext);
                     }
+
+		    /* Check if instance 1 channel number is not corrupted */
+		    if (channelStatsArrayPtr[0].ch_number != org_ch[0])
+	            {
+			UT_FAIL("The channel number for instance 1 got corrupted after wifi_getRadioChannelStats() call");
+	                UT_LOG("The channel number : %d for instance 1 got corrupted after wifi_getRadioChannelStats() call", channelStatsArrayPtr[0].ch_number);
+		    }
 
                     /* Check if Stats receieved for instance 1 are valid by checking if any of the values are non-zero*/
                     if((channelStatsArrayPtr[0].ch_noise != 0) || (channelStatsArrayPtr[0].ch_radar_noise != 0) || (channelStatsArrayPtr[0].ch_max_80211_rssi != 0)|| (channelStatsArrayPtr[0].ch_non_80211_noise != 0) || (channelStatsArrayPtr[0].ch_utilization != 0) || (channelStatsArrayPtr[0].ch_utilization_total != 0)|| (channelStatsArrayPtr[0].ch_utilization_busy != 0) || (channelStatsArrayPtr[0].ch_utilization_busy_tx != 0)|| (channelStatsArrayPtr[0].ch_utilization_busy_rx != 0) || (channelStatsArrayPtr[0].ch_utilization_busy_self != 0)|| (channelStatsArrayPtr[0].ch_utilization_busy_ext != 0))
@@ -297,6 +309,13 @@ void test_extender_wifi_getRadioChannelStats(void)
                     {
                         UT_FAIL("Stats Values retrieved are NOT valid when chanel in pool");
                         UT_LOG("Stats Values retrieved are NOT valid for channel %d in pool", channelStatsArrayPtr[0].ch_number);
+                    }
+
+		    /* Check if instance 2 channel number is not corrupted */
+                    if (channelStatsArrayPtr[1].ch_number != org_ch[1])
+                    {
+                        UT_FAIL("The channel number for instance 2 got corrupted after wifi_getRadioChannelStats() call");
+                        UT_LOG("The channel number : %d for instance 2 got corrupted after wifi_getRadioChannelStats() call", channelStatsArrayPtr[1].ch_number);
                     }
 
                     /* Check if Stats receieved for instance 2 are valid by checking if population of stats is skipped */

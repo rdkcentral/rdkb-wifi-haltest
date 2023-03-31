@@ -383,7 +383,6 @@ void test_radio_wifi_setRadioOperatingParameters(void)
 * |01|invoke wifi_setRadioOperatingParameters() with valid channel values set to operationParam structure for 2.4G radio | radioIndex=0, operationParam.channel={3, 6, 9, 11} | WIFI_HAL_SUCCESS| Should Pass |
 * |02|invoke wifi_setRadioOperatingParameters() with valid channel values set to operationParam structure for 5G radio | radioIndex=1, operationParam.channel={44, 116, 144, 157} | WIFI_HAL_SUCCESS| Should Pass |
 */
-void test_setRadioOperatingParameters_valid_channel( void )
 void test_setRadioOperatingParameters_valid_channel(void)
 {
     UT_LOG("Entering test_setRadioOperatingParameters_valid_channel...");
