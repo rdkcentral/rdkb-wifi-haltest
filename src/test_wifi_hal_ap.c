@@ -121,7 +121,7 @@ void test_wifi_getApAssociatedDevice(void)
                     result = wifi_getApAssociatedDevice(apIndices[iteration], &opDeviceMacAddArray[0], maxNumDevices, NULL);
                     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
 
-                    UT_LOG("Setting valid buffer to opDeviceMacAddArray, maxNumDevices as %d, NULL buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices, apIndices[iteration], result);
+                    UT_LOG("Setting valid buffer of type mac_address_t to opDeviceMacAddArray, maxNumDevices as %d, NULL buffer to opNumOfDevices for apIndex %d returns : %d", maxNumDevices, apIndices[iteration], result);
                 }
 
                 /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
