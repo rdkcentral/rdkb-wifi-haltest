@@ -21,10 +21,6 @@
 * @file test_wifi_hal_generic.c
 * @page WIFIHAL_Generic WiFi HAL Level 1 Tests - Generic
 *
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
-*
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
 * This is to ensure that the wifi_init() and wifi_getHalCapability() APIs meet the operational requirements across all vendors.

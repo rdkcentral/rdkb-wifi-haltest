@@ -20,9 +20,6 @@
 /**
 * @file l2_test_wifi_hal.c
 * @page WIFIHAL_L2 WiFi HAL Level 2 Tests - Radio, AP and Extender APIs
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
 *
 * ## Module's Role
 * This module includes Level 2 functional tests (success and failure scenarios).
@@ -1126,7 +1123,7 @@ void test_createVAP_vapinfo_valid_tc1(void)
 
     int * apIndices = NULL;
     int i = 0, index = 0, result = 0, radioIndex = 0, returnStatus = 0;
-    wifi_vap_info_map_t  map, map1, tmp_map;
+    wifi_vap_info_map_t  map1, tmp_map;
     unsigned int numRadios = 0;
 
     /* Get the number of radios applicable */

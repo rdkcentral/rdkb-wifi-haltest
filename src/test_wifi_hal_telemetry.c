@@ -21,10 +21,6 @@
 * @file test_wifi_hal_telemetry.c
 * @page WIFIHAL_Telemetry WiFi HAL Level 1 Tests - Telemetry
 *
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
-*
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
 * This is to ensure that the wifi_getRadioBandUtilization(), wifi_getApAssociatedDeviceDiagnosticResult3(), wifi_getApAssociatedClientDiagnosticResult() and wifi_getRadioTrafficStats2() APIs meet the operational requirements across all vendors.

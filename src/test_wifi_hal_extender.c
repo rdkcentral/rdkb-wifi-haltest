@@ -21,10 +21,6 @@
 * @file test_wifi_hal_extender.c
 * @page WIFIHAL_Extender WiFi HAL Level 1 Tests - Extender
 *
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
-*
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
 * This is to ensure that the wifi_getRadioChannelStats() API meets the operational requirements across all vendors.

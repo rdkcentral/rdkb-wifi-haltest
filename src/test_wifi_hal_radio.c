@@ -21,10 +21,6 @@
 * @file test_wifi_hal_radio.c
 * @page WIFIHAL_Radio WiFi HAL Level 1 Tests - Radio
 *
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
-*
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
 * This is to ensure that the APIs: wifi_getRadioTransmitPower(), wifi_getRadioOperatingChannelBandwidth() and wifi_setRadioOperatingParameters()  meets the operational requirements of the RADIO HAL across all vendors.

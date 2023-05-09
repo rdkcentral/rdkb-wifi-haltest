@@ -21,10 +21,6 @@
 * @file test_wifi_hal_sta.c
 * @page WIFIHAL_Sta WiFi HAL Level 1 Tests - STA
 *
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
-*
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
 * This is to ensure that the APIs: wifi_connect(), wifi_disconnect() and wifi_startScan() meets the operational requirements of the STA HAL across all vendors.

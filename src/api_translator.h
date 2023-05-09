@@ -17,7 +17,14 @@
  * limitations under the License.
 */
 
-//Generic hal api declaration, to avoid compilation error
+/*
+ @note this api translator implementation when vendor API and RDK Wifi HAL API
+ names which is in the spec were different.
+ So that the test suite can verify both APIs without altering anything inside the test functions.
+ It is expected that this will be removed in later revisions of the code.
+*/
+
+//Generic hal api declaration
 INT wifi_hal_init();
 INT wifi_hal_getHalCapability(wifi_hal_capability_t *hal);
 INT wifi_hal_connect(INT ap_index, wifi_bss_info_t *bss);
@@ -47,3 +54,4 @@ INT wifi_hal_disconnect(INT apIndex);
 #define wifi_connect(apIndex, bss) wifi_hal_connect(apIndex, bss)
 
 #define wifi_disconnect(apIndex) wifi_hal_disconnect(apIndex)
+

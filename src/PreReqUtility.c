@@ -164,7 +164,7 @@ int WiFiPreReq()
 **/
 int createVAP(int radioIndex, int apIndex, APTYPE type)
 {
-    int ret = 0;
+    int ret;
     wifi_vap_info_map_t map;
 
     /* Get the vap configuration */
@@ -176,26 +176,22 @@ int createVAP(int radioIndex, int apIndex, APTYPE type)
         case STA :
             ret = get_mesh_sta_vap_config(apIndex, &map.vap_array[0]);
             break;
+        default:
+            UT_LOG("Unable to parse the vap config file");
+            return WIFI_HAL_ERROR;
     }
 
-    if (ret == 0)
-    {
-        UT_LOG("get_private_vap_config for vap %d returns : %d", apIndex, ret);
+    UT_LOG("get_private_vap_config for vap %d returns : %d", apIndex, ret);
 
-        map.num_vaps = 1;
-        ret = wifi_createVAP(radioIndex, &map);
-        if (ret == 0)
-        {
-            UT_LOG("WiFi create VAP returned success");
-        }
-        else
-        {
-            UT_LOG("WiFi create VAP returned failure");
-        }
-    }
-    else
+    map.num_vaps = 1;
+    ret = wifi_createVAP(radioIndex, &map);
+    if (ret != 0)
     {
-        UT_LOG("Unable to parse the vap config file");
+        UT_LOG("WiFi create VAP returned failure");
+        return WIFI_HAL_ERROR;
     }
-    return ret;
+
+    UT_LOG("WiFi create VAP returned success");
+
+    return WIFI_HAL_SUCCESS;
 }

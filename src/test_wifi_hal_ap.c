@@ -21,10 +21,6 @@
 * @file test_wifi_hal_ap.c
 * @page WIFIHAL_Ap WiFi HAL Level 1 Tests - AP
 *
-* **Component Owner:** Soumya Munshi@n
-* **Component Architect:** Soumya Munshi@n
-* **Review Team:** Soumya Munshi, Gerald Weatherup, Anjali Thampi@n
-*
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
 * This is to ensure that the wifi_getApAssociatedDevice(), wifi_enableCSIEngine(), wifi_getRadioVapInfoMap(), wifi_kickAssociatedDevice() and wifi_createVAP() APIs meet the operational requirements across all vendors.
