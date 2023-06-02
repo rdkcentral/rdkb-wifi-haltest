@@ -36,7 +36,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES",
-				"Passphrase": "folded9656angle"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -89,7 +89,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES",
-				"Passphrase": "folded9656angle"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -140,7 +140,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "CA1CA89C125A8817B1"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -191,7 +191,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "CA1CA89C125A8817B1"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -241,11 +241,11 @@
 			"Security": {
 				"Mode": "None",
 				"RadiusSettings": {
-					"RadiusServerIPAddr": "96.115.128.204",
-					"RadiusServerPort": 1812,
+					"RadiusServerIPAddr": "0.0.0.0",
+					"RadiusServerPort": 0,
 					"RadiusSecret": "123456789",
-					"SecondaryRadiusServerIPAddr": "96.115.128.204",
-					"SecondaryRadiusServerPort": 1812,
+					"SecondaryRadiusServerIPAddr": "0.0.0.0",
+					"SecondaryRadiusServerPort": 0,
 					"SecondaryRadiusSecret": "123456789",
 					"DasServerIPAddr": "0.0.0.0",
 					"DasServerPort": 0,
@@ -304,11 +304,11 @@
 			"Security": {
 				"Mode": "None",
 				"RadiusSettings": {
-					"RadiusServerIPAddr": "96.115.128.204",
-					"RadiusServerPort": 1812,
+					"RadiusServerIPAddr": "0.0.0.0",
+					"RadiusServerPort": 0,
 					"RadiusSecret": "123456789",
-					"SecondaryRadiusServerIPAddr": "96.115.128.204",
-					"SecondaryRadiusServerPort": 1812,
+					"SecondaryRadiusServerIPAddr": "0.0.0.0",
+					"SecondaryRadiusServerPort": 0,
 					"SecondaryRadiusSecret": "123456789",
 					"DasServerIPAddr": "0.0.0.0",
 					"DasServerPort": 0,
@@ -368,7 +368,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "AEF9D58B978A103B04016D600FD4B1E6943A3FF538B98B84F1C177B414F7018"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -419,7 +419,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "AEF9D58B978A103B04016D600FD4B1E6943A3FF538B98B84F1C177B414F7018"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -481,11 +481,11 @@
 				"EapReqRetries": 0,
 				"DisablePmksaCaching": false,
 				"RadiusSettings": {
-					"RadiusServerIPAddr": "96.115.128.204",
-					"RadiusServerPort": 1812,
+					"RadiusServerIPAddr": "0.0.0.0",
+					"RadiusServerPort": 0,
 					"RadiusSecret": "123456789",
-					"SecondaryRadiusServerIPAddr": "96.115.128.204",
-					"SecondaryRadiusServerPort": 1812,
+					"SecondaryRadiusServerIPAddr": "0.0.0.0",
+					"SecondaryRadiusServerPort": 0,
 					"SecondaryRadiusSecret": "123456789",
 					"DasServerIPAddr": "0.0.0.0",
 					"DasServerPort": 0,
@@ -556,11 +556,11 @@
 				"EapReqRetries": 0,
 				"DisablePmksaCaching": false,
 				"RadiusSettings": {
-					"RadiusServerIPAddr": "96.115.128.204",
-					"RadiusServerPort": 1812,
+					"RadiusServerIPAddr": "0.0.0.0",
+					"RadiusServerPort": 0,
 					"RadiusSecret": "123456789",
-					"SecondaryRadiusServerIPAddr": "96.115.128.204",
-					"SecondaryRadiusServerPort": 1812,
+					"SecondaryRadiusServerIPAddr": "0.0.0.0",
+					"SecondaryRadiusServerPort": 0,
 					"SecondaryRadiusSecret": "123456789",
 					"DasServerIPAddr": "0.0.0.0",
 					"DasServerPort": 0,
@@ -770,7 +770,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "1234567890"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -821,7 +821,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "1234567890"
+				"Passphrase": ""
 			},
 			"Interworking": {
 				"InterworkingEnable": false,
@@ -853,7 +853,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "SA2mNb5p8KHN=A8nDzxj-^HWZpAbjX4q"
+				"Passphrase": ""
 			},
 			"ScanParameters": {
 				"Period": 0,
@@ -875,7 +875,7 @@
 				"MFPConfig": "Disabled",
 				"Mode": "WPA2-Personal",
 				"EncryptionMethod": "AES+TKIP",
-				"Passphrase": "SA2mNb5p8KHN=A8nDzxj-^HWZpAbjX4q"
+				"Passphrase": ""
 			},
 			"ScanParameters": {
 				"Period": 0,
