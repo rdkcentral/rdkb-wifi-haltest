@@ -7,3 +7,4 @@ listed below.  Your use of this material within the component is also subject to
 conditions of these licenses.  The LICENSE file contains the text of all the licenses which apply
 within this component.
 
+This project uses the test framework https://github.com/ThrowTheSwitch/CMock
