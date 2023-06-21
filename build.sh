@@ -24,7 +24,7 @@ TEST_REPO=git@github.com:rdkcentral/ut-core.git
 
 # Set default UT_PROJECT_VERSION to master
 if [ -z "${UT_PROJECT_VERSION}" ]; then
-    UT_PROJECT_VERSION=master
+    UT_PROJECT_VERSION="1.6.0"
 fi
 
 # Check if the common document configuration is present, if not clone it

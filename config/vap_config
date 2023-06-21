@@ -30,7 +30,7 @@
 			"WpsPushButton": 0,
 			"WpsEnable": true,
 			"WpsConfigMethodsEnabled": 128,
-                        "WpsPin": "69468780",
+                        "WpsPin": "",
 			"BeaconRateCtl": "6Mbps",
 			"Security": {
 				"MFPConfig": "Disabled",
@@ -83,7 +83,7 @@
 			"WpsPushButton": 0,
 			"WpsEnable": true,
 			"WpsConfigMethodsEnabled": 128,
-                        "WpsPin": "69468780",
+                        "WpsPin": "",
 			"BeaconRateCtl": "6Mbps",
 			"Security": {
 				"MFPConfig": "Disabled",
