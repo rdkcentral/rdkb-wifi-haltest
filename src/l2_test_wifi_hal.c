@@ -717,6 +717,31 @@ static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandw
     return 0;
 }
 
+static int convert_channelwidth_to_string(wifi_channelBandwidth_t width, char *chWidth)
+{
+    if( width == WIFI_CHANNELBANDWIDTH_20MHZ )
+    {
+        strcpy(chWidth, "20");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_40MHZ )
+    {
+        strcpy(chWidth, "40");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_80MHZ )
+    {
+        strcpy(chWidth, "80");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_160MHZ )
+    {
+        strcpy(chWidth, "160");
+    }
+    else
+    {
+        return -1;
+    }
+    return 0;
+}
+
 /**
 * @brief This module test will get the supported channelwidths from wifi_getHalCapability(), set using wifi_setRadioOperatingParameters() 
 * and verify the set value using wifi_getRadioOperatingChannelBandwidth()@n
@@ -735,8 +760,9 @@ void test_getRadioOperatingChannelBandwidth_valid()
     wifi_channelBandwidth_t set_channelwidth_enum = 0;
     char initial_channelwidth[10] = {'\0'};
     char set_channelwidth[10] = {'\0'};
+    char chWidth[10] = {'\0'};
     unsigned int numRadios = 0;
-    int radioIndex = 0, i = 0, result = 0, returnStatus = 0, count = 0;
+    int radioIndex = 0, i = 0, result = 0, returnStatus = 0;
     wifi_radio_operationParam_t tmp_radio;
 
     /* Get the number of radios applicable */
@@ -752,13 +778,13 @@ void test_getRadioOperatingChannelBandwidth_valid()
 
         for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
         {
+	    int count = 0;
 	    if(get_channel_bandwidth(radioIndex, &count, channelWidth_list) == -1) {
 		UT_LOG("Unable to retrieve channel bandwidth");
                 UT_FAIL("Unable to retrieve channel bandwidth");
 		return;
             }
-
-            for (i=1; i<count; i++)
+            for (i=0; i<count; i++)
             {
                 result = wifi_getRadioOperatingChannelBandwidth(radioIndex, initial_channelwidth);
                 UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
@@ -769,48 +795,59 @@ void test_getRadioOperatingChannelBandwidth_valid()
                     UT_LOG("Initial Channelwidth of radio %d is %s which is a valid bandwidth", radioIndex, initial_channelwidth);
                     UT_PASS("Initial Channel Bandwidth validation success");
                 }
+		else
+		{
+		    UT_LOG("Initial Channelwidth of radio %d is %s which is not a valid bandwidth as, substring MHz is missing", radioIndex, initial_channelwidth);
+		    UT_FAIL("Initial Channel Bandwidth validation failure");
+		}
 
                 tmp_radio = g_operationParam[radioIndex];
                 tmp_radio.channelWidth = channelWidth_list[i];
-
-                UT_LOG("Setting channelWidth to %d using setRadioOperatingParameters", tmp_radio.channelWidth);
+                if (convert_channelwidth_to_string(tmp_radio.channelWidth, chWidth) == 0)
+		{
+                    UT_LOG("Setting channelWidth to %s using setRadioOperatingParameters", chWidth);
+		}
                 result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
+		UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
                 UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
-                UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
 
                 result = wifi_getRadioOperatingChannelBandwidth(radioIndex, set_channelwidth);
+		UT_LOG("wifi_getRadioOperatingChannelBandwidth for radioIndex %d returns result %d\n", radioIndex, result);
                 UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS);
-                UT_LOG("wifi_setRadioOperatingParameters for radioIndex %d returns result %d\n", radioIndex, result);
 
                 if (NULL != strstr(set_channelwidth, "MHz"))
                 {
                     UT_LOG("Set Channelwidth of radio %d is %s which is a valid bandwidth", radioIndex, set_channelwidth);
                     UT_PASS("Set ChannelWidth validation success");
-                }
 
-                if (convert_channelwidth_to_enum(set_channelwidth, &set_channelwidth_enum) == 0)
-		{
-		    if(set_channelwidth_enum == tmp_radio.channelWidth)
+		    if (convert_channelwidth_to_enum(set_channelwidth, &set_channelwidth_enum) == 0)
+		    {
+		        if(set_channelwidth_enum == tmp_radio.channelWidth)
+			{
+			    UT_LOG("The channelwidth set using wifi_setRadioOperatingParameters is reflected successfully in wifi_getRadioOperatingChannelBandwidth for Radio %d", radioIndex);
+                            UT_PASS("The channelwidth set using wifi_setRadioOperatingParameters is reflected successfully in wifi_getRadioOperatingChannelBandwidth");
+                            result = wifi_setRadioOperatingParameters(radioIndex, &g_operationParam[radioIndex]);
+			    UT_LOG("wifi_setRadioOperatingParameters after setting back to rado_config file values for radio %d returns : %d", radioIndex, result);
+                            UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
+			}
+			else
+			{
+			    UT_LOG("The channelwidth set using wifi_setRadioOperatingParameters is NOT reflected in wifi_getRadioOperatingChannelBandwidth for Radio %d", radioIndex);
+			    UT_FAIL("The channelwidth set using wifi_setRadioOperatingParameters is NOT reflected in wifi_getRadioOperatingChannelBandwidth");
+			}
+		    }
+		    else
 	            {
-	                UT_LOG("The channelwidth set using wifi_setRadioOperatingParameters is reflected successfully in wifi_getRadioOperatingChannelBandwidth for Radio %d", radioIndex);
-			UT_PASS("The channelwidth set using wifi_setRadioOperatingParameters is reflected successfully in wifi_getRadioOperatingChannelBandwidth");
-			result = wifi_setRadioOperatingParameters(radioIndex, &g_operationParam[radioIndex]);
-			UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
-			UT_LOG("wifi_setRadioOperatingParameters after setting back to rado_config file values for radio %d returns : %d", radioIndex, result);
-	            }
-	            else
-                    {
-			UT_LOG("The channelwidth set using wifi_setRadioOperatingParameters is NOT reflected in wifi_getRadioOperatingChannelBandwidth for Radio %d", radioIndex);
-                        UT_FAIL("The channelwidth set using wifi_setRadioOperatingParameters is NOT reflected in wifi_getRadioOperatingChannelBandwidth");
+		       UT_LOG("convert_channelwidth_to_enum failed");
+                       UT_FAIL("convert_channelwidth_to_enum failed");
                     }
 		}
-	        else
-	        {
-		    UT_LOG("convert_channelwidth_to_enum failed");
-                    UT_FAIL("convert_channelwidth_to_enum failed");
-		    return;
-	        }
-	    }
+		else
+		{
+		    UT_LOG("Set Channelwidth of radio %d is %s which is not a valid bandwidth as, substring MHz is missing", radioIndex, set_channelwidth);
+		    UT_FAIL("Set ChannelWidth validation failure");
+                }
+            }
         }
     }
     else

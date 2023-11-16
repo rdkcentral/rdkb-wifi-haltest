@@ -396,10 +396,8 @@ INT get_channel_list(int radioIndex, int *count, int channels[25])
 INT get_channel_bandwidth(int radioIndex, int *count, wifi_channelBandwidth_t Width[5])
 {
     int j = 0, ret = 0;
-    UT_LOG("Entered get_channel_bandwidth");
     wifi_hal_capability_t cap;
     wifi_radio_capabilities_t *rcap;
-
     ret = wifi_getHalCapability(&cap);
     UT_ASSERT_EQUAL(ret, WIFI_HAL_SUCCESS);
 
@@ -414,25 +412,25 @@ INT get_channel_bandwidth(int radioIndex, int *count, wifi_channelBandwidth_t Wi
             if (chbw & WIFI_CHANNELBANDWIDTH_20MHZ)
             {
                 UT_LOG(" 20");
-                Width[*count] = 20;
+                Width[*count] = WIFI_CHANNELBANDWIDTH_20MHZ;
                 (*count)++;
             }
             if (chbw & WIFI_CHANNELBANDWIDTH_40MHZ)
             {
                 UT_LOG(" 40");
-                Width[*count] = 40;
+                Width[*count] = WIFI_CHANNELBANDWIDTH_40MHZ;
                 (*count)++;
             }
             if (chbw & WIFI_CHANNELBANDWIDTH_80MHZ)
             {
                 UT_LOG(" 80");
-                Width[*count] = 80;
+                Width[*count] = WIFI_CHANNELBANDWIDTH_80MHZ;
 		(*count)++;
             }
             if (chbw & WIFI_CHANNELBANDWIDTH_160MHZ)
             {
                 UT_LOG(" 160");
-                Width[*count] = 160;
+                Width[*count] = WIFI_CHANNELBANDWIDTH_160MHZ;
                 (*count)++;
             }
             UT_LOG(" MHz");
@@ -450,8 +448,6 @@ INT get_channel_bandwidth(int radioIndex, int *count, wifi_channelBandwidth_t Wi
          UT_LOG("wifi_getHalCapability failed ret is %d", ret);
          return -1;
      }
-
-     UT_LOG("Exiting get_channel_bandwidth");
      return 0;
 }
 
