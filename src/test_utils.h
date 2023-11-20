@@ -71,6 +71,7 @@ extern INT test_utils_getApIndices(UINT maxRadio, INT apIndices[], APTYPE type);
 extern INT l2_test_prerequisite();
 extern INT get_channel_list(int radioIndex, int *count, int channels[25]);
 extern INT get_channel_bandwidth(int radioIndex, int *count, wifi_channelBandwidth_t Width[5]);
+extern INT convert_channelwidth_to_string(wifi_channelBandwidth_t width, char *chWidth);
 /* UTILITY FUNCTIONS END */
 
 #endif /* TEST_UTILS_H */

@@ -451,6 +451,35 @@ INT get_channel_bandwidth(int radioIndex, int *count, wifi_channelBandwidth_t Wi
      return 0;
 }
 
+/**function to convert channel width passed as enum value to string
+* IN     :  width - channel width passed as enum value
+* IN     :  chwidth - buffer which holds the channel width value converted to string
+**/
+int convert_channelwidth_to_string(wifi_channelBandwidth_t width, char *chWidth)
+{
+    if( width == WIFI_CHANNELBANDWIDTH_20MHZ )
+    {
+        strcpy(chWidth, "20");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_40MHZ )
+    {
+        strcpy(chWidth, "40");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_80MHZ )
+    {
+        strcpy(chWidth, "80");
+    }
+    else if( width == WIFI_CHANNELBANDWIDTH_160MHZ )
+    {
+        strcpy(chWidth, "160");
+    }
+    else
+    {
+        return -1;
+    }
+    return 0;
+}
+
 #if 0
 INT test_utils_setBandwidth(INT radioIndex, UINT bandwidth)
 {
