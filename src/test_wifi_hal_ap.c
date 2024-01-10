@@ -23,7 +23,7 @@
 *
 * ## Module's Role
 * This module includes Level 1 functional tests (success and failure scenarios).
-* This is to ensure that the wifi_getApAssociatedDevice(), wifi_enableCSIEngine(), wifi_getRadioVapInfoMap(), wifi_kickAssociatedDevice() and wifi_createVAP() APIs meet the operational requirements across all vendors.
+* This is to ensure that the wifi_getApAssociatedDevice(), wifi_enableCSIEngine(), wifi_getRadioVapInfoMap(), wifi_kickApAssociatedDevice() and wifi_createVAP() APIs meet the operational requirements across all vendors.
 *
 * **Pre-Conditions:**  None@n
 * **Dependencies:** None@n
@@ -46,6 +46,9 @@
 /* Values here should be read from a configuration file, that supports the test */
 #define TBC_NEGATIVE_INDEX_OUT_OF_RANGE (-1)
 #define TBC_POSITIVE_INDEX_OUT_OF_RANGE (99)
+mac_address_t VALID_CLIENT_MAC = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
+mac_address_t INVALID_CLIENT_MAC = {0x11, 0x22, 0x33};
+mac_address_t EMPTY_CLIENT_MAC = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 /**
 * @brief This function checks if wifi_getApAssociatedDevice() works as expected
@@ -73,6 +76,7 @@
 * |07|call wifi_getApAssociatedDevice() with invalid negative apIndex | apIndex=-1, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
 * |08|call wifi_getApAssociatedDevice() with invalid positive outofRange apIndex | apIndex=99, *opDeviceMacAddArray=valid buffer of type mac_address_t, maxNumDevices=0, opNumOfDevices=valid buffer of type unsigned int  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
 */
+
 void test_wifi_getApAssociatedDevice(void)
 {
     UT_LOG("Entering getApAssociatedDevice...");
@@ -200,14 +204,14 @@ void test_wifi_getApAssociatedDevice(void)
 *
 * |Variation / Step|Description|Test Data|Expected Result|Notes|
 * |:--:|---------|----------|--------------|-----|
-* |01|call wifi_enableCSIEngine() with apIndex as 0, NULL mac address and enable parameter as false | apIndex=0, sta=NULL , enable=FALSE | WIFI_HAL_SUCCESS | Should Pass |
-* |02|call wifi_enableCSIEngine() with apIndex as 1, NULL mac address and enable parameter as false | apIndex=1, sta=NULL , enable=FALSE | WIFI_HAL_SUCCESS | Should Pass |
-* |03|call wifi_enableCSIEngine() with apIndex as 0, NULL mac address and enable parameter as true | apIndex=0, sta=NULL , enable=TRUE | WIFI_HAL_SUCCESS | Should Pass |
-* |04|call wifi_enableCSIEngine() with apIndex as 1, NULL mac address and enable parameter as true | apIndex=1, sta=NULL , enable=TRUE | WIFI_HAL_SUCCESS | Should Pass |
-* |05|call wifi_enableCSIEngine() with apIndex as 0, NULL mac address and enable parameter as an invalid value | apIndex=0, sta=NULL, enable=2 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |06|call wifi_enableCSIEngine() with apIndex as 1, NULL mac address and enable parameter as an invalid value | apIndex=1, sta=NULL, enable=2 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |07|call wifi_enableCSIEngine() with negative apIndex, NULL mac address and enable parameter as FALSE | apIndex=-1, sta=NULL , enable=FALSE | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |08|call wifi_enableCSIEngine() with out of range apIndex, NULL mac address and enable parameter as FALSE | apIndex=99, sta=NULL , enable=FALSE | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |01|call wifi_enableCSIEngine() with apIndex as 0, NULL(00:00:00:00:00:00) mac address and enable parameter as false | apIndex=0, sta=NULL(00:00:00:00:00:00) , enable=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |02|call wifi_enableCSIEngine() with apIndex as 1, NULL(00:00:00:00:00:00) mac address and enable parameter as false | apIndex=1, sta=NULL(00:00:00:00:00:00) , enable=FALSE | WIFI_HAL_SUCCESS | Should Pass |
+* |03|call wifi_enableCSIEngine() with apIndex as 0, NULL(00:00:00:00:00:00) mac address and enable parameter as true | apIndex=0, sta=NULL(00:00:00:00:00:00) , enable=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |04|call wifi_enableCSIEngine() with apIndex as 1, NULL(00:00:00:00:00:00) mac address and enable parameter as true | apIndex=1, sta=NULL(00:00:00:00:00:00) , enable=TRUE | WIFI_HAL_SUCCESS | Should Pass |
+* |05|call wifi_enableCSIEngine() with apIndex as 0, NULL(00:00:00:00:00:00) mac address and enable parameter as an invalid value | apIndex=0, sta=NULL(00:00:00:00:00:00), enable=2 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_enableCSIEngine() with apIndex as 1, NULL(00:00:00:00:00:00) mac address and enable parameter as an invalid value | apIndex=1, sta=NULL(00:00:00:00:00:00), enable=2 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |07|call wifi_enableCSIEngine() with negative apIndex, NULL(00:00:00:00:00:00) mac address and enable parameter as FALSE | apIndex=-1, sta=NULL(00:00:00:00:00:00) , enable=FALSE | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |08|call wifi_enableCSIEngine() with out of range apIndex, NULL(00:00:00:00:00:00) mac address and enable parameter as FALSE | apIndex=99, sta=NULL(00:00:00:00:00:00) , enable=FALSE | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
 */
 void test_wifi_enableCSIEngine(void)
 {
@@ -223,6 +227,8 @@ void test_wifi_enableCSIEngine(void)
     unsigned int numRadios = 0;
     BOOL enable = FALSE;
     BOOL enable_invalid = 2;
+    char macstr[] = "000000000000";
+    mac_address_t null_mac = {'\0'};
 
     /* Get the number of radios applicable */
     returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
@@ -242,17 +248,18 @@ void test_wifi_enableCSIEngine(void)
             if (returnStatus == 0)
             {
                 UT_LOG("Private AP Indices for the supported radios retrieved");
+                sscanf(macstr, "%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx", &null_mac[0], &null_mac[1], &null_mac[2], &null_mac[3], &null_mac[4], &null_mac[5]);
 
                 /* Positive Test WIFI_HAL_SUCCESS */
                 /* Passing valid apIndex, NULL mac address and enable parameter as false and expecting the API to return success */
                 UT_LOG("Test Case 1");
-
+                UT_LOG("NUll (%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx) MAC", null_mac[0], null_mac[1], null_mac[2], null_mac[3], null_mac[4], null_mac[5]);
                 for (iteration = 0; iteration < numRadios; iteration ++)
                 {
-                    result = wifi_enableCSIEngine(apIndices[iteration], NULL, enable);
+                    result = wifi_enableCSIEngine(apIndices[iteration], null_mac, enable);
                     UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
 
-                    UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndices[iteration], result);
+                    UT_LOG("Setting NULL(%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx) mac address and enable as %d for apIndex %d returns : %d", null_mac[0], null_mac[1], null_mac[2], null_mac[3], null_mac[4], null_mac[5], enable, apIndices[iteration], result);
                 }
 
                 /* Negative Test WIFI_HAL_ERROR */
@@ -262,10 +269,10 @@ void test_wifi_enableCSIEngine(void)
 
                 for (iteration = 0; iteration < numRadios; iteration ++)
                 {
-                    result = wifi_enableCSIEngine(apIndices[iteration], NULL, enable);
+                    result = wifi_enableCSIEngine(apIndices[iteration], null_mac, enable);
                     UT_ASSERT_EQUAL( result, WIFI_HAL_ERROR );
 
-                    UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndices[iteration], result);
+                    UT_LOG("Setting NULL (%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx) mac address and enable as %d for apIndex %d returns : %d", null_mac[0], null_mac[1], null_mac[2], null_mac[3], null_mac[4], null_mac[5], enable, apIndices[iteration], result);
                 }
 
                 /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
@@ -274,10 +281,10 @@ void test_wifi_enableCSIEngine(void)
 
                 for (iteration = 0; iteration < numRadios; iteration ++)
                 {
-                    result = wifi_enableCSIEngine(apIndices[iteration], NULL, enable_invalid);
+                    result = wifi_enableCSIEngine(apIndices[iteration], null_mac, enable_invalid);
                     UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
 
-                    UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable_invalid, apIndices[iteration], result);
+                    UT_LOG("Setting NULL (%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx) mac address and enable as %d for apIndex %d returns : %d", null_mac[0], null_mac[1], null_mac[2], null_mac[3], null_mac[4], null_mac[5], enable_invalid, apIndices[iteration], result);
                 }
 
                 /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
@@ -285,19 +292,19 @@ void test_wifi_enableCSIEngine(void)
                 enable = FALSE;
                 UT_LOG("Test Case 4");
 
-                result = wifi_enableCSIEngine(apIndex_negative, NULL, enable);
+                result = wifi_enableCSIEngine(apIndex_negative, null_mac, enable);
                 UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
 
-                UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndex_negative, result);
+                UT_LOG("Setting NULL (%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx) mac address and enable as %d for apIndex %d returns : %d", null_mac[0], null_mac[1], null_mac[2], null_mac[3], null_mac[4], null_mac[5], enable, apIndex_negative, result);
 
                 /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
                 /* Passing out of range apIndex, NULL mac address and enable parameter as FALSE and expecting the API to return failure */
                 UT_LOG("Test Case 5");
 
-                result = wifi_enableCSIEngine(apIndex_OutOfRange, NULL, enable);
+                result = wifi_enableCSIEngine(apIndex_OutOfRange, null_mac, enable);
                 UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
 
-                UT_LOG("Setting NULL mac address and enable as %d for apIndex %d returns : %d", enable, apIndex_OutOfRange, result);
+                UT_LOG("Setting NULL (%02hhx:%02hhx:%02hhx:%02hhx:%02hhx:%02hhx) mac address and enable as %d for apIndex %d returns : %d", null_mac[0], null_mac[1], null_mac[2], null_mac[3], null_mac[4], null_mac[5],  enable, apIndex_OutOfRange, result);
             }
             else
             {
@@ -550,9 +557,9 @@ void test_wifi_getRadioVapInfoMap(void)
 }
 
 /**
-* @brief This function checks if wifi_kickAssociatedDevice() works as expected
+* @brief This function checks if wifi_kickApAssociatedDevice() works as expected
 *
-* Calls the header function wifi_kickAssociatedDevice() with correct and incorrect params
+* Calls the header function wifi_kickApAssociatedDevice() with correct and incorrect params
 *
 * **Test Group ID:** Basic: 01@n
 * **Test Case ID:** 005@n
@@ -566,24 +573,22 @@ void test_wifi_getRadioVapInfoMap(void)
 *
 * |Variation / Step|Description|Test Data|Expected Result|Notes|
 * |:--:|---------|----------|--------------|-----|
-* |01|call wifi_kickAssociatedDevice() with positive out of range apIndex | apIndex=99, device=pass valid buffer of type wifi_device_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |02|call wifi_kickAssociatedDevice() with negative out of range apIndex | apIndex=-1, device=pass valid buffer of type wifi_device_t | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |03|call wifi_kickAssociatedDevice() with apIndex as 0 and invalid device mac | apIndex=0, device="AA:BB:CC:DD:EE:FF" | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |04|call wifi_kickAssociatedDevice() with apIndex as 1 and invalid device mac | apIndex=1, device="AA:BB:CC:DD:EE:FF" | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |05|call wifi_kickAssociatedDevice() with apIndex as 0 and device mac as NULL | apIndex=0, device=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |06|call wifi_kickAssociatedDevice() with apIndex as 1 and device mac as NULL | apIndex=1, device=NULL | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |01|call wifi_kickApAssociatedDevice() with positive out of range apIndex | apIndex=99, device=pass valid buffer of type wifi_device_t | RETURN_ERR | Should Fail |
+* |02|call wifi_kickApAssociatedDevice() with negative out of range apIndex | apIndex=-1, device=pass valid buffer of type wifi_device_t | RETURN_ERR | Should Fail |
+* |03|call wifi_kickApAssociatedDevice() with apIndex as 0 and invalid device mac | apIndex=0, device="AA:BB:CC:DD:EE:FF" | RETURN_ERR | Should Fail |
+* |04|call wifi_kickApAssociatedDevice() with apIndex as 1 and invalid device mac | apIndex=1, device="AA:BB:CC:DD:EE:FF" | RETURN_ERR | Should Fail |
+* |05|call wifi_kickApAssociatedDevice() with apIndex as 0 and device mac as NULL | apIndex=0, device=NULL | RETURN_ERR | Should Fail |
+* |06|call wifi_kickApAssociatedDevice() with apIndex as 1 and device mac as NULL | apIndex=1, device=NULL | RETURN_ERR| Should Fail |
 */
-void test_wifi_kickAssociatedDevice(void)
+void test_wifi_kickApAssociatedDevice(void)
 {
-   UT_LOG("Entering kickAssociatedDevice..." );
+   UT_LOG("Entering kickApAssociatedDevice..." );
 
    int result = 0;
    int index = 0;
    unsigned int numRadios = 0;
    int returnStatus = 0;
-   wifi_device_t device;
    int * apIndex = NULL;
-   char *mac = "AA:BB:CC:DD:EE:FF";
 
    /* Get the number of radios applicable */
    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
@@ -600,42 +605,37 @@ void test_wifi_kickAssociatedDevice(void)
 		if(returnStatus == 0)
 		{
 	       		/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
-	       		/* Passing an invalid positive out of range apIndex, valid device and expecting the API to return failure */
+	       		/* Passing an invalid positive out of range apIndex, valid mac and expecting the API to return failure */
 	       		UT_LOG("Test Case 1");
-	       		memset(&device,0,sizeof(wifi_device_t));
-	       		result = wifi_kickAssociatedDevice(TBC_POSITIVE_INDEX_OUT_OF_RANGE, &device);
-			UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-	       		UT_LOG("Passing an invalid positive out of range apIndex %d with valid device returns %d", TBC_POSITIVE_INDEX_OUT_OF_RANGE, result);
+	       		result = wifi_kickApAssociatedDevice(TBC_POSITIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC);
+			    UT_ASSERT_EQUAL( result, RETURN_ERR);
+	       		UT_LOG("Passing an invalid positive out of range apIndex %d with valid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", TBC_POSITIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC[0], VALID_CLIENT_MAC[1], VALID_CLIENT_MAC[2], VALID_CLIENT_MAC[3], VALID_CLIENT_MAC[4], VALID_CLIENT_MAC[5], result);
 
 			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
-	       		/* Passing an invalid negative apIndex, valid device and expecting the API to return failure */
+	       		/* Passing an invalid negative apIndex, valid mac and expecting the API to return failure */
 	       		UT_LOG("Test Case 2");
-	       		memset(&device,0,sizeof(wifi_device_t));
-	       		result = wifi_kickAssociatedDevice(TBC_NEGATIVE_INDEX_OUT_OF_RANGE, &device);
-	                UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-			UT_LOG("Passing an invalid negative out of range apIndex %d with valid device returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, result);
+	       		result = wifi_kickApAssociatedDevice(TBC_NEGATIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC);
+	            UT_ASSERT_EQUAL( result, RETURN_ERR);
+			    UT_LOG("Passing an invalid negative out of range apIndex %d with valid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC[0], VALID_CLIENT_MAC[1], VALID_CLIENT_MAC[2], VALID_CLIENT_MAC[3], VALID_CLIENT_MAC[4], VALID_CLIENT_MAC[5], result);
 
 			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
-	       		/* Passing valid apIndex, invalid device mac  and expecting the API to return failure */
+	       		/* Passing valid apIndex, invalid mac(Invalid length) and expecting the API to return failure */
 	       		UT_LOG("Test Case 3");
 	       		for (index = 0; index < numRadios; index++)
 	       		{
-	       			memset(&device,0,sizeof(wifi_device_t));
-	       			sscanf(mac, "%02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX", &device.wifi_devMacAddress[0], &device.wifi_devMacAddress[1], &device.wifi_devMacAddress[2], &device.wifi_devMacAddress[3], &device.wifi_devMacAddress[4], &device.wifi_devMacAddress[5]);
-	       			result = wifi_kickAssociatedDevice(apIndex[index], &device);
-	                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-				UT_LOG("Passing valid apIndex  %d with invalid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX device mac returns %d", apIndex[index], device.wifi_devMacAddress[0], device.wifi_devMacAddress[1], device.wifi_devMacAddress[2], device.wifi_devMacAddress[3], device.wifi_devMacAddress[4], device.wifi_devMacAddress[5], result);
+	       			result = wifi_kickApAssociatedDevice(apIndex[index], INVALID_CLIENT_MAC);
+	                UT_ASSERT_EQUAL( result, RETURN_ERR);
+				    UT_LOG("Passing valid apIndex  %d with invalid %02hhX:%02hhX:%02hhX mac returns %d", apIndex[index], INVALID_CLIENT_MAC[0], INVALID_CLIENT_MAC[1], INVALID_CLIENT_MAC[2], result);
 	       		}
 
 			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
-	       		/* Passing valid apIndex, NULL device and expecting the API to return failure */
+	       		/* Passing valid apIndex, invalid mac(Empty) and expecting the API to return failure */
 	       		UT_LOG("Test Case 4");
 	       		for (index = 0; index < numRadios; index++)
 	       		{
-	       			memset(&device,0,sizeof(wifi_device_t));
-	       			result = wifi_kickAssociatedDevice(apIndex[index], NULL);
-	                        UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-				UT_LOG("Passing valid apIndex %d with NULL device returns %d", apIndex[index], result);
+	       			result = wifi_kickApAssociatedDevice(apIndex[index], EMPTY_CLIENT_MAC);
+	                UT_ASSERT_EQUAL( result, RETURN_ERR);
+				    UT_LOG("Passing valid apIndex %d with invalid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", apIndex[index], EMPTY_CLIENT_MAC[0], EMPTY_CLIENT_MAC[1], EMPTY_CLIENT_MAC[2], EMPTY_CLIENT_MAC[3], EMPTY_CLIENT_MAC[4], EMPTY_CLIENT_MAC[5], result);
 	       		}
 		}
 		else
@@ -654,7 +654,7 @@ void test_wifi_kickAssociatedDevice(void)
 	   UT_LOG("Unable to retrieve the number of radios from HalCapability");
    }
 
-   UT_LOG("Exiting kickAssociatedDevice..." );
+   UT_LOG("Exiting kickApAssociatedDevice..." );
    return;
 
 }
@@ -3128,8 +3128,11 @@ INT test_wifi_ap_register( void )
     {
         return -1;
     }
+    
+    #ifdef WIFI_HAL_VERSION_3_PHASE2
+    UT_add_test( pSuite, "wifi_getApAssociatedDevice", test_wifi_getApAssociatedDevice);    /*As per the ticket : BCOMB-1677*/
+    #endif
 
-    UT_add_test( pSuite, "wifi_getApAssociatedDevice", test_wifi_getApAssociatedDevice);
     UT_add_test( pSuite, "wifi_enableCSIEngine", test_wifi_enableCSIEngine);
     UT_add_test( pSuite, "wifi_getRadioVapInfoMap", test_wifi_getRadioVapInfoMap);
     UT_add_test( pSuite, "wifi_createVAP", test_wifi_createVAP);
@@ -3137,7 +3140,7 @@ INT test_wifi_ap_register( void )
     //UT_add_test( pSuite, "wifi_newApAssociatedDevice_callback_register", test_wifi_newApAssociatedDevice_callback_register);
     //UT_add_test( pSuite, "wifi_apDeAuthEvent_callback_register", test_wifi_apDeAuthEvent_callback_register);
     //UT_add_test( pSuite, "wifi_apDisassociatedDevice_callback_register", test_wifi_apDisassociatedDevice_callback_register);
-    UT_add_test( pSuite, "wifi_kickAssociatedDevice", test_wifi_kickAssociatedDevice);
+    UT_add_test( pSuite, "wifi_kickApAssociatedDevice", test_wifi_kickApAssociatedDevice);
     UT_add_test( pSuite, "private_valid_tc1", test_createVAP_private_valid_tc1);
     UT_add_test( pSuite, "private_valid_tc2", test_createVAP_private_valid_tc2);
     UT_add_test( pSuite, "private_invalid", test_createVAP_private_invalid);

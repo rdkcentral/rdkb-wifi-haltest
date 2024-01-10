@@ -66,6 +66,14 @@ INT wifi_mgmt_frame_callbacks_register(wifi_receivedMgmtFrame_callback mgmtRxCal
   return (INT)0;
 }
 
+INT wifi_kickApAssociatedDevice(INT apIndex, mac_address_t client_mac)
+{
+  /*TODO: Implement Me!*/
+  (void)apIndex;
+  (void)client_mac;
+  return (INT)0;
+}
+
 void wifi_newApAssociatedDevice_callback_register(wifi_newApAssociatedDevice_callback callback_proc)
 {
   /*TODO: Implement Me!*/

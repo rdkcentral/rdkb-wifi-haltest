@@ -692,7 +692,7 @@ void test_wifi_L2_set_valid_bandwidth_6Ghz_80_80MHz(void)
 }
 #endif
 
-static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandwidth_t *chbw)
+/*static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandwidth_t *chbw)
 {
     if( strcmp(channelwidth, "20MHz") == 0 )
     {
@@ -715,7 +715,9 @@ static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandw
         return -1;
     }
     return 0;
-}
+}*/
+
+/*As per the ticket BCOMB-1677 if common hal api is used to configure, then use common hal api to read the configuration*/
 
 /**
 * @brief This module test will get the supported channelwidths from wifi_getHalCapability(), set using wifi_setRadioOperatingParameters() 
@@ -728,7 +730,7 @@ static int convert_channelwidth_to_enum(char channelwidth[10], wifi_channelBandw
 * **Test Procedure:**
 * Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
 */
-void test_getRadioOperatingChannelBandwidth_valid()
+/*void test_getRadioOperatingChannelBandwidth_valid()
 {
     UT_LOG("Entering test_getRadioOperatingChannelBandwidth_valid...");
     wifi_channelBandwidth_t channelWidth_list[5] = {0};
@@ -738,18 +740,18 @@ void test_getRadioOperatingChannelBandwidth_valid()
     char chWidth[10] = {'\0'};
     unsigned int numRadios = 0;
     int radioIndex = 0, i = 0, result = 0, returnStatus = 0;
-    wifi_radio_operationParam_t tmp_radio;
+    wifi_radio_operationParam_t tmp_radio;*/
 
     /* Get the number of radios applicable */
-    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+   /* returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
     if (returnStatus == 0)
     {
-        UT_LOG("Number of Radios : %u", numRadios);
+        UT_LOG("Number of Radios : %u", numRadios);*/
 
         /* Postive Test WIFI_HAL_SUCCESS */
         /* Setting valid radio operating parameters and expecting the API to return success */
-        UT_LOG("Test Case 1");
+        /*UT_LOG("Test Case 1");
 
         for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
         {
@@ -832,7 +834,7 @@ void test_getRadioOperatingChannelBandwidth_valid()
 
     UT_LOG("Exiting test_getRadioOperatingChannelBandwidth_valid");
     return;
-}
+}*/
 
 /**
 * @brief This module test will verify setting invalid channelwidth values using wifi_getRadioOperatingChannelBandwidth() 
@@ -845,7 +847,7 @@ void test_getRadioOperatingChannelBandwidth_valid()
 * **Test Procedure:**
 * Refer to UT specification documentation [L2_TestSpecification.md](../../docs/pages/)
 */
-void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
+/*void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
 {
     UT_LOG("Entering test_getRadioOperatingChannelBandwidth_invalid_channelwidth...");
 
@@ -855,18 +857,18 @@ void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
     char set_channelwidth[10] = {'\0'};
     int result = 0, returnStatus = 0, radioIndex = 0;
     unsigned int numRadios = 0;
-    wifi_radio_operationParam_t tmp_radio;
+    wifi_radio_operationParam_t tmp_radio;*/
 
     /* Get the number of radios applicable */
-    returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
+    /*returnStatus = test_utils_getMaxNumberOfRadio(&numRadios);
 
     if (returnStatus == 0)
     {
-        UT_LOG("Number of Radios : %u", numRadios);
+        UT_LOG("Number of Radios : %u", numRadios);*/
 
         /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
         /* Setting invalid channel bandwidth and expecting the API to return failure */
-        UT_LOG("Test Case 2");
+        /*UT_LOG("Test Case 2");
 
         for (radioIndex = 0; radioIndex < numRadios; radioIndex++)
         {
@@ -877,22 +879,22 @@ void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
             {
                 UT_LOG("Initial ChannelBandwidth of radio %d is %s which is a valid bandwidth", radioIndex, initial_channelwidth);
                 UT_PASS("Initial Channel Bandwidth validation success");
-            }
+            }*/
 
             /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
             /* Setting invalid positive channel bandwidth 200 and expecting the API to return failure */
-            UT_LOG("Test case 2.1");
+            /*UT_LOG("Test case 2.1");
             tmp_radio = g_operationParam[radioIndex];
             tmp_radio.channelWidth = positive_width;
 
             UT_LOG("Setting channelWidth to %d using setRadioOperatingParameters", tmp_radio.channelWidth);
             result = wifi_setRadioOperatingParameters(radioIndex, &tmp_radio);
 	    UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS );
-            UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);
+            UT_LOG("wifi_setRadioOperatingParameters for radio %d returns : %d", radioIndex, result);*/
 
              /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
              /* Setting invalid negative channel bandwidth -250 and expecting the API to return failure */
-	     UT_LOG("Test case 2.2");
+	     /*UT_LOG("Test case 2.2");
              tmp_radio = g_operationParam[radioIndex];
              tmp_radio.channelWidth = negative_width;
 
@@ -918,9 +920,9 @@ void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
              else
              {
                  UT_LOG("Channel Width got corrupted after setting invalid values");
-                 UT_FAIL("Channel Bandwidth validation failure");
+                 UT_FAIL("Channel Bandwidth validation failure");*/
 		 /* Set the values back same as the radio_config file */
-		 result = wifi_setRadioOperatingParameters(radioIndex, &g_operationParam[radioIndex]);
+		 /*result = wifi_setRadioOperatingParameters(radioIndex, &g_operationParam[radioIndex]);
 		 UT_ASSERT_EQUAL( result, WIFI_HAL_SUCCESS );
 		 UT_LOG("wifi_setRadioOperatingParameters after setting back to rado_config file values for radio %d returns : %d", radioIndex, result);
              }
@@ -933,7 +935,7 @@ void test_getRadioOperatingChannelBandwidth_invalid_channelwidth()
 
     UT_LOG("Exiting test_getRadioOperatingChannelBandwidth_invalid_channelwidth");
     return;
-}
+}*/
 
 /**
 * @brief This module test will verify passing wifi_setRadioOperatingParameters() with invalid radioIndex values 
@@ -3006,9 +3008,11 @@ int test_wifi_hal_l2_register( void )
     {
         return -1;
     }
-
-    UT_add_test( pSuite, "set_valid_channelbandwidth", test_getRadioOperatingChannelBandwidth_valid);
-    UT_add_test( pSuite, "set_invalid_channelbandwidth", test_getRadioOperatingChannelBandwidth_invalid_channelwidth);
+    
+    /*As per the ticket BCOMB-1677 if common hal api is used to configure, then use common hal api to read the configuration*/
+    //UT_add_test( pSuite, "set_valid_channelbandwidth", test_getRadioOperatingChannelBandwidth_valid); 
+    //UT_add_test( pSuite, "set_invalid_channelbandwidth", test_getRadioOperatingChannelBandwidth_invalid_channelwidth);
+    
     UT_add_test( pSuite, "set_invalidradioIndex_channelbandwidth", test_getRadioOperatingChannelBandwidth_invalid_radioIndex);
     UT_add_test( pSuite, "set_operationParam_NULL_channelbandwidth", test_getRadioOperatingChannelBandwidth_operationParamNULL);
     UT_add_test( pSuite, "createVAP_vapinfo_tc1", test_createVAP_vapinfo_valid_tc1);

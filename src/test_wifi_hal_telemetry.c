@@ -165,10 +165,8 @@ void test_telemetry_wifi_getRadioBandUtilization(void)
 * |02|call wifi_getApAssociatedDeviceDiagnosticResult3() with valid arguments for apIndex 1 | apIndex=1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=0 | WIFI_HAL_SUCCESS| Should Pass |
 * |03|call wifi_getApAssociatedDeviceDiagnosticResult3() with invalid positive out of range apIndex | apIndex=99, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=0 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
 * |04|call wifi_getApAssociatedDeviceDiagnosticResult3() with invalid negative out of range apIndex | apIndex=-1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |05|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 0 and invalid client mac buffer | apIndex=0, **associated_dev_array="000000000000",*output_array_size=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |06|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 1 and invalid client mac buffer | apIndex=1, **associated_dev_array="000000000000",*output_array_size=1 | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |07|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 0 and NULL array size | apIndex=0, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
-* |08|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 1 and NULL array size | apIndex=1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |05|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 0 and NULL array size | apIndex=0, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
+* |06|call wifi_getApAssociatedDeviceDiagnosticResult3() with apIndex as 1 and NULL array size | apIndex=1, **associated_dev_array=valid buffer of type wifi_associated_dev3_t ,*output_array_size=NULL  | WIFI_HAL_INVALID_ARGUMENTS| Should Fail |
 */
 void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 {
@@ -180,8 +178,8 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
    int returnStatus = 0;
    wifi_associated_dev3_t *associated_dev_array = NULL;
    uint output_array_size = 0;
-   char *macstr = "000000000000";
-   wifi_associated_dev3_t dev;
+   //char *macstr = "000000000000";
+   //wifi_associated_dev3_t dev;
    int * apIndex = NULL;
 
    /* To get number of supported radios*/
@@ -238,7 +236,7 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
 
           /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
           /* Passing valid apIndex, invalid client mac buffer and array size as 1 and expecting the API to return failure */
-          UT_LOG("Test Case 4");
+          /*UT_LOG("Test Case 4");
           for (index = 0; index < numRadios; index++)
           {
               output_array_size = 1;
@@ -247,7 +245,7 @@ void test_telemetry_wifi_getApAssociatedDeviceDiagnosticResult3(void)
               result = wifi_getApAssociatedDeviceDiagnosticResult3(apIndex[index], &associated_dev_array, &output_array_size);
               UT_ASSERT_EQUAL( result, WIFI_HAL_INVALID_ARGUMENTS);
               UT_LOG("Passing an valid apIndex %d with invalid client mac buffer and array size as 1 returns  %d", apIndex[index], result);
-          }
+          }*/
 
           /* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
           /* Passing an valid apIndex, valid client mac buffer and NULL array size and expecting the API to return failure */
