@@ -608,15 +608,15 @@ void test_wifi_kickApAssociatedDevice(void)
 	       		/* Passing an invalid positive out of range apIndex, valid mac and expecting the API to return failure */
 	       		UT_LOG("Test Case 1");
 	       		result = wifi_kickApAssociatedDevice(TBC_POSITIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC);
-			    UT_ASSERT_EQUAL( result, RETURN_ERR);
+                        UT_ASSERT_EQUAL( result, RETURN_ERR);
 	       		UT_LOG("Passing an invalid positive out of range apIndex %d with valid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", TBC_POSITIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC[0], VALID_CLIENT_MAC[1], VALID_CLIENT_MAC[2], VALID_CLIENT_MAC[3], VALID_CLIENT_MAC[4], VALID_CLIENT_MAC[5], result);
 
 			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
 	       		/* Passing an invalid negative apIndex, valid mac and expecting the API to return failure */
 	       		UT_LOG("Test Case 2");
 	       		result = wifi_kickApAssociatedDevice(TBC_NEGATIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC);
-	            UT_ASSERT_EQUAL( result, RETURN_ERR);
-			    UT_LOG("Passing an invalid negative out of range apIndex %d with valid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC[0], VALID_CLIENT_MAC[1], VALID_CLIENT_MAC[2], VALID_CLIENT_MAC[3], VALID_CLIENT_MAC[4], VALID_CLIENT_MAC[5], result);
+                        UT_ASSERT_EQUAL( result, RETURN_ERR);
+                        UT_LOG("Passing an invalid negative out of range apIndex %d with valid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", TBC_NEGATIVE_INDEX_OUT_OF_RANGE, VALID_CLIENT_MAC[0], VALID_CLIENT_MAC[1], VALID_CLIENT_MAC[2], VALID_CLIENT_MAC[3], VALID_CLIENT_MAC[4], VALID_CLIENT_MAC[5], result);
 
 			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
 	       		/* Passing valid apIndex, invalid mac(Invalid length) and expecting the API to return failure */
@@ -624,8 +624,8 @@ void test_wifi_kickApAssociatedDevice(void)
 	       		for (index = 0; index < numRadios; index++)
 	       		{
 	       			result = wifi_kickApAssociatedDevice(apIndex[index], INVALID_CLIENT_MAC);
-	                UT_ASSERT_EQUAL( result, RETURN_ERR);
-				    UT_LOG("Passing valid apIndex  %d with invalid %02hhX:%02hhX:%02hhX mac returns %d", apIndex[index], INVALID_CLIENT_MAC[0], INVALID_CLIENT_MAC[1], INVALID_CLIENT_MAC[2], result);
+                                UT_ASSERT_EQUAL( result, RETURN_ERR);
+                                UT_LOG("Passing valid apIndex  %d with invalid %02hhX:%02hhX:%02hhX mac returns %d", apIndex[index], INVALID_CLIENT_MAC[0], INVALID_CLIENT_MAC[1], INVALID_CLIENT_MAC[2], result);
 	       		}
 
 			/* Negative Test WIFI_HAL_INVALID_ARGUMENTS */
@@ -634,8 +634,8 @@ void test_wifi_kickApAssociatedDevice(void)
 	       		for (index = 0; index < numRadios; index++)
 	       		{
 	       			result = wifi_kickApAssociatedDevice(apIndex[index], EMPTY_CLIENT_MAC);
-	                UT_ASSERT_EQUAL( result, RETURN_ERR);
-				    UT_LOG("Passing valid apIndex %d with invalid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", apIndex[index], EMPTY_CLIENT_MAC[0], EMPTY_CLIENT_MAC[1], EMPTY_CLIENT_MAC[2], EMPTY_CLIENT_MAC[3], EMPTY_CLIENT_MAC[4], EMPTY_CLIENT_MAC[5], result);
+                                UT_ASSERT_EQUAL( result, RETURN_ERR);
+                                UT_LOG("Passing valid apIndex %d with invalid %02hhX:%02hhX:%02hhX:%02hhX:%02hhX:%02hhX mac returns %d", apIndex[index], EMPTY_CLIENT_MAC[0], EMPTY_CLIENT_MAC[1], EMPTY_CLIENT_MAC[2], EMPTY_CLIENT_MAC[3], EMPTY_CLIENT_MAC[4], EMPTY_CLIENT_MAC[5], result);
 	       		}
 		}
 		else

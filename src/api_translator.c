@@ -37,5 +37,4 @@ INT wifi_hal_createVAP(wifi_radio_index_t index, wifi_vap_info_map_t *map){retur
 INT wifi_hal_getRadioVapInfoMap(wifi_radio_index_t index, wifi_vap_info_map_t *map){return 0;}
 INT wifi_hal_startScan(wifi_radio_index_t index, wifi_neighborScanMode_t scan_mode, INT dwell_time, UINT num, UINT *chan_list){return 0;}
 INT wifi_hal_disconnect(INT apIndex){return 0;}
-INT wifi_kickAssociatedDevice(INT apIndex, wifi_device_t *device){return 0;}
 #endif

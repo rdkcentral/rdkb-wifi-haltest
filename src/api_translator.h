@@ -30,7 +30,6 @@ INT wifi_hal_getHalCapability(wifi_hal_capability_t *hal);
 INT wifi_hal_connect(INT ap_index, wifi_bss_info_t *bss);
 INT wifi_hal_setRadioOperatingParameters(wifi_radio_index_t index, wifi_radio_operationParam_t *operationParam);
 INT wifi_hal_createVAP(wifi_radio_index_t index, wifi_vap_info_map_t *map);
-INT wifi_hal_kickAssociatedDevice(INT ap_index, mac_address_t mac);
 INT wifi_hal_startScan(wifi_radio_index_t index, wifi_neighborScanMode_t scan_mode, INT dwell_time, UINT num, UINT *chan_list);
 INT wifi_hal_disconnect(INT ap_index);
 INT wifi_hal_getRadioVapInfoMap(wifi_radio_index_t index, wifi_vap_info_map_t *map);
